@@ -5,11 +5,12 @@
   "main": "build/ascesis.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start",
-    "build": "./node_modules/webpack/bin/webpack.js"
+    "build": "node node_modules/babel-cli/bin/babel src --out-dir build"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.9",
     "babel-plugin-transform-es2015-destructuring": "^6.19.0",

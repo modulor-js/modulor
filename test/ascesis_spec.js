@@ -1,4 +1,5 @@
-import { BaseComponent, BaseController } from '../src/ascesis';
+import { BaseComponent, BaseController } from '../build/ascesis';
+
 
 describe('Single component functionality', (done) => {
 

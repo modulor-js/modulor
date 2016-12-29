@@ -1,4 +1,4 @@
-import Router from '../src/router';
+import Router from '../build/router';
 
 
 describe('Base functionality', () => {
