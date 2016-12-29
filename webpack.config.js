@@ -7,7 +7,8 @@ var OUTPUT_DIR = path.join(__dirname, 'build');
 module.exports = {
   context: CLIENT_DIR,
   entry: {
-    'router': './router.js'
+    'router': './router.js',
+    'ascesis': ['./ascesis.js']
   },
   output: {
     path: OUTPUT_DIR,

@@ -2,7 +2,7 @@
   "name": "ascesis",
   "version": "0.0.1",
   "description": "",
-  "main": "src/ascesis.js",
+  "main": "build/ascesis.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start",
     "build": "./node_modules/webpack/bin/webpack.js"
