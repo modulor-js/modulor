@@ -11,6 +11,21 @@ export function fireEvent(eventName, target, eventData){
   target.dispatchEvent(event);
 }
 
+export function html(html_string, target){
+  var fragment = document.createDocumentFragment();
+  var temp_container = document.createElement('div');
+  temp_container.innerHTML = html_string;
+  while(temp_container.firstChild){
+    fragment.appendChild(temp_container.firstChild);
+  }
+  if(target){
+    target.innerHTML = '';
+    target.appendChild(fragment);
+    return target;
+  }
+  return fragment;
+}
+
 class ChildComponents extends Array {
    constructor(){
     super();
@@ -67,14 +82,7 @@ export function extend(baseClass){
     }
 
     html(html_string){
-      var fragment = document.createDocumentFragment();
-      var temp_container = document.createElement('div');
-      temp_container.innerHTML = html_string;
-      while(temp_container.firstChild){
-        fragment.appendChild(temp_container.firstChild);
-      }
-      this.innerHTML = "";
-      this.appendChild(fragment);
+      html(html_string, this);
     }
 
     addDisconnectListener(callback){
