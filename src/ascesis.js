@@ -1,9 +1,9 @@
 export function fireEvent(eventName, target, eventData){
   target = target || document.body;
   var event;
-  if(window.Event){
-    event = new Event(eventName, {"bubbles":true, "cancelable":true});
-  } else {
+  try {
+    event = new Event(eventName, { "bubbles": true, "cancelable": true });
+  } catch(e) {
     event = document.createEvent('Event');
     event.initEvent(eventName, true, true);
   }

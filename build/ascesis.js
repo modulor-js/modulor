@@ -20,9 +20,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function fireEvent(eventName, target, eventData) {
   target = target || document.body;
   var event;
-  if (window.Event) {
+  try {
     event = new Event(eventName, { "bubbles": true, "cancelable": true });
-  } else {
+  } catch (e) {
     event = document.createEvent('Event');
     event.initEvent(eventName, true, true);
   }
