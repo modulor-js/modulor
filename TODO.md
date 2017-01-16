@@ -1,3 +1,5 @@
+**core**
+
 * ?? html function should return: `[documentFragment, refs]`
 
 * ?? extract acsesis_utils from ascesis.js 
@@ -11,3 +13,11 @@
 * add $ hash with refs
 
 * replace childComponents with getter, use DOM traverse
+
+**router**
+
+* add setParam function
+
+**common**
+
+* refactor tests
