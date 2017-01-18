@@ -1,6 +1,5 @@
 import { BaseComponent, BaseController } from '../build/ascesis';
 
-
 describe('Single component functionality', (done) => {
 
   let component;
@@ -63,18 +62,6 @@ describe('Complex functionality', (done) => {
   class ComponentThree extends BaseComponent {}
 
 
-  let components_map = {
-    'root-controller': RootController,
-    'child-controller': ChildController,
-    'component-one': ComponentOne,
-    'component-two': ComponentTwo,
-    'component-three': ComponentThree,
-  };
-
-  Object.keys(components_map).forEach((component_name) => {
-    customElements.define(component_name, components_map[component_name]);
-  });
-
   let container = document.createElement('div');
 
   document.body.appendChild(container);
@@ -93,6 +80,18 @@ describe('Complex functionality', (done) => {
       </child-controller>
     </root-controller>
   `;
+
+  let components_map = {
+    'root-controller': RootController,
+    'child-controller': ChildController,
+    'component-one': ComponentOne,
+    'component-two': ComponentTwo,
+    'component-three': ComponentThree,
+  };
+
+  Object.keys(components_map).forEach((component_name) => {
+    customElements.define(component_name, components_map[component_name]);
+  });
 
   let components_elements = Object.keys(components_map)
                                   .reduce((acc, component_name) => {
@@ -138,6 +137,12 @@ describe('Complex functionality', (done) => {
     assert.equal(components_elements['component-three'][0].classList.contains('component-highlighted'), false);
   });
 
+  it('finds parent component correctly', () => {
+    assert.equal(components_elements['component-two'][0].parentComponent, components_elements['child-controller'][0]);
+    assert.notEqual(components_elements['component-three'][0].parentComponent, components_elements['root-controller'][0]);
+    assert.equal(components_elements['child-controller'][0].parentComponent, components_elements['root-controller'][0]);
+  });
+
   it('child components selectors work correctly', () => {
     let child_controller = components_elements['root-controller'][0].childComponents.querySelector('child-controller');
     assert.equal(child_controller, components_elements['child-controller'][0]);
@@ -148,15 +153,13 @@ describe('Complex functionality', (done) => {
   });
 
   it('deletes child components correctly', () => {
-    let root_child_components = components_elements['root-controller'][0].childComponents;
     components_elements['component-one'][0].remove();
-    assert.equal(root_child_components.length, 2);
-    assert.equal(root_child_components[0], components_elements['component-one'][1]);
-    assert.equal(root_child_components[1], components_elements['child-controller'][0]);
-    let child_controller_child_components = components_elements['child-controller'][0].childComponents;
+    assert.equal(components_elements['root-controller'][0].childComponents.length, 2);
+    assert.equal(components_elements['root-controller'][0].childComponents[0], components_elements['component-one'][1]);
+    assert.equal(components_elements['root-controller'][0].childComponents[1], components_elements['child-controller'][0]);
     components_elements['component-two'][0].remove();
-    assert.equal(child_controller_child_components.length, 1);
-    assert.equal(child_controller_child_components[0], components_elements['component-three'][0]);
+    assert.equal(components_elements['child-controller'][0].childComponents.length, 1);
+    assert.equal(components_elements['child-controller'][0].childComponents[0], components_elements['component-three'][0]);
   });
 
 });

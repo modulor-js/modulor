@@ -1,3 +1,17 @@
+export function walkDOM(node, filter = () => true, skipNode = () => false) {
+  let arr = new QueryableArray();
+  let loop = (node) => toArray(node.children).forEach((child) => {
+    filter(child) && arr.push(child);
+    (!skipNode(child) && child.hasChildNodes()) && loop(child);
+  });
+  loop(node);
+  return arr;
+}
+
+export function toArray(nodes){
+  return Array.prototype.slice.call(nodes);
+}
+
 export function fireEvent(eventName, target, eventData){
   target = target || document.body;
   var event;
@@ -26,7 +40,8 @@ export function html(html_string, target){
   return fragment;
 }
 
-class ChildComponents extends Array {
+//deprecated
+class QueryableArray extends Array {
    constructor(){
     super();
     this.querySelector = (selector) => {
@@ -61,6 +76,24 @@ export function extend(baseClass){
       super();
     }
 
+    get __isAscesis(){
+      return true;
+    }
+
+    get childComponents(){
+      return walkDOM(this, (node) => node.__isAscesis, (node) => node.__isAscesis);
+    }
+
+    get parentComponent(){
+      let parent = this;
+      while(parent = parent.parentNode){
+        if(parent.__isAscesis){
+          break;
+        }
+      }
+      return parent;
+    }
+
     toggleHighlight(){
       this.classList.toggle(this.componentType + '-highlighted');
     }
@@ -72,11 +105,6 @@ export function extend(baseClass){
       });
     }
 
-    removeChildComponent(childComponent){
-      var index = this.childComponents.indexOf(childComponent);
-      this.childComponents.splice(index, 1);
-    }
-
     trigger(eventName, eventData){
       fireEvent(eventName, this, eventData);
     }
@@ -85,29 +113,15 @@ export function extend(baseClass){
       html(html_string, this);
     }
 
-    addDisconnectListener(callback){
-      this.disconnectListeners.push(callback);
-    }
-
     connectedCallback(){
-      this.disconnectListeners = [];
-      this.childComponents = new ChildComponents();
       this.trigger('component-attached');
       this.addEventListener('component-attached', (event) => {
         event.stopPropagation();
-        event.target.parentComponent = this;
-        this.childComponents.push(event.target);
-        event.target.addDisconnectListener((target) => {
-          this.removeChildComponent(target);
-        });
       });
       super.connectedCallback && super.connectedCallback();
     }
 
     disconnectedCallback(){
-      this.disconnectListeners.forEach((listener) => {
-        listener(this);
-      });
       super.disconnectedCallback && super.disconnectedCallback();
     }
 
