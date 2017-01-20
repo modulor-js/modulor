@@ -12,7 +12,7 @@
 
 * add $ hash with refs
 
-* replace childComponents with getter, use DOM traverse
+* ~~replace childComponents with getter, use DOM traverse~~
 
 **router**
 
