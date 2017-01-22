@@ -14,6 +14,10 @@
 
 * ~~replace childComponents with getter, use DOM traverse~~
 
+* remove QueriableArray class, remove querySelector[All] methods on child components
+
+* rewrite toArray according to tests https://jsperf.com/nodelist-to-array and https://jsperf.com/slice-call-vs-for-loop454545
+
 **router**
 
 * add setParam function
