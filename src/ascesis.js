@@ -12,6 +12,22 @@ export function attr(element, key, value){
   return element.getAttribute(key);
 }
 
+export function addClass(element, className){
+  return element.classList.add(className);
+}
+
+export function removeClass(element, className){
+  return element.classList.remove(className);
+}
+
+export function toggleClass(element, className){
+  return element.classList.toggle(className);
+}
+
+export function hasClass(element, className){
+  return element.classList.contains(className);
+}
+
 export function walkDOM(node, filter = () => true, skipNode = () => false) {
   let arr = new QueryableArray();
   let loop = (node) => toArray(node.children).forEach((child) => {
@@ -129,6 +145,22 @@ export function extend(baseClass){
 
     attr(key, value){
       return attr(this, key, value);
+    }
+
+    addClass(className){
+      return addClass(this, className);
+    }
+
+    removeClass(className){
+      return removeClass(this, className);
+    }
+
+    toggleClass(className){
+      return toggleClass(this, className);
+    }
+
+    hasClass(className){
+      return hasClass(this, className);
     }
 
     trigger(eventName, eventData){

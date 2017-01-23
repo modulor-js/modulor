@@ -37,6 +37,26 @@ function _attr(element, key, value) {
 }
 
 exports.attr = _attr;
+function _addClass(element, className) {
+  return element.classList.add(className);
+}
+
+exports.addClass = _addClass;
+function _removeClass(element, className) {
+  return element.classList.remove(className);
+}
+
+exports.removeClass = _removeClass;
+function _toggleClass(element, className) {
+  return element.classList.toggle(className);
+}
+
+exports.toggleClass = _toggleClass;
+function _hasClass(element, className) {
+  return element.classList.contains(className);
+}
+
+exports.hasClass = _hasClass;
 function walkDOM(node) {
   var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
     return true;
@@ -194,6 +214,26 @@ function extend(baseClass) {
       key: "attr",
       value: function attr(key, value) {
         return _attr(this, key, value);
+      }
+    }, {
+      key: "addClass",
+      value: function addClass(className) {
+        return _addClass(this, className);
+      }
+    }, {
+      key: "removeClass",
+      value: function removeClass(className) {
+        return _removeClass(this, className);
+      }
+    }, {
+      key: "toggleClass",
+      value: function toggleClass(className) {
+        return _toggleClass(this, className);
+      }
+    }, {
+      key: "hasClass",
+      value: function hasClass(className) {
+        return _hasClass(this, className);
       }
     }, {
       key: "trigger",

@@ -41,6 +41,18 @@ describe('Single component functionality', (done) => {
     assert.equal(component.hasAttribute('foo'), false);
   });
 
+  it('class functions works correctly', () => {
+    component.addClass('foo');
+    assert.equal(component.classList.contains('foo'), true);
+    component.removeClass('foo');
+    assert.equal(component.classList.contains('foo'), false);
+    component.toggleClass('foo');
+    assert.equal(component.classList.contains('foo'), true);
+    assert.equal(component.classList.contains('foo'), component.hasClass('foo'));
+    component.toggleClass('foo');
+    assert.equal(component.classList.contains('foo'), false);
+  });
+
   it('toggles debug class correctly', () => {
     component.toggleHighlight();
     assert.equal(component.classList.contains('component-highlighted'), true);
