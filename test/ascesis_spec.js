@@ -30,10 +30,16 @@ describe('Single component functionality', (done) => {
 
   it('$ function works correctly', () => {
     let result = component.$('[data-test="bar"], span');
-    assert(result instanceof Array, true);
-    assert(result.length, 2);
+    assert.equal(result instanceof Array, true);
+    assert.equal(result.length, 2);
   });
 
+  it('attr function works correctly', () => {
+    component.attr('foo', 'bar');
+    assert.equal(component.attr('foo'), 'bar');
+    component.attr('foo', null);
+    assert.equal(component.hasAttribute('foo'), false);
+  });
 
   it('toggles debug class correctly', () => {
     component.toggleHighlight();

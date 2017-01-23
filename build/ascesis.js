@@ -26,6 +26,17 @@ function _$(selector) {
 }
 
 exports.$ = _$;
+function _attr(element, key, value) {
+  if (value) {
+    return element.setAttribute(key, value);
+  }
+  if (value === null) {
+    return element.removeAttribute(key);
+  }
+  return element.getAttribute(key);
+}
+
+exports.attr = _attr;
 function walkDOM(node) {
   var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
     return true;
@@ -178,6 +189,11 @@ function extend(baseClass) {
       key: "$",
       value: function $(selector) {
         return _$(selector, this);
+      }
+    }, {
+      key: "attr",
+      value: function attr(key, value) {
+        return _attr(this, key, value);
       }
     }, {
       key: "trigger",

@@ -2,6 +2,16 @@ export function $(selector, element = document){
   return toArray(element.querySelectorAll(selector));
 }
 
+export function attr(element, key, value){
+  if(value){
+    return element.setAttribute(key, value);
+  }
+  if(value === null){
+    return element.removeAttribute(key);
+  }
+  return element.getAttribute(key);
+}
+
 export function walkDOM(node, filter = () => true, skipNode = () => false) {
   let arr = new QueryableArray();
   let loop = (node) => toArray(node.children).forEach((child) => {
@@ -115,6 +125,10 @@ export function extend(baseClass){
 
     $(selector){
       return $(selector, this);
+    }
+
+    attr(key, value){
+      return attr(this, key, value);
     }
 
     trigger(eventName, eventData){
