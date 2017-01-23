@@ -1,3 +1,7 @@
+export function $(selector, element = document){
+  return toArray(element.querySelectorAll(selector));
+}
+
 export function walkDOM(node, filter = () => true, skipNode = () => false) {
   let arr = new QueryableArray();
   let loop = (node) => toArray(node.children).forEach((child) => {
@@ -9,7 +13,11 @@ export function walkDOM(node, filter = () => true, skipNode = () => false) {
 }
 
 export function toArray(nodes){
-  return Array.prototype.slice.call(nodes);
+  let arr = [];
+  for (let i = 0, ref = arr.length = nodes.length; i < ref; i++){
+   arr[i] = nodes[i];
+  }
+  return arr;
 }
 
 export function fireEvent(eventName, target, eventData){
@@ -53,7 +61,7 @@ class QueryableArray extends Array {
       return null;
     }
     this.querySelectorAll = (selector) => {
-      var output = [];
+      var output = new QueryableArray();
       for(var index = 0; index < this.length; index++){
         this[index].matches(selector) && output.push(this[index]);
       }
@@ -103,6 +111,10 @@ export function extend(baseClass){
       this.childComponents.forEach(function(child){
         child.toggleHighlightAll();
       });
+    }
+
+    $(selector){
+      return $(selector, this);
     }
 
     trigger(eventName, eventData){

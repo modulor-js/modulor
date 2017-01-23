@@ -19,6 +19,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function _$(selector) {
+  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+
+  return toArray(element.querySelectorAll(selector));
+}
+
+exports.$ = _$;
 function walkDOM(node) {
   var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
     return true;
@@ -39,7 +46,11 @@ function walkDOM(node) {
 }
 
 function toArray(nodes) {
-  return Array.prototype.slice.call(nodes);
+  var arr = [];
+  for (var i = 0, ref = arr.length = nodes.length; i < ref; i++) {
+    arr[i] = nodes[i];
+  }
+  return arr;
 }
 
 function fireEvent(eventName, target, eventData) {
@@ -90,7 +101,7 @@ var QueryableArray = function (_Array) {
       return null;
     };
     _this.querySelectorAll = function (selector) {
-      var output = [];
+      var output = new QueryableArray();
       for (var index = 0; index < _this.length; index++) {
         _this[index].matches(selector) && output.push(_this[index]);
       }
@@ -162,6 +173,11 @@ function extend(baseClass) {
         this.childComponents.forEach(function (child) {
           child.toggleHighlightAll();
         });
+      }
+    }, {
+      key: "$",
+      value: function $(selector) {
+        return _$(selector, this);
       }
     }, {
       key: "trigger",

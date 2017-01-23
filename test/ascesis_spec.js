@@ -1,4 +1,4 @@
-import { BaseComponent, BaseController } from '../build/ascesis';
+import { BaseComponent, BaseController, toArray } from '../build/ascesis';
 
 describe('Single component functionality', (done) => {
 
@@ -27,6 +27,13 @@ describe('Single component functionality', (done) => {
     component.html(fixture);
     assert.equal(component.innerHTML, fixture);
   });
+
+  it('$ function works correctly', () => {
+    let result = component.$('[data-test="bar"], span');
+    assert(result instanceof Array, true);
+    assert(result.length, 2);
+  });
+
 
   it('toggles debug class correctly', () => {
     component.toggleHighlight();
