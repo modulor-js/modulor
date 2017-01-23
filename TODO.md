@@ -16,6 +16,8 @@
 
 * ~~rewrite toArray according to tests https://jsperf.com/nodelist-to-array and https://jsperf.com/slice-call-vs-for-loop454545~~
 
+* implement mixins according to http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/ or similar
+
 **router**
 
 * add setParam function
