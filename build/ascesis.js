@@ -8,6 +8,8 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+exports.walkDOM = walkDOM;
+exports.toArray = toArray;
 exports.fireEvent = fireEvent;
 exports.extend = extend;
 
@@ -16,6 +18,71 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _$(selector) {
+  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+
+  return toArray(element.querySelectorAll(selector));
+}
+
+exports.$ = _$;
+function _attr(element, key, value) {
+  if (value) {
+    return element.setAttribute(key, value);
+  }
+  if (value === null) {
+    return element.removeAttribute(key);
+  }
+  return element.getAttribute(key);
+}
+
+exports.attr = _attr;
+function _addClass(element, className) {
+  return element.classList.add(className);
+}
+
+exports.addClass = _addClass;
+function _removeClass(element, className) {
+  return element.classList.remove(className);
+}
+
+exports.removeClass = _removeClass;
+function _toggleClass(element, className) {
+  return element.classList.toggle(className);
+}
+
+exports.toggleClass = _toggleClass;
+function _hasClass(element, className) {
+  return element.classList.contains(className);
+}
+
+exports.hasClass = _hasClass;
+function walkDOM(node) {
+  var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
+    return true;
+  };
+  var skipNode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {
+    return false;
+  };
+
+  var arr = new QueryableArray();
+  var loop = function loop(node) {
+    return toArray(node.children).forEach(function (child) {
+      filter(child) && arr.push(child);
+      !skipNode(child) && child.hasChildNodes() && loop(child);
+    });
+  };
+  loop(node);
+  return arr;
+}
+
+function toArray(nodes) {
+  var arr = [];
+  for (var i = 0, ref = arr.length = nodes.length; i < ref; i++) {
+    arr[i] = nodes[i];
+  }
+  return arr;
+}
 
 function fireEvent(eventName, target, eventData) {
   target = target || document.body;
@@ -45,15 +112,16 @@ function _html(html_string, target) {
   return fragment;
 }
 
+//deprecated
 exports.html = _html;
 
-var ChildComponents = function (_Array) {
-  _inherits(ChildComponents, _Array);
+var QueryableArray = function (_Array) {
+  _inherits(QueryableArray, _Array);
 
-  function ChildComponents() {
-    _classCallCheck(this, ChildComponents);
+  function QueryableArray() {
+    _classCallCheck(this, QueryableArray);
 
-    var _this = _possibleConstructorReturn(this, (ChildComponents.__proto__ || Object.getPrototypeOf(ChildComponents)).call(this));
+    var _this = _possibleConstructorReturn(this, (QueryableArray.__proto__ || Object.getPrototypeOf(QueryableArray)).call(this));
 
     _this.querySelector = function (selector) {
       for (var index = 0; index < _this.length; index++) {
@@ -64,7 +132,7 @@ var ChildComponents = function (_Array) {
       return null;
     };
     _this.querySelectorAll = function (selector) {
-      var output = [];
+      var output = new QueryableArray();
       for (var index = 0; index < _this.length; index++) {
         _this[index].matches(selector) && output.push(_this[index]);
       }
@@ -73,7 +141,7 @@ var ChildComponents = function (_Array) {
     return _this;
   }
 
-  return ChildComponents;
+  return QueryableArray;
 }(Array);
 
 var BaseController = exports.BaseController = function (_extend) {
@@ -138,10 +206,34 @@ function extend(baseClass) {
         });
       }
     }, {
-      key: "removeChildComponent",
-      value: function removeChildComponent(childComponent) {
-        var index = this.childComponents.indexOf(childComponent);
-        this.childComponents.splice(index, 1);
+      key: "$",
+      value: function $(selector) {
+        return _$(selector, this);
+      }
+    }, {
+      key: "attr",
+      value: function attr(key, value) {
+        return _attr(this, key, value);
+      }
+    }, {
+      key: "addClass",
+      value: function addClass(className) {
+        return _addClass(this, className);
+      }
+    }, {
+      key: "removeClass",
+      value: function removeClass(className) {
+        return _removeClass(this, className);
+      }
+    }, {
+      key: "toggleClass",
+      value: function toggleClass(className) {
+        return _toggleClass(this, className);
+      }
+    }, {
+      key: "hasClass",
+      value: function hasClass(className) {
+        return _hasClass(this, className);
       }
     }, {
       key: "trigger",
@@ -154,41 +246,47 @@ function extend(baseClass) {
         _html(html_string, this);
       }
     }, {
-      key: "addDisconnectListener",
-      value: function addDisconnectListener(callback) {
-        this.disconnectListeners.push(callback);
-      }
-    }, {
       key: "connectedCallback",
       value: function connectedCallback() {
-        var _this5 = this;
-
-        this.disconnectListeners = [];
-        this.childComponents = new ChildComponents();
         this.trigger('component-attached');
         this.addEventListener('component-attached', function (event) {
           event.stopPropagation();
-          event.target.parentComponent = _this5;
-          _this5.childComponents.push(event.target);
-          event.target.addDisconnectListener(function (target) {
-            _this5.removeChildComponent(target);
-          });
         });
         _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this).call(this);
       }
     }, {
       key: "disconnectedCallback",
       value: function disconnectedCallback() {
-        var _this6 = this;
-
-        this.disconnectListeners.forEach(function (listener) {
-          listener(_this6);
-        });
         _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this).call(this);
       }
     }, {
       key: "attributeChangedCallback",
       value: function attributeChangedCallback() {}
+    }, {
+      key: "__isAscesis",
+      get: function get() {
+        return true;
+      }
+    }, {
+      key: "childComponents",
+      get: function get() {
+        return walkDOM(this, function (node) {
+          return node.__isAscesis;
+        }, function (node) {
+          return node.__isAscesis;
+        });
+      }
+    }, {
+      key: "parentComponent",
+      get: function get() {
+        var parent = this;
+        while (parent = parent.parentNode) {
+          if (parent.__isAscesis) {
+            break;
+          }
+        }
+        return parent;
+      }
     }]);
 
     return _class;
