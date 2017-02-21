@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.BaseComponent = exports.BaseController = exports.html = exports.hasClass = exports.toggleClass = exports.removeClass = exports.addClass = exports.attr = exports.$ = undefined;
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
@@ -12,6 +13,8 @@ exports.walkDOM = walkDOM;
 exports.toArray = toArray;
 exports.fireEvent = fireEvent;
 exports.extend = extend;
+
+var _delegate = require("./delegate");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -194,6 +197,10 @@ function extend(baseClass) {
 
     _createClass(_class, [{
       key: "toggleHighlight",
+
+
+      //debug highlighting
+
       value: function toggleHighlight() {
         this.classList.toggle(this.componentType + '-highlighted');
       }
@@ -205,6 +212,9 @@ function extend(baseClass) {
           child.toggleHighlightAll();
         });
       }
+
+      //DOM
+
     }, {
       key: "$",
       value: function $(selector) {
@@ -236,20 +246,48 @@ function extend(baseClass) {
         return _hasClass(this, className);
       }
     }, {
-      key: "trigger",
-      value: function trigger(eventName, eventData) {
-        fireEvent(eventName, this, eventData);
-      }
-    }, {
       key: "html",
       value: function html(html_string) {
         _html(html_string, this);
       }
+
+      //events
+
+    }, {
+      key: "on",
+      value: function on(eventName, selector, callback) {
+        if (!callback) {
+          callback = selector;
+          selector = null;
+        }
+        _delegate.delegate.on(eventName, this, selector, callback);
+      }
+    }, {
+      key: "off",
+      value: function off() {
+        var eventName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var selector = arguments[1];
+        var callback = arguments[2];
+
+        if (!callback) {
+          callback = selector;
+          selector = null;
+        }
+        _delegate.delegate.off(eventName, this, selector, callback);
+      }
+    }, {
+      key: "trigger",
+      value: function trigger(eventName, eventData) {
+        fireEvent(eventName, this, eventData);
+      }
+
+      //lifecycle callbacks
+
     }, {
       key: "connectedCallback",
       value: function connectedCallback() {
         this.trigger('component-attached');
-        this.addEventListener('component-attached', function (event) {
+        this.on('component-attached', function (event) {
           event.stopPropagation();
         });
         _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this).call(this);
@@ -257,6 +295,7 @@ function extend(baseClass) {
     }, {
       key: "disconnectedCallback",
       value: function disconnectedCallback() {
+        this.off();
         _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this).call(this);
       }
     }, {

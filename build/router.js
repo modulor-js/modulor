@@ -199,7 +199,7 @@ var Router = function () {
       }
 
       var _path = absolute ? path : this.root + path;
-      history[replace ? 'replaceState' : 'pushState'](null, null, _path);
+      window.history[replace ? 'replaceState' : 'pushState'](null, null, _path);
       !silent && this.trigger('url-changed');
     }
   }, {
