@@ -33,6 +33,7 @@
     "karma-sinon-chai": "^1.2.4",
     "karma-webpack": "^1.8.0",
     "mocha": "^3.2.0",
+    "pretty-data": "^0.40.0",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0",
     "webpack": "^1.14.0"
