@@ -12,7 +12,7 @@ describe.only('new router', () => {
   });
 
   let r1 = new Router();
-  r1.add('/:bar', (foo) => {
+  r1.add('/*', (foo) => {
     console.log(2222222, foo);
     return true;
   });
@@ -20,39 +20,9 @@ describe.only('new router', () => {
   //console.log(r.container.innerHTML);
   //console.log(r1.getRoot());
   window.history.replaceState(null, null, '/foo/bar');
-  fireEvent('popstate', window)
-  //fireEvent('url-changed', r.container);
+  r.resolve();
+  //fireEvent('url-changed', window);
 
-  //let a = document.createElement('div');
-  //attr(a, 'route', '/');
-
-  //let b = document.createElement('div');
-  //attr(b, 'route', '/foo');
-
-  //let c = document.createElement('div');
-  //attr(c, 'route', '/bar');
-
-  //c.rootMatches = (e) => {
-    //let path = e.traverse
-                //.reduce((acc, el) => acc.concat(attr(el, 'route') || []) , [])
-                //.reverse()
-                //.join('')
-                //.replace(/\/\//ig, '/');
-    //return !!~window.location.pathname.indexOf(path);
-  //}
-
-  //a.appendChild(b);
-  //a.appendChild(c);
-
-  ////console.log(a.innerHTML);
-
-  ////let delegate = createDelegate(a);
-
-  //a.addEventListener('foo', (e) => {
-    //console.log(e.target[>, e.target.rootMatches(e)<]);
-  //});
-
-  //fireEvent('foo', c);
 
   it('foo', () => {
     //console.dir(window.location);

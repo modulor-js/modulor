@@ -57,14 +57,14 @@ function Router(options = {}){
   this.container.setAttribute('base', options.base || '/');
   this.container.setAttribute('router-root', true);
 
-  window.addEventListener('popstate', () => {
-    if(this.container.getAttribute('router-root')){
-      fireEvent('url-changed', this.container);
-    }
-  });
-  this.container.addEventListener('url-changed', () => {
+  window.addEventListener('popstate', () => this.onRouteChange());
+  window.addEventListener('url-changed', () => this.onRouteChange());
+}
+
+Router.prototype.onRouteChange = function(){
+  if(this.container.getAttribute('router-root')){
     this.resolve();
-  });
+  }
 }
 
 Router.prototype.resolve = function(){
