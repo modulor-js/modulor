@@ -1,14 +1,15 @@
+import pathToRegexp from 'path-to-regexp';
 import { fireEvent, walkDOM } from './ascesis';
 
 var pd = require('pretty-data').pd;
 
-function Route(path, callback){
+function Route(path = '*', callback = () => {}){
   this.container = document.createElement('script');
   this.container.setAttribute('path', path);
 
   this.container.route = this;
 
-  this.callback = () => callback();
+  this.callback = (result) => callback.apply(this, result.slice(1));
 }
 
 Route.prototype.getRoot = function(){
@@ -16,17 +17,31 @@ Route.prototype.getRoot = function(){
   let part = [];
   do {
     part.unshift($el.getAttribute('base'))
+    if(!!$el.getAttribute('router-root')){
+      break;
+    }
     $el = $el.parentNode;
-  } while($el && !!$el.getAttribute('router-root'));
+  } while($el);
   return part.join('').replace(/\/\//ig, '/');
 }
 
-Route.prototype.getGlobalPath = function(){
-  return this.container.location.pathname;
+Route.prototype.routeMatches = function(root = this.getRoot()){
+  let globalPath = this.getGlobalPath();
+  if(globalPath.indexOf(root) !== 0){
+    return false;
+  }
+  let path = root === '/' ? globalPath : globalPath.replace(root, '');
+  let routeRegex = pathToRegexp(this.container.getAttribute('path'));
+  return path.match(routeRegex);
 }
 
-Route.prototype.notify = function(){
-  return this.callback();
+Route.prototype.getGlobalPath = function(){
+  return window.location.pathname;
+}
+
+Route.prototype.resolve = function(root){
+  let result = this.routeMatches(root);
+  return result ? this.callback(result) : null;
 }
 
 
@@ -48,12 +63,11 @@ function Router(options = {}){
     }
   });
   this.container.addEventListener('url-changed', () => {
-    let foo = this.notifyObservers();
-    console.log(foo);
+    this.resolve();
   });
 }
 
-Router.prototype.notifyObservers = function(){
+Router.prototype.resolve = function(){
   //down to up order
   let routers = walkDOM(
     this.container,
@@ -62,7 +76,7 @@ Router.prototype.notifyObservers = function(){
       //check if node matches root
       return false;
     }
-  ).map(($el) => $el.router.notifyObservers());
+  ).map(($el) => $el.router.resolve());
   if(~routers.indexOf(false)){
     return false;
   }
@@ -70,7 +84,7 @@ Router.prototype.notifyObservers = function(){
     this.container,
     (child) => child.getAttribute('path'),
       (child) => !!child.getAttribute('base')
-  ).map(($el) => $el.route.notify());
+  ).map(($el) => $el.route.resolve());
   return !!routes.indexOf(false);
 }
 
@@ -117,10 +131,6 @@ Router.prototype.notifyListeners = () => {
 }
 
 Router.prototype.trigger = () => {
-}
-
-Router.prototype.resolve = function(){
-  console.log('resolve!');
 }
 
 Router.prototype.navigate = () => {
