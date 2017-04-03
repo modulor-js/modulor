@@ -3,6 +3,7 @@ import { fireEvent, walkDOM } from './ascesis';
 
 var pd = require('pretty-data').pd;
 
+
 function Route(path = '*', callback = () => {}){
   this.container = document.createElement('script');
   this.container.setAttribute('path', path);
@@ -12,25 +13,16 @@ function Route(path = '*', callback = () => {}){
   this.callback = (result) => callback.apply(this, result.slice(1));
 }
 
-Route.prototype.getRoot = function(){
+Route.prototype.getPath = function(){
   let $el = this.container;
-  let part = [];
-  do {
-    part.unshift($el.getAttribute('base'))
-    if(!!$el.getAttribute('router-root')){
-      break;
-    }
+  while($el && !$el.getAttribute('base')){
     $el = $el.parentNode;
-  } while($el);
-  return part.join('').replace(/\/\//ig, '/');
+  }
+  return $el.router ? $el.router.getPath() : null;
 }
 
-Route.prototype.routeMatches = function(root = this.getRoot()){
-  let globalPath = this.getGlobalPath();
-  if(globalPath.indexOf(root) !== 0){
-    return false;
-  }
-  let path = root === '/' ? globalPath : globalPath.replace(root, '');
+Route.prototype.routeMatches = function(){
+  let path = this.getPath();
   let routeRegex = pathToRegexp(this.container.getAttribute('path'));
   return path.match(routeRegex);
 }
@@ -56,6 +48,7 @@ function Router(options = {}){
 
   this.container.setAttribute('base', options.base || '/');
   this.container.setAttribute('router-root', true);
+  options.useHash && this.container.setAttribute('use-hash', true);
 
   window.addEventListener('popstate', () => this.onRouteChange());
   window.addEventListener('url-changed', () => this.onRouteChange());
@@ -71,7 +64,7 @@ Router.prototype.resolve = function(){
   //down to up order
   let routers = walkDOM(
     this.container,
-    (child) => !!child.getAttribute('base'),
+    (child) => child.getAttribute('base'),
     (child) => {
       //check if node matches root
       return false;
@@ -83,9 +76,9 @@ Router.prototype.resolve = function(){
   let routes = walkDOM(
     this.container,
     (child) => child.getAttribute('path'),
-      (child) => !!child.getAttribute('base')
+    (child) => child.hasAttribute('base')
   ).map(($el) => $el.route.resolve());
-  return !!routes.indexOf(false);
+  return !~routes.indexOf(false);
 }
 
 Router.prototype.getRoot = function(){
@@ -93,8 +86,11 @@ Router.prototype.getRoot = function(){
   let part = [];
   do {
     part.unshift($el.getAttribute('base'))
+    if(!!$el.getAttribute('router-root')){
+      break;
+    }
     $el = $el.parentNode;
-  } while($el && !!$el.getAttribute('router-root'));
+  } while($el);
   return part.join('').replace(/\/\//ig, '/');
 }
 
@@ -113,10 +109,23 @@ Router.prototype.getQs = () => {
 Router.prototype.getParams = () => {
 }
 
-Router.prototype.getGlobalPath = () => {
+Router.prototype.useHash = function(){
+  this.container.hasAttribute('use-hash');
 }
 
-Router.prototype.getPath = () => {
+Router.prototype.getGlobalPath = function(){
+  return this.useHash()
+         ? window.location.hash.replace(/^#/, '/')
+         : window.location.pathname;
+}
+
+Router.prototype.getPath = function(){
+  let root = this.getRoot();
+  let globalPath = this.getGlobalPath();
+  if(globalPath.indexOf(root) !== 0){
+    return false;
+  }
+  return root === '/' ? globalPath : globalPath.replace(root, '');
 }
 
 Router.prototype.rootMatches = () => {
