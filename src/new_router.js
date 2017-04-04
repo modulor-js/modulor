@@ -52,6 +52,9 @@ function Router(options = {}){
 
   window.addEventListener('popstate', () => this.onRouteChange());
   window.addEventListener('url-changed', () => this.onRouteChange());
+  this.container.addEventListener('router-navigated', () => {
+    fireEvent(window, 'url-changed');
+  });
 }
 
 Router.prototype.onRouteChange = function(){
@@ -142,7 +145,14 @@ Router.prototype.notifyListeners = () => {
 Router.prototype.trigger = () => {
 }
 
-Router.prototype.navigate = () => {
+Router.prototype.navigate = function(path, params = {}){
+  let newPath = `${this.getRoot()}/${path}`;
+  if(this.useHash()){
+    window.location.hash = newPath;
+  } else {
+    window.history[params.replace ? 'replaceState' : 'pushState'](null, null, newPath);
+  }
+  fireEvent('router-navigated', this.container);
 }
 
 Router.prototype.mount = function(path, router){
