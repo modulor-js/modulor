@@ -52,35 +52,42 @@ function Router(options = {}){
 
   window.addEventListener('popstate', () => this.onRouteChange());
   window.addEventListener('url-changed', () => this.onRouteChange());
-  this.container.addEventListener('router-navigated', () => {
-    fireEvent(window, 'url-changed');
+  this.container.addEventListener('router-navigated', (e) => {
+    fireEvent('url-changed', window);
+    e.stopPropagation(); //strange!
   });
 }
 
 Router.prototype.onRouteChange = function(){
   if(this.container.getAttribute('router-root')){
-    this.resolve();
+    try {
+      this.resolve();
+    } catch(e) {
+      console.error(e)
+    }
   }
 }
 
 Router.prototype.resolve = function(){
   //down to up order
+
+  //FIXME: here could be only one walk iteration
   let routers = walkDOM(
     this.container,
-    (child) => child.getAttribute('base'),
-    (child) => {
-      //check if node matches root
-      return false;
-    }
+    (child) => child.getAttribute('base') && child.router.rootMatches(),
+    (child) => child.getAttribute('base')
   ).map(($el) => $el.router.resolve());
+
   if(~routers.indexOf(false)){
     return false;
   }
+
   let routes = walkDOM(
     this.container,
     (child) => child.getAttribute('path'),
     (child) => child.hasAttribute('base')
   ).map(($el) => $el.route.resolve());
+
   return !~routes.indexOf(false);
 }
 
@@ -106,10 +113,21 @@ Router.prototype.getPrevPath = () => {
 Router.prototype.setPrevPath = () => {
 }
 
-Router.prototype.getQs = () => {
+Router.prototype.getQs = function(){
+  return window.location.search === ''
+         ? false
+         : window.location.search.split('?')[1];
 }
 
-Router.prototype.getParams = () => {
+Router.prototype.getParams = function(){
+  return this.getQs()
+         ? this.getQs().split('&').reduce((acc, param) => {
+           let [key, value] = param.split('=');
+           return Object.assign(acc, {
+              [key]: value
+           });
+         }, {})
+         : {}
 }
 
 Router.prototype.useHash = function(){
@@ -124,14 +142,16 @@ Router.prototype.getGlobalPath = function(){
 
 Router.prototype.getPath = function(){
   let root = this.getRoot();
+  let re = new RegExp(`^${root === '/' ? '' : root}(\/|$)`)
   let globalPath = this.getGlobalPath();
-  if(globalPath.indexOf(root) !== 0){
+  if(!re.test(globalPath)){
     return false;
   }
-  return root === '/' ? globalPath : globalPath.replace(root, '');
+  return globalPath.replace(re, '$1');
 }
 
-Router.prototype.rootMatches = () => {
+Router.prototype.rootMatches = function(){
+  return this.getPath() !== false;
 }
 
 Router.prototype.add = function(path, callback){
@@ -146,7 +166,10 @@ Router.prototype.trigger = () => {
 }
 
 Router.prototype.navigate = function(path, params = {}){
-  let newPath = `${this.getRoot()}/${path}`;
+  if(!this.rootMatches()){
+    return false;
+  }
+  let newPath = `${params.absolute ? '' : this.getRoot()}/${path}`.replace(/(\/{1,})/ig, '/'); //duplication with line 103. make common function `clean`
   if(this.useHash()){
     window.location.hash = newPath;
   } else {
