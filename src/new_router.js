@@ -13,20 +13,22 @@ function Route(path = '*', callback = () => {}){
   this.callback = (result) => callback.apply(this, result.slice(1).concat(this.getParams()));
 }
 
-Route.prototype.getPath = function(){
+Route.prototype.getRouter = function(){
   let $el = this.container;
-  while($el && !$el.getAttribute('base')){
+  while($el && !$el.hasAttribute('base')){
     $el = $el.parentNode;
   }
-  return $el.router ? $el.router.getPath() : null;
+  return ($el || {}).router;
+}
+
+Route.prototype.getPath = function(){
+  let router = this.getRouter();
+  return router ? router.getPath() : null;
 }
 
 Route.prototype.getParams = function(){
-  let $el = this.container;
-  while($el && !$el.getAttribute('base')){
-    $el = $el.parentNode;
-  }
-  return $el.router ? $el.router.getParams() : null;
+  let router = this.getRouter();
+  return router ? router.getParams() : null;
 }
 
 Route.prototype.routeMatches = function(){
@@ -79,25 +81,36 @@ Router.prototype.handleRouteChange = function(){
   }
 }
 
+Router.prototype.getChildrenElements = function(){
+  return walkDOM(
+    this.container,
+    (child) => true,
+    (child) => child.getAttribute('base')
+  ).reduce((acc, $el) => {
+    if($el.getAttribute('base') && $el.router.rootMatches()){
+      acc.routers.push($el);
+    }
+    if($el.getAttribute('path')){
+      acc.routes.push($el);
+    }
+    return acc;
+  }, {
+    routers: [],
+    routes: []
+  });
+}
+
 Router.prototype.resolve = function(){
   //down to up order
+  let elements = this.getChildrenElements();
 
-  //FIXME: here could be only one walk iteration
-  let routers = walkDOM(
-    this.container,
-    (child) => child.getAttribute('base') && child.router.rootMatches(),
-    (child) => child.getAttribute('base')
-  ).map(($el) => $el.router.resolve());
+  let routers = elements.routers.map(($el) => $el.router.resolve());
 
   if(~routers.indexOf(false)){
     return false;
   }
 
-  let routes = walkDOM(
-    this.container,
-    (child) => child.getAttribute('path'),
-    (child) => child.hasAttribute('base')
-  ).map(($el) => $el.route.resolve());
+  let routes = elements.routes.map(($el) => $el.route.resolve());
 
   return !~routes.indexOf(false);
 }
