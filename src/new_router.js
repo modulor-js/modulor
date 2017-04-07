@@ -10,7 +10,7 @@ function Route(path = '*', callback = () => {}){
 
   this.container.route = this;
 
-  this.callback = (result) => callback.apply(this, result.slice(1));
+  this.callback = (result) => callback.apply(this, result.slice(1).concat(this.getParams()));
 }
 
 Route.prototype.getPath = function(){
@@ -19,6 +19,14 @@ Route.prototype.getPath = function(){
     $el = $el.parentNode;
   }
   return $el.router ? $el.router.getPath() : null;
+}
+
+Route.prototype.getParams = function(){
+  let $el = this.container;
+  while($el && !$el.getAttribute('base')){
+    $el = $el.parentNode;
+  }
+  return $el.router ? $el.router.getParams() : null;
 }
 
 Route.prototype.routeMatches = function(){
@@ -50,15 +58,18 @@ function Router(options = {}){
   this.container.setAttribute('router-root', true);
   options.useHash && this.container.setAttribute('use-hash', true);
 
-  window.addEventListener('popstate', () => this.onRouteChange());
-  window.addEventListener('url-changed', () => this.onRouteChange());
-  this.container.addEventListener('router-navigated', (e) => {
+  this.onRouteChange = () => this.handleRouteChange();
+  this.onRouterNavigated = (e) => {
     fireEvent('url-changed', window);
     e.stopPropagation(); //strange!
-  });
+  };
+
+  window.addEventListener('popstate', this.onRouteChange);
+  window.addEventListener('url-changed', this.onRouteChange);
+  this.container.addEventListener('router-navigated', this.onRouterNavigated);
 }
 
-Router.prototype.onRouteChange = function(){
+Router.prototype.handleRouteChange = function(){
   if(this.container.getAttribute('router-root')){
     try {
       this.resolve();
@@ -175,7 +186,7 @@ Router.prototype.navigate = function(path, params = {}){
   } else {
     window.history[params.replace ? 'replaceState' : 'pushState'](null, null, newPath);
   }
-  fireEvent('router-navigated', this.container);
+  !params.silent && fireEvent('router-navigated', this.container);
 }
 
 Router.prototype.mount = function(path, router){
@@ -184,7 +195,12 @@ Router.prototype.mount = function(path, router){
   this.container.appendChild(router.container);
 }
 
-Router.prototype.destroy = () => {
+Router.prototype.destroy = function(){
+  window.removeEventListener('popstate', this.onRouteChange);
+  window.removeEventListener('url-changed', this.onRouteChange);
+  this.container.removeEventListener('router-navigated', this.onRouterNavigated);
+  delete this.container.router;
+  //TODO remove routes
 }
 
 export { Router }

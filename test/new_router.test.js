@@ -34,6 +34,9 @@ let { Router } = require('../src/new_router');
 //})
 
 describe('Base functionality', () => {
+
+  const router = new Router();
+
   beforeAll(() => {
     //set initial url to /
     window.history.replaceState(null, null, '/');
@@ -42,9 +45,8 @@ describe('Base functionality', () => {
   afterAll(() => {
     //set initial url to /
     window.history.replaceState(null, null, '/');
+    router.destroy();
   });
-
-  const router = new Router();
 
   it('returns root correctly', () => {
     expect(router.getRoot()).toBe('/');
@@ -100,17 +102,22 @@ describe('Base functionality', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
-  //it('destroys correctly', () => {
-    //let handler = jest.fn(() => {});
-    //router.add('/bar', handler);
-    //router.destroy();
-    //router.navigate('/bar');
-    //expect(handler).not.toHaveBeenCalled();
+  it('destroys correctly', () => {
+    let handler = jest.fn(() => {});
+    router.add('/bar', handler);
+    router.destroy();
+    router.navigate('/bar');
+    expect(handler).not.toHaveBeenCalled();
     //expect(router.listeners).toEqual([]);
-  //});
+  });
 });
 
 describe('Mount on subpath', () => {
+
+  const router = new Router({
+    base: '/subpath'
+  });
+
   beforeEach(() => {
     //set initial url to /
     window.history.replaceState(null, null, '/');
@@ -121,8 +128,8 @@ describe('Mount on subpath', () => {
     window.history.replaceState(null, null, '/');
   });
 
-  const router = new Router({
-    base: '/subpath'
+  afterAll(() => {
+    router.destroy();
   });
 
   it('matches root correctly', () => {
@@ -171,3 +178,105 @@ describe('Mount on subpath', () => {
   });
 });
 
+describe('Routes handling', () => {
+
+  const router = new Router();
+
+  beforeEach(() => {
+    //set initial url to /
+    window.history.replaceState(null, null, '/');
+  });
+
+  afterEach(() => {
+    //set initial url to /
+    window.history.replaceState(null, null, '/');
+  });
+
+  afterAll(() => {
+    router.destroy();
+  });
+
+  it('handles nested routes correctly', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
+    router.add('/', handler1);
+    router.add('/foo', handler2);
+    router.add('/*', handler3);
+    router.resolve();
+    expect(handler1).toHaveBeenCalledTimes(1);
+    router.navigate('/foo');
+    expect(handler2).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(2);
+  });
+
+  it('doesnt handle silent naviagation', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    router.add('/', handler1);
+    router.add('/foo', handler2);
+    router.resolve();
+    expect(handler1).toHaveBeenCalledTimes(1);
+    router.navigate('/foo', { silent: true });
+    expect(handler2).not.toHaveBeenCalled();
+  });
+
+  it('passes correct params to handler', () => {
+    let args;
+    let handler = jest.fn();
+    router.add('/:foo', handler);
+    router.navigate('/test?foo=bar');
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(handler).toHaveBeenCalledWith('test', { foo: 'bar' });
+  });
+
+  //it('doesnt handle same url twice', () => {
+    //router.navigate('/foobar?foo=bar');
+    //let result = router.navigate('/foobar?foo=bar');
+    //expect(result).toEqual(false);
+    //let result2 = router.navigate('/foobar?foo=bar', true);
+    //expect(result2).toEqual(false);
+  //});
+
+});
+
+describe('Nested Routers', () => {
+  beforeEach(() => {
+    window.history.replaceState(null, null, '/');
+  });
+
+  afterEach(() => {
+    window.history.replaceState(null, null, '/');
+  });
+
+  const root_router = new Router();
+  const sub_router_1 = new Router();
+  const sub_router_2 = new Router();
+
+  root_router.mount('/test1', sub_router_1);
+  root_router.mount('/test2', sub_router_2, true);
+
+
+  it('mounts correctly', () => {
+    expect(sub_router_1.getRoot()).toEqual('/test1');
+    expect(sub_router_2.getRoot()).toEqual('/test2');
+  });
+
+  it('handles routes correctly', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
+    let handler4 = jest.fn(() => false);
+    root_router.add('/test1', handler1);
+    root_router.add('/test2', handler2);
+    sub_router_1.add('/', handler3);
+    sub_router_2.add('/', handler4);
+    root_router.navigate('/test1');
+    expect(handler1).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(1);
+    root_router.navigate('/test2');
+    expect(handler2).not.toHaveBeenCalled();
+    expect(handler4).toHaveBeenCalledTimes(1);
+  });
+
+});
