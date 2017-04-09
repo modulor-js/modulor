@@ -44,6 +44,7 @@ var createDelegate = exports.createDelegate = function createDelegate() {
       target = target.parentNode;
       level++;
     } while (target !== document);
+    event.traverse = path.slice();
     listenersPool.sort(function (a, b) {
       return a.id - b.id;
     });

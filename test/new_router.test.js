@@ -1,37 +1,6 @@
-let { createDelegate } = require('../src/delegate');
-let { fireEvent, attr } = require('../src/ascesis');
+let { fireEvent } = require('../src/ascesis');
 let { Router } = require('../src/new_router');
 
-
-//describe.only('new router', () => {
-
-  //let r = new Router();
-  //r.add('/:foo/:bar', (foo, bar) => {
-    //console.log(111111, foo, bar);
-    //return true;
-  //});
-
-  //let r1 = new Router();
-  //r1.add('/:foo/:bar?/:bla?', (foo, bar) => {
-    //console.log(2222222, foo, bar);
-    //return true;
-  //});
-  //r.mount('/foo', r1);
-  ////console.log(r.container.innerHTML);
-  //window.history.pushState(null, null, '/foo/bar');
-  ////console.log(r1.getPath());
-  ////r.resolve();
-  //fireEvent('url-changed', window);
-
-  //r1.navigate('/test')
-  //console.log(window.location.href)
-
-
-  //it('foo', () => {
-    ////console.dir(window.location);
-    //expect(true);
-  //});
-//})
 
 describe('Base functionality', () => {
 
@@ -83,12 +52,12 @@ describe('Base functionality', () => {
     expect(router.getPath()).toEqual('/');
   });
 
-  //it('adds handlers correctly', () => {
-    //let handler = () => {};
-    //router.add('/', handler);
-    //expect(router.listeners.length).toEqual(1);
-    //expect(router.listeners[0].callback).toEqual(handler);
-  //});
+  it('adds handlers correctly', () => {
+    let handler = jest.fn(() => {});
+    router.add('/', handler);
+    expect(router.getRoutes().length).toEqual(1);
+    expect(typeof router.getRoutes()[0].route.callback).toEqual('function');
+  });
 
   it('navigates correctly', () => {
     router.navigate('/bar');
@@ -108,7 +77,7 @@ describe('Base functionality', () => {
     router.destroy();
     router.navigate('/bar');
     expect(handler).not.toHaveBeenCalled();
-    //expect(router.listeners).toEqual([]);
+    expect(router.getRoutes()).toEqual([]);
   });
 });
 
@@ -229,14 +198,6 @@ describe('Routes handling', () => {
     expect(handler).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith('test', { foo: 'bar' });
   });
-
-  //it('doesnt handle same url twice', () => {
-    //router.navigate('/foobar?foo=bar');
-    //let result = router.navigate('/foobar?foo=bar');
-    //expect(result).toEqual(false);
-    //let result2 = router.navigate('/foobar?foo=bar', true);
-    //expect(result2).toEqual(false);
-  //});
 
 });
 

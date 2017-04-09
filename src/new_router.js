@@ -1,8 +1,6 @@
 import pathToRegexp from 'path-to-regexp';
 import { fireEvent, walkDOM } from './ascesis';
 
-var pd = require('pretty-data').pd;
-
 
 function Route(path = '*', callback = () => {}){
   this.container = document.createElement('script');
@@ -110,7 +108,7 @@ Router.prototype.resolve = function(){
     return false;
   }
 
-  let routes = elements.routes.map(($el) => $el.route.resolve());
+  let routes = this.getRoutes(elements).map(($el) => $el.route.resolve());
 
   return !~routes.indexOf(false);
 }
@@ -126,15 +124,6 @@ Router.prototype.getRoot = function(){
     $el = $el.parentNode;
   } while($el);
   return part.join('').replace(/\/\//ig, '/');
-}
-
-Router.prototype.setRoot = () => {
-}
-
-Router.prototype.getPrevPath = () => {
-}
-
-Router.prototype.setPrevPath = () => {
 }
 
 Router.prototype.getQs = function(){
@@ -183,12 +172,6 @@ Router.prototype.add = function(path, callback){
   this.container.appendChild(route.container);
 }
 
-Router.prototype.notifyListeners = () => {
-}
-
-Router.prototype.trigger = () => {
-}
-
 Router.prototype.navigate = function(path, params = {}){
   if(!this.rootMatches()){
     return false;
@@ -202,6 +185,10 @@ Router.prototype.navigate = function(path, params = {}){
   !params.silent && fireEvent('router-navigated', this.container);
 }
 
+Router.prototype.getRoutes = function(childrenElements = this.getChildrenElements()){
+  return childrenElements.routes;
+}
+
 Router.prototype.mount = function(path, router){
   router.container.setAttribute('base', path);
   router.container.removeAttribute('router-root');
@@ -213,7 +200,7 @@ Router.prototype.destroy = function(){
   window.removeEventListener('url-changed', this.onRouteChange);
   this.container.removeEventListener('router-navigated', this.onRouterNavigated);
   delete this.container.router;
-  //TODO remove routes
+  this.getRoutes().forEach((route) => route.remove());
 }
 
 export { Router }
