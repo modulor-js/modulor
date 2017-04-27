@@ -3,230 +3,236 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Router = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _ascesis = require('./ascesis');
-
 var _pathToRegexp = require('path-to-regexp');
 
 var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
+
+var _ascesis = require('./ascesis');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function Route() {
+  var _this = this;
 
-var default_options = {
-  root: '',
-  routes: {}
+  var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+  this.container = document.createElement('script');
+  this.container.setAttribute('path', path);
+
+  this.container.route = this;
+
+  this.callback = function (result) {
+    return callback.apply(_this, result.slice(1).concat(_this.getParams()));
+  };
+}
+
+Route.prototype.getRouter = function () {
+  var $el = this.container;
+  while ($el && !$el.hasAttribute('base')) {
+    $el = $el.parentNode;
+  }
+  return ($el || {}).router;
 };
 
-var Router = function () {
-  _createClass(Router, [{
-    key: 'root',
-    get: function get() {
-      return this._root || this.options.root;
-    },
-    set: function set(value) {
-      this._root = value;
-    }
-  }, {
-    key: 'prev_path',
-    get: function get() {
-      return this._prev_path;
-    },
-    set: function set(value) {
-      this._prev_path = value;
-    }
-  }, {
-    key: 'prev_qs',
-    get: function get() {
-      return this._prev_qs;
-    },
-    set: function set(value) {
-      this._prev_qs = value;
-    }
-  }, {
-    key: 'qs',
-    get: function get() {
-      return this.container.location.search === '' ? false : this.container.location.search.split('?')[1];
-    }
-  }, {
-    key: 'global_path',
-    get: function get() {
-      return this.container.location.pathname;
-    }
-  }, {
-    key: 'path',
-    get: function get() {
-      return this.root_matches ? this.global_path.replace(this.root, '') : false;
-    }
-  }, {
-    key: 'root_matches',
-    get: function get() {
-      return new RegExp('^' + this.root + '(/|$)').test(this.global_path);
-    }
-  }, {
-    key: 'params',
-    get: function get() {
-      return this.qs ? this.qs.split('&').reduce(function (acc, param) {
-        var _param$split = param.split('='),
-            _param$split2 = _slicedToArray(_param$split, 2),
-            key = _param$split2[0],
-            value = _param$split2[1];
+Route.prototype.getPath = function () {
+  var router = this.getRouter();
+  return router ? router.getPath() : null;
+};
 
-        return _extends(acc, _defineProperty({}, key, value));
-      }, {}) : {};
+Route.prototype.getParams = function () {
+  var router = this.getRouter();
+  return router ? router.getParams() : null;
+};
+
+Route.prototype.routeMatches = function () {
+  var path = this.getPath();
+  var routeRegex = (0, _pathToRegexp2.default)(this.container.getAttribute('path'));
+  return path.match(routeRegex);
+};
+
+Route.prototype.getGlobalPath = function () {
+  return window.location.pathname;
+};
+
+Route.prototype.resolve = function (root) {
+  var result = this.routeMatches(root);
+  return result ? this.callback(result) : null;
+};
+
+function Router() {
+  var _this2 = this;
+
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  this.options = options;
+  this.container = options.container || document.createElement('script');
+
+  this.container.router = this;
+
+  this.container.setAttribute('base', options.base || '/');
+  this.container.setAttribute('router-root', true);
+  options.useHash && this.container.setAttribute('use-hash', true);
+
+  this.onRouteChange = function () {
+    return _this2.handleRouteChange();
+  };
+  this.onRouterNavigated = function (e) {
+    (0, _ascesis.fireEvent)('url-changed', window);
+    e.stopPropagation(); //strange!
+  };
+
+  window.addEventListener('popstate', this.onRouteChange);
+  window.addEventListener('url-changed', this.onRouteChange);
+  this.container.addEventListener('router-navigated', this.onRouterNavigated);
+}
+
+Router.prototype.handleRouteChange = function () {
+  if (this.container.getAttribute('router-root')) {
+    try {
+      this.resolve();
+    } catch (e) {
+      console.error(e);
     }
-  }]);
+  }
+};
 
-  function Router() {
-    var _this = this;
+Router.prototype.getChildrenElements = function () {
+  return (0, _ascesis.walkDOM)(this.container, function (child) {
+    return true;
+  }, function (child) {
+    return child.getAttribute('base');
+  }).reduce(function (acc, $el) {
+    if ($el.getAttribute('base') && $el.router.rootMatches()) {
+      acc.routers.push($el);
+    }
+    if ($el.getAttribute('path')) {
+      acc.routes.push($el);
+    }
+    return acc;
+  }, {
+    routers: [],
+    routes: []
+  });
+};
 
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var container = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window;
+Router.prototype.resolve = function () {
+  //down to up order
+  var elements = this.getChildrenElements();
 
-    _classCallCheck(this, Router);
+  var routers = elements.routers.map(function ($el) {
+    return $el.router.resolve();
+  });
 
-    this.options = _extends({}, default_options, options);
-    this.listeners = [];
-    this.subrouters = [];
-    this.container = container;
-
-    Object.keys(this.options.routes).forEach(function (route) {
-      //add function should handle this
-      _this.add(route, _this.options.routes[route]);
-    });
-
-    this.container.addEventListener('popstate', function () {
-      return _this.resolve();
-    });
-    this.container.addEventListener('url-changed', function () {
-      return _this.resolve();
-    });
+  if (~routers.indexOf(false)) {
+    return false;
   }
 
-  _createClass(Router, [{
-    key: 'add',
-    value: function add() {
-      var route = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : /(.*)/;
-      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var routes = this.getRoutes(elements).map(function ($el) {
+    return $el.route.resolve();
+  });
 
-      this.listeners.push({ route: (0, _pathToRegexp2.default)(route, []), callback: callback });
+  return !~routes.indexOf(false);
+};
+
+Router.prototype.getRoot = function () {
+  var $el = this.container;
+  var part = [];
+  do {
+    part.unshift($el.getAttribute('base'));
+    if (!!$el.getAttribute('router-root')) {
+      break;
     }
-  }, {
-    key: 'notify_listeners',
-    value: function notify_listeners() {
-      var _this2 = this;
+    $el = $el.parentNode;
+  } while ($el);
+  return part.join('').replace(/\/\//ig, '/');
+};
 
-      this.listeners.forEach(function (_ref) {
-        var route = _ref.route,
-            callback = _ref.callback;
+Router.prototype.getQs = function () {
+  return window.location.search === '' ? false : window.location.search.split('?')[1];
+};
 
-        var match = _this2.path.match(route);
-        if (match) {
-          //first argument should not be here
-          callback.apply(_this2, match.concat(_this2.params));
-        }
-      });
-    }
-  }, {
-    key: 'trigger',
-    value: function trigger() {
-      (0, _ascesis.fireEvent)('url-changed', this.container);
-    }
-  }, {
-    key: 'resolve',
-    value: function resolve() {
-      if (!this.root_matches || this.prev_path === this.path && this.prev_qs === this.qs) {
-        return false;
-      }
-      //do not notify own listeners if subrouter matches root
-      if (this.subrouters.length) {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+Router.prototype.getParams = function () {
+  return this.getQs() ? this.getQs().split('&').reduce(function (acc, param) {
+    var _param$split = param.split('='),
+        _param$split2 = _slicedToArray(_param$split, 2),
+        key = _param$split2[0],
+        value = _param$split2[1];
 
-        try {
-          for (var _iterator = this.subrouters[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var subrouter = _step.value;
+    return _extends(acc, _defineProperty({}, key, value));
+  }, {}) : {};
+};
 
-            if (subrouter.root_matches && subrouter.prevent) {
-              return false;
-            }
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-      }
-      this.prev_path = this.path;
-      this.prev_qs = this.qs;
-      this.notify_listeners();
-    }
-  }, {
-    key: 'navigate',
-    value: function navigate(path) {
-      var absolute = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var replace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-      var silent = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+Router.prototype.useHash = function () {
+  this.container.hasAttribute('use-hash');
+};
 
+Router.prototype.getGlobalPath = function () {
+  return this.useHash() ? window.location.hash.replace(/^#/, '/') : window.location.pathname;
+};
 
-      var full_prev_path = [this.path].concat(this.qs || []).join('?');
-      if (!absolute && (!this.root_matches || path === full_prev_path)) {
-        return false;
-      }
+Router.prototype.getPath = function () {
+  var root = this.getRoot();
+  var re = new RegExp('^' + (root === '/' ? '' : root) + '(/|$)');
+  var globalPath = this.getGlobalPath();
+  if (!re.test(globalPath)) {
+    return false;
+  }
+  return globalPath.replace(re, '$1');
+};
 
-      var full_prev_global_path = [this.global_path].concat(this.qs || []).join('?');
-      if (absolute && path === full_prev_global_path) {
-        return false;
-      }
+Router.prototype.rootMatches = function () {
+  return this.getPath() !== false;
+};
 
-      var _path = absolute ? path : this.root + path;
-      window.history[replace ? 'replaceState' : 'pushState'](null, null, _path);
-      !silent && this.trigger('url-changed');
-    }
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      var _this3 = this;
+Router.prototype.add = function (path, callback) {
+  var route = new Route(path, callback);
+  this.container.appendChild(route.container);
+};
 
-      this.listeners = [];
-      this.container.removeEventListener('popstate', function () {
-        return _this3.resolve();
-      });
-      this.container.removeEventListener('url-changed', function () {
-        return _this3.resolve();
-      });
-    }
-  }, {
-    key: 'mount',
-    value: function mount(path, router) {
-      var prevent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+Router.prototype.navigate = function (path) {
+  var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      router.root = this.root + path;
-      router.prevent = prevent;
-      this.subrouters.push(router);
-    }
-  }]);
+  if (!this.rootMatches()) {
+    return false;
+  }
+  var newPath = ((params.absolute ? '' : this.getRoot()) + '/' + path).replace(/(\/{1,})/ig, '/'); //duplication with line 103. make common function `clean`
+  if (this.useHash()) {
+    window.location.hash = newPath;
+  } else {
+    window.history[params.replace ? 'replaceState' : 'pushState'](null, null, newPath);
+  }
+  !params.silent && (0, _ascesis.fireEvent)('router-navigated', this.container);
+};
 
-  return Router;
-}();
+Router.prototype.getRoutes = function () {
+  var childrenElements = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getChildrenElements();
 
-exports.default = Router;
+  return childrenElements.routes;
+};
+
+Router.prototype.mount = function (path, router) {
+  router.container.setAttribute('base', path);
+  router.container.removeAttribute('router-root');
+  this.container.appendChild(router.container);
+};
+
+Router.prototype.destroy = function () {
+  window.removeEventListener('popstate', this.onRouteChange);
+  window.removeEventListener('url-changed', this.onRouteChange);
+  this.container.removeEventListener('router-navigated', this.onRouterNavigated);
+  delete this.container.router;
+  this.getRoutes().forEach(function (route) {
+    return route.remove();
+  });
+};
+
+exports.Router = Router;
