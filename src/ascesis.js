@@ -1,3 +1,5 @@
+import { delegate } from './delegate'
+
 export function $(selector, element = document){
   return toArray(element.querySelectorAll(selector));
 }
@@ -128,6 +130,8 @@ export function extend(baseClass){
       return parent;
     }
 
+    //debug highlighting
+
     toggleHighlight(){
       this.classList.toggle(this.componentType + '-highlighted');
     }
@@ -138,6 +142,8 @@ export function extend(baseClass){
         child.toggleHighlightAll();
       });
     }
+
+    //DOM
 
     $(selector){
       return $(selector, this);
@@ -163,23 +169,44 @@ export function extend(baseClass){
       return hasClass(this, className);
     }
 
-    trigger(eventName, eventData){
-      fireEvent(eventName, this, eventData);
-    }
-
     html(html_string){
       html(html_string, this);
     }
 
+    //events
+
+    on(eventName, selector, callback){
+      if(!callback){
+        callback = selector;
+        selector = null;
+      }
+      delegate.on(eventName, this, selector, callback);
+    }
+
+    off(eventName = null, selector, callback){
+      if(!callback){
+        callback = selector;
+        selector = null;
+      }
+      delegate.off(eventName, this, selector, callback);
+    }
+
+    trigger(eventName, eventData){
+      fireEvent(eventName, this, eventData);
+    }
+
+    //lifecycle callbacks
+
     connectedCallback(){
       this.trigger('component-attached');
-      this.addEventListener('component-attached', (event) => {
+      this.on('component-attached', (event) => {
         event.stopPropagation();
       });
       super.connectedCallback && super.connectedCallback();
     }
 
     disconnectedCallback(){
+      this.off();
       super.disconnectedCallback && super.disconnectedCallback();
     }
 

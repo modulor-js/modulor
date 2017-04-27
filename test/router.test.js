@@ -1,84 +1,92 @@
-import Router from '../build/router';
+let { fireEvent } = require('../src/ascesis');
+let { Router } = require('../src/router');
 
 
 describe('Base functionality', () => {
-  before(() => {
-    //set initial url to /
-    window.history.replaceState(null, null, '/');
-  });
-
-  after(() => {
-    //set initial url to /
-    window.history.replaceState(null, null, '/');
-  });
 
   const router = new Router();
 
+  beforeAll(() => {
+    //set initial url to /
+    window.history.replaceState(null, null, '/');
+  });
+
+  afterAll(() => {
+    //set initial url to /
+    window.history.replaceState(null, null, '/');
+    router.destroy();
+  });
+
   it('returns root correctly', () => {
-    assert.equal(router.root, '');
+    expect(router.getRoot()).toBe('/');
   });
 
   it('matches root correctly', () => {
-    assert.equal(router.root_matches, true);
+    expect(router.rootMatches()).toBe(true);
   });
 
   it('returns query string correctly', () => {
-    assert.equal(router.qs, false);
+    expect(router.getQs()).toBe(false);
     window.history.replaceState(null, null, '/?foo=bar');
-    assert.equal(router.qs, 'foo=bar');
+    expect(router.getQs()).toBe('foo=bar');
     window.history.replaceState(null, null, '/?foo=bar&bar=baz');
-    assert.equal(router.qs, 'foo=bar&bar=baz');
+    expect(router.getQs()).toBe('foo=bar&bar=baz');
   });
 
   it('returns query params correctly', () => {
     window.history.replaceState(null, null, '/');
-    assert.deepEqual(router.params, {});
+    expect(router.getParams()).toEqual({});
     window.history.replaceState(null, null, '/?foo');
-    assert.deepEqual(router.params, { foo: undefined });
+    expect(router.getParams()).toEqual({ foo: undefined });
     window.history.replaceState(null, null, '/?foo=bar');
-    assert.deepEqual(router.params, { foo: 'bar' });
+    expect(router.getParams()).toEqual({ foo: 'bar' });
     window.history.replaceState(null, null, '/?foo=bar&bar=baz');
-    assert.deepEqual(router.params, { foo: 'bar', bar: 'baz' });
+    expect(router.getParams()).toEqual({ foo: 'bar', bar: 'baz' });
   });
 
   it('returns absolute path correctly', () => {
-    assert.equal(router.global_path, '/');
+    expect(router.getGlobalPath()).toEqual('/');
   });
 
   it('returns relative path correctly', () => {
-    assert.equal(router.path, '/');
+    expect(router.getPath()).toEqual('/');
   });
 
   it('adds handlers correctly', () => {
-    let handler = () => {};
+    let handler = jest.fn(() => {});
     router.add('/', handler);
-    assert.equal(router.listeners.length, 1);
-    assert.equal(router.listeners[0].callback, handler);
+    expect(router.getRoutes().length).toEqual(1);
+    expect(typeof router.getRoutes()[0].route.callback).toEqual('function');
   });
 
   it('navigates correctly', () => {
     router.navigate('/bar');
-    assert.equal(router.path, '/bar');
+    expect(router.getPath()).toEqual('/bar');
   });
 
   it('handles route correctly', () => {
-    let handler = chai.spy(() => {});
+    let handler = jest.fn(() => {});
     router.add('/foo', handler);
     router.navigate('/foo');
-    expect(handler).to.have.been.called.once;
+    expect(handler).toHaveBeenCalledTimes(1);
   });
 
   it('destroys correctly', () => {
-    let handler = chai.spy(() => {});
+    let handler = jest.fn(() => {});
     router.add('/bar', handler);
     router.destroy();
     router.navigate('/bar');
-    expect(handler).not.to.have.been.called.once;
-    assert.deepEqual(router.listeners, []);
+    expect(handler).not.toHaveBeenCalled();
+    expect(router.getRoutes()).toEqual([]);
   });
 });
 
 describe('Mount on subpath', () => {
+
+  const router = new Router({
+    base: '/subpath'
+  });
+
   beforeEach(() => {
     //set initial url to /
     window.history.replaceState(null, null, '/');
@@ -89,57 +97,60 @@ describe('Mount on subpath', () => {
     window.history.replaceState(null, null, '/');
   });
 
-  const router = new Router({
-    root: '/subpath'
+  afterAll(() => {
+    router.destroy();
   });
 
   it('matches root correctly', () => {
-    assert.equal(router.root_matches, false);
+    expect(router.rootMatches()).toEqual(false);
     window.history.replaceState(null, null, '/subpath');
-    assert.equal(router.root_matches, true);
+    expect(router.rootMatches()).toEqual(true);
     window.history.replaceState(null, null, '/subpath/foo');
-    assert.equal(router.root_matches, true);
+    expect(router.rootMatches()).toEqual(true);
     window.history.replaceState(null, null, '/subpath2');
-    assert.equal(router.root_matches, false);
+    expect(router.rootMatches()).toEqual(false);
   });
 
   it('returns absolute path correctly', () => {
-    assert.equal(router.global_path, '/');
+    expect(router.getGlobalPath()).toEqual('/');
     window.history.replaceState(null, null, '/subpath');
-    assert.equal(router.global_path, '/subpath');
+    expect(router.getGlobalPath()).toEqual('/subpath');
   });
 
   it('returns relative path correctly', () => {
-    assert.equal(router.path, false);
+    expect(router.getPath(), false);
     window.history.replaceState(null, null, '/subpath');
-    assert.equal(router.path, '');
+    expect(router.getPath(), '');
     window.history.replaceState(null, null, '/subpath/bar');
-    assert.equal(router.path, '/bar');
+    expect(router.getPath(), '/bar');
     window.history.replaceState(null, null, '/subpath_/foo');
-    assert.equal(router.path, false);
+    expect(router.getPath(), false);
   });
 
   it('navigates correctly', () => {
     router.navigate('/bar');
-    assert.equal(router.path, false);
+    expect(router.getPath()).toEqual(false);
     window.history.replaceState(null, null, '/subpath');
     router.navigate('/bar');
-    assert.equal(router.path, '/bar');
-    assert.equal(router.global_path, '/subpath/bar');
-    router.navigate('/subpath/baz', true);
-    assert.equal(router.global_path, '/subpath/baz');
+    expect(router.getPath()).toEqual('/bar');
+    expect(router.getGlobalPath()).toEqual('/subpath/bar');
+    router.navigate('/subpath/baz', { absolute: true });
+    expect(router.getGlobalPath()).toEqual('/subpath/baz');
   });
 
   it('handles route correctly', () => {
-    let handler = chai.spy(() => {});
+    let handler = jest.fn();
     router.add('/foo', handler);
     window.history.replaceState(null, null, '/subpath/foo');
     router.resolve();
-    expect(handler).to.have.been.called.once;
+    expect(handler).toHaveBeenCalled();
   });
 });
 
 describe('Routes handling', () => {
+
+  const router = new Router();
+
   beforeEach(() => {
     //set initial url to /
     window.history.replaceState(null, null, '/');
@@ -150,51 +161,42 @@ describe('Routes handling', () => {
     window.history.replaceState(null, null, '/');
   });
 
-  const router = new Router();
+  afterAll(() => {
+    router.destroy();
+  });
 
   it('handles nested routes correctly', () => {
-    let handler1 = chai.spy(() => {});
-    let handler2 = chai.spy(() => {});
-    let handler3 = chai.spy(() => {});
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
     router.add('/', handler1);
     router.add('/foo', handler2);
     router.add('/*', handler3);
     router.resolve();
-    expect(handler1).to.have.been.called.once;
+    expect(handler1).toHaveBeenCalledTimes(1);
     router.navigate('/foo');
-    expect(handler2).to.have.been.called.once;
-    expect(handler3).to.have.been.called.twice;
+    expect(handler2).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(2);
   });
 
   it('doesnt handle silent naviagation', () => {
-    let handler1 = chai.spy(() => {});
-    let handler2 = chai.spy(() => {});
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
     router.add('/', handler1);
     router.add('/foo', handler2);
     router.resolve();
-    expect(handler1).to.have.been.called.once;
-    router.navigate('/foo', false, false, true);
-    expect(handler2).not.to.have.been.called.once;
+    expect(handler1).toHaveBeenCalledTimes(1);
+    router.navigate('/foo', { silent: true });
+    expect(handler2).not.toHaveBeenCalled();
   });
 
   it('passes correct params to handler', () => {
     let args;
-    let handler = chai.spy((route, foo, params) => {
-      //route argument should not be here
-      args = [route, foo, params];
-    });
+    let handler = jest.fn();
     router.add('/:foo', handler);
     router.navigate('/test?foo=bar');
-    expect(handler).to.have.been.called.once;
-    assert.deepEqual(args, ['/test', 'test', { foo: 'bar' }]);
-  });
-
-  it('doesnt handle same url twice', () => {
-    router.navigate('/foobar?foo=bar');
-    let result = router.navigate('/foobar?foo=bar');
-    assert.equal(result, false);
-    let result2 = router.navigate('/foobar?foo=bar', true);
-    assert.equal(result2, false);
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(handler).toHaveBeenCalledWith('test', { foo: 'bar' });
   });
 
 });
@@ -217,26 +219,25 @@ describe('Nested Routers', () => {
 
 
   it('mounts correctly', () => {
-    assert.equal(sub_router_1.root, '/test1');
-    assert.equal(sub_router_2.root, '/test2');
-    assert.equal(sub_router_2.prevent, true);
+    expect(sub_router_1.getRoot()).toEqual('/test1');
+    expect(sub_router_2.getRoot()).toEqual('/test2');
   });
 
   it('handles routes correctly', () => {
-    let handler1 = chai.spy(() => {});
-    let handler2 = chai.spy(() => {});
-    let handler3 = chai.spy(() => {});
-    let handler4 = chai.spy(() => {});
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
+    let handler4 = jest.fn(() => false);
     root_router.add('/test1', handler1);
     root_router.add('/test2', handler2);
     sub_router_1.add('/', handler3);
     sub_router_2.add('/', handler4);
     root_router.navigate('/test1');
-    expect(handler1).to.have.been.called.once;
-    expect(handler3).to.have.been.called.once;
+    expect(handler1).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(1);
     root_router.navigate('/test2');
-    expect(handler2).not.to.have.been.called.once;
-    expect(handler4).to.have.been.called.once;
+    expect(handler2).not.toHaveBeenCalled();
+    expect(handler4).toHaveBeenCalledTimes(1);
   });
 
 });

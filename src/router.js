@@ -1,141 +1,206 @@
-import { fireEvent } from './ascesis';
 import pathToRegexp from 'path-to-regexp';
+import { fireEvent, walkDOM } from './ascesis';
 
-const default_options = {
-  root: '',
-  routes: {}
+
+function Route(path = '*', callback = () => {}){
+  this.container = document.createElement('script');
+  this.container.setAttribute('path', path);
+
+  this.container.route = this;
+
+  this.callback = (result) => callback.apply(this, result.slice(1).concat(this.getParams()));
 }
 
-export default class Router {
-  get root(){
-    return this._root || this.options.root;
+Route.prototype.getRouter = function(){
+  let $el = this.container;
+  while($el && !$el.hasAttribute('base')){
+    $el = $el.parentNode;
   }
-  set root(value){
-    this._root = value;
-  }
-
-  get prev_path(){
-    return this._prev_path;
-  }
-  set prev_path(value){
-    this._prev_path = value;
-  }
-
-  get prev_qs(){
-    return this._prev_qs;
-  }
-  set prev_qs(value){
-    this._prev_qs = value;
-  }
-
-  get qs(){
-    return this.container.location.search === ''
-           ? false
-           : this.container.location.search.split('?')[1];
-  }
-
-  get global_path(){
-    return this.container.location.pathname;
-  }
-
-  get path(){
-    return this.root_matches ? this.global_path.replace(this.root, '') : false;
-  }
-
-  get root_matches(){
-    return (new RegExp(`^${this.root}(/|$)`)).test(this.global_path);
-  }
-
-  get params(){
-    return this.qs
-           ? this.qs.split('&').reduce((acc, param) => {
-             let [key, value] = param.split('=');
-             return Object.assign(acc, {
-                [key]: value
-             });
-           }, {})
-           : {}
-  }
-
-  constructor(options = {}, container = window){
-
-    this.options = Object.assign({}, default_options, options);
-    this.listeners = [];
-    this.subrouters = [];
-    this.container = container;
-
-    Object.keys(this.options.routes).forEach((route) => {
-      //add function should handle this
-      this.add(route, this.options.routes[route]);
-    });
-
-    this.container.addEventListener('popstate', () => this.resolve());
-    this.container.addEventListener('url-changed', () => this.resolve());
-
-  }
-
-  add(route = /(.*)/, callback = () => {}){
-    this.listeners.push({ route: pathToRegexp(route, []), callback });
-  }
-
-  notify_listeners(){
-    this.listeners.forEach(({ route, callback }) => {
-      let match = this.path.match(route);
-      if(match){
-        //first argument should not be here
-        callback.apply(this, match.concat(this.params));
-      }
-    })
-  }
-
-  trigger(){
-    fireEvent('url-changed', this.container);
-  }
-
-  resolve(){
-    if(!this.root_matches || (this.prev_path === this.path && this.prev_qs === this.qs)){
-      return false;
-    }
-    //do not notify own listeners if subrouter matches root
-    if(this.subrouters.length){
-      for(let subrouter of this.subrouters){
-        if(subrouter.root_matches && subrouter.prevent){
-          return false;
-        }
-      }
-    }
-    this.prev_path = this.path;
-    this.prev_qs = this.qs;
-    this.notify_listeners();
-  }
-
-  navigate(path, absolute = false, replace = false, silent = false){
-
-    let full_prev_path = [this.path].concat(this.qs || []).join('?');
-    if(!absolute && (!this.root_matches || (path === full_prev_path))){
-      return false;
-    }
-
-    let full_prev_global_path = [this.global_path].concat(this.qs || []).join('?');
-    if(absolute && path === full_prev_global_path){
-      return false;
-    }
-
-    let _path = absolute ? path : this.root + path;
-    history[replace ? 'replaceState' : 'pushState'](null, null, _path);
-    !silent && this.trigger('url-changed');
-  }
-
-  destroy(){
-    this.listeners = [];
-    this.container.removeEventListener('popstate', () => this.resolve());
-    this.container.removeEventListener('url-changed', () => this.resolve());
-  }
-
-  mount(path, router, prevent = false){
-    router.root = this.root + path;
-    router.prevent = prevent;
-    this.subrouters.push(router);
-  }
-
+  return ($el || {}).router;
 }
+
+Route.prototype.getPath = function(){
+  let router = this.getRouter();
+  return router ? router.getPath() : null;
+}
+
+Route.prototype.getParams = function(){
+  let router = this.getRouter();
+  return router ? router.getParams() : null;
+}
+
+Route.prototype.routeMatches = function(){
+  let path = this.getPath();
+  let routeRegex = pathToRegexp(this.container.getAttribute('path'));
+  return path.match(routeRegex);
+}
+
+Route.prototype.getGlobalPath = function(){
+  return window.location.pathname;
+}
+
+Route.prototype.resolve = function(root){
+  let result = this.routeMatches(root);
+  return result ? this.callback(result) : null;
+}
+
+
+
+
+
+function Router(options = {}){
+  this.options = options;
+  this.container = options.container || document.createElement('script');
+
+  this.container.router = this;
+
+  this.container.setAttribute('base', options.base || '/');
+  this.container.setAttribute('router-root', true);
+  options.useHash && this.container.setAttribute('use-hash', true);
+
+  this.onRouteChange = () => this.handleRouteChange();
+  this.onRouterNavigated = (e) => {
+    fireEvent('url-changed', window);
+    e.stopPropagation(); //strange!
+  };
+
+  window.addEventListener('popstate', this.onRouteChange);
+  window.addEventListener('url-changed', this.onRouteChange);
+  this.container.addEventListener('router-navigated', this.onRouterNavigated);
+}
+
+Router.prototype.handleRouteChange = function(){
+  if(this.container.getAttribute('router-root')){
+    try {
+      this.resolve();
+    } catch(e) {
+      console.error(e)
+    }
+  }
+}
+
+Router.prototype.getChildrenElements = function(){
+  return walkDOM(
+    this.container,
+    (child) => true,
+    (child) => child.getAttribute('base')
+  ).reduce((acc, $el) => {
+    if($el.getAttribute('base') && $el.router.rootMatches()){
+      acc.routers.push($el);
+    }
+    if($el.getAttribute('path')){
+      acc.routes.push($el);
+    }
+    return acc;
+  }, {
+    routers: [],
+    routes: []
+  });
+}
+
+Router.prototype.resolve = function(){
+  //down to up order
+  let elements = this.getChildrenElements();
+
+  let routers = elements.routers.map(($el) => $el.router.resolve());
+
+  if(~routers.indexOf(false)){
+    return false;
+  }
+
+  let routes = this.getRoutes(elements).map(($el) => $el.route.resolve());
+
+  return !~routes.indexOf(false);
+}
+
+Router.prototype.getRoot = function(){
+  let $el = this.container;
+  let part = [];
+  do {
+    part.unshift($el.getAttribute('base'))
+    if(!!$el.getAttribute('router-root')){
+      break;
+    }
+    $el = $el.parentNode;
+  } while($el);
+  return part.join('').replace(/\/\//ig, '/');
+}
+
+Router.prototype.getQs = function(){
+  return window.location.search === ''
+         ? false
+         : window.location.search.split('?')[1];
+}
+
+Router.prototype.getParams = function(){
+  return this.getQs()
+         ? this.getQs().split('&').reduce((acc, param) => {
+           let [key, value] = param.split('=');
+           return Object.assign(acc, {
+              [key]: value
+           });
+         }, {})
+         : {}
+}
+
+Router.prototype.useHash = function(){
+  this.container.hasAttribute('use-hash');
+}
+
+Router.prototype.getGlobalPath = function(){
+  return this.useHash()
+         ? window.location.hash.replace(/^#/, '/')
+         : window.location.pathname;
+}
+
+Router.prototype.getPath = function(){
+  let root = this.getRoot();
+  let re = new RegExp(`^${root === '/' ? '' : root}(\/|$)`)
+  let globalPath = this.getGlobalPath();
+  if(!re.test(globalPath)){
+    return false;
+  }
+  return globalPath.replace(re, '$1');
+}
+
+Router.prototype.rootMatches = function(){
+  return this.getPath() !== false;
+}
+
+Router.prototype.add = function(path, callback){
+  let route = new Route(path, callback);
+  this.container.appendChild(route.container);
+}
+
+Router.prototype.navigate = function(path, params = {}){
+  if(!this.rootMatches()){
+    return false;
+  }
+  let newPath = `${params.absolute ? '' : this.getRoot()}/${path}`.replace(/(\/{1,})/ig, '/'); //duplication with line 103. make common function `clean`
+  if(this.useHash()){
+    window.location.hash = newPath;
+  } else {
+    window.history[params.replace ? 'replaceState' : 'pushState'](null, null, newPath);
+  }
+  !params.silent && fireEvent('router-navigated', this.container);
+}
+
+Router.prototype.getRoutes = function(childrenElements = this.getChildrenElements()){
+  return childrenElements.routes;
+}
+
+Router.prototype.mount = function(path, router){
+  router.container.setAttribute('base', path);
+  router.container.removeAttribute('router-root');
+  this.container.appendChild(router.container);
+}
+
+Router.prototype.destroy = function(){
+  window.removeEventListener('popstate', this.onRouteChange);
+  window.removeEventListener('url-changed', this.onRouteChange);
+  this.container.removeEventListener('router-navigated', this.onRouterNavigated);
+  delete this.container.router;
+  this.getRoutes().forEach((route) => route.remove());
+}
+
+export { Router }
