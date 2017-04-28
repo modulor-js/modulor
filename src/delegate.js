@@ -36,7 +36,7 @@ export const createDelegate = (root = document) => {
       }
       target = target.parentNode;
       level++;
-    } while(target !== document);
+    } while(target && target !== document);
     event.traverse = path.slice();
     listenersPool.sort((a, b) => a.id - b.id);
     let nextListenersPool = [];
