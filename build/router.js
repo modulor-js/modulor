@@ -250,4 +250,5 @@ Router.prototype.destroy = function () {
   this.getRoutes().forEach(function (route) {
     return route.remove();
   });
+  this.container.remove();
 };

@@ -213,4 +213,5 @@ Router.prototype.destroy = function(){
   this.container.removeEventListener('router-navigated', this.onRouterNavigated);
   delete this.container.router;
   this.getRoutes().forEach((route) => route.remove());
+  this.container.remove();
 }
