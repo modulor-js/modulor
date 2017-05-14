@@ -238,6 +238,13 @@ Router.prototype.mount = function (path, router) {
   this.container.appendChild(router.container);
 };
 
+Router.prototype.unmount = function (router) {
+  //router.container.setAttribute('base', path);
+  //router.container.removeAttribute('router-root');
+  this.container.removeChild(router.container);
+  //this.container.appendChild(router.container);
+};
+
 Router.prototype.destroy = function () {
   window.removeEventListener('popstate', this.onRouteChange);
   window.removeEventListener('url-changed', this.onRouteChange);

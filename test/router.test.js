@@ -268,4 +268,16 @@ describe('Nested Routers', () => {
     expect(handler4).toHaveBeenCalledTimes(1);
   });
 
+  it('unmounts correctly', () => {
+    root_router.unmount(sub_router_1);
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    sub_router_1.add('/', handler1);
+    sub_router_2.add('/', handler2);
+    root_router.navigate('/test1');
+    expect(handler1).not.toHaveBeenCalledTimes(1);
+    root_router.navigate('/test2');
+    expect(handler2).toHaveBeenCalledTimes(1);
+  });
+
 });
