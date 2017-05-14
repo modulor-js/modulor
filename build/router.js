@@ -85,6 +85,8 @@ function Router() {
   this.container.setAttribute('router-root', true);
   options.useHash && this.container.setAttribute('use-hash', true);
 
+  options.routes && this.add(options.routes);
+
   this.onRouteChange = function () {
     return _this2.handleRouteChange();
   };

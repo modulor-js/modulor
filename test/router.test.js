@@ -84,6 +84,21 @@ describe('Base functionality', () => {
     expect(handler2).toHaveBeenCalledTimes(1);
   });
 
+  it('handles routes table in constructor', () => {
+    let handler1 = jest.fn(() => {});
+    let handler2 = jest.fn(() => {});
+    const test_router = new Router({
+      routes: {
+        '/foo': handler1,
+        '/bar': handler2
+      }
+    })
+    test_router.navigate('/foo');
+    test_router.navigate('/bar');
+    expect(handler1).toHaveBeenCalledTimes(1);
+    expect(handler2).toHaveBeenCalledTimes(1);
+  });
+
   it('destroys correctly', () => {
     let handler = jest.fn(() => {});
     router.add('/bar', handler);

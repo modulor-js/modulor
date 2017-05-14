@@ -58,6 +58,8 @@ export function Router(options = {}){
   this.container.setAttribute('router-root', true);
   options.useHash && this.container.setAttribute('use-hash', true);
 
+  options.routes && this.add(options.routes);
+
   this.onRouteChange = () => this.handleRouteChange();
   this.onRouterNavigated = (e) => {
     fireEvent('url-changed', window);
