@@ -116,7 +116,7 @@ Router.prototype.getChildrenElements = function () {
   }, function (child) {
     return child.getAttribute('base');
   }).reduce(function (acc, $el) {
-    if ($el.getAttribute('base') && $el.router.rootMatches()) {
+    if ($el.getAttribute('base') && $el.router && $el.router.rootMatches()) {
       acc.routers.push($el);
     }
     if ($el.getAttribute('path')) {
