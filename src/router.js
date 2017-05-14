@@ -48,7 +48,7 @@ Route.prototype.resolve = function(root){
 
 
 
-function Router(options = {}){
+export function Router(options = {}){
   this.options = options;
   this.container = options.container || document.createElement('script');
 
@@ -168,6 +168,12 @@ Router.prototype.rootMatches = function(){
 }
 
 Router.prototype.add = function(path, callback){
+  if(typeof path === 'object'){
+    Object.keys(path).forEach((path_item) => {
+      this.add(path_item, path[path_item])
+    });
+    return;
+  }
   let route = new Route(path, callback);
   this.container.appendChild(route.container);
 }
@@ -202,5 +208,3 @@ Router.prototype.destroy = function(){
   delete this.container.router;
   this.getRoutes().forEach((route) => route.remove());
 }
-
-export { Router }
