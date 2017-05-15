@@ -23,15 +23,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function Route() {
+  var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
+
   var _this = this;
 
-  var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
   var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  var router = arguments[2];
 
-  this.container = document.createElement('script');
-  this.container.setAttribute('path', path);
-
-  this.container.route = this;
+  this.path = path;
+  this.router = router;
 
   this.callback = function (result) {
     return callback.apply(_this, result.slice(1).concat(_this.getParams()));
@@ -39,11 +39,7 @@ function Route() {
 }
 
 Route.prototype.getRouter = function () {
-  var $el = this.container;
-  while ($el && !$el.hasAttribute('base')) {
-    $el = $el.parentNode;
-  }
-  return ($el || {}).router;
+  return this.router;
 };
 
 Route.prototype.getPath = function () {
@@ -58,7 +54,7 @@ Route.prototype.getParams = function () {
 
 Route.prototype.routeMatches = function () {
   var path = this.getPath();
-  var routeRegex = (0, _pathToRegexp2.default)(this.container.getAttribute('path'));
+  var routeRegex = (0, _pathToRegexp2.default)(this.path);
   return path.match(routeRegex);
 };
 
@@ -77,12 +73,21 @@ function Router() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   this.options = options;
-  this.container = options.container || document.createElement('script');
+
+  if (options.container) {
+    this.container = options.container;
+    options.isRoot && this.container.setAttribute('router-root', true);
+    options.base && this.container.setAttribute('router-base', options.base);
+  } else {
+    this.container = document.createElement('script');
+    this.container.setAttribute('router-base', options.base || '/');
+    this.container.setAttribute('router-root', true);
+  }
+
+  this.routes = [];
 
   this.container.router = this;
 
-  this.container.setAttribute('base', options.base || '/');
-  this.container.setAttribute('router-root', true);
   options.useHash && this.container.setAttribute('use-hash', true);
 
   options.routes && this.add(options.routes);
@@ -110,30 +115,23 @@ Router.prototype.handleRouteChange = function () {
   }
 };
 
-Router.prototype.getChildrenElements = function () {
+Router.prototype.isRouter = function ($el) {
+  return $el.getAttribute('router-base') && $el.router;
+};
+
+Router.prototype.getChildRouters = function () {
+  var _this3 = this;
+
   return (0, _ascesis.walkDOM)(this.container, function (child) {
-    return true;
-  }, function (child) {
-    return child.getAttribute('base');
-  }).reduce(function (acc, $el) {
-    if ($el.getAttribute('base') && $el.router && $el.router.rootMatches()) {
-      acc.routers.push($el);
-    }
-    if ($el.getAttribute('path')) {
-      acc.routes.push($el);
-    }
-    return acc;
-  }, {
-    routers: [],
-    routes: []
-  });
+    return _this3.isRouter(child) && child.router.rootMatches();
+  }, this.isRouter);
 };
 
 Router.prototype.resolve = function () {
   //down to up order
-  var elements = this.getChildrenElements();
+  var elements = this.getChildRouters();
 
-  var routers = elements.routers.map(function ($el) {
+  var routers = elements.map(function ($el) {
     return $el.router.resolve();
   });
 
@@ -141,19 +139,31 @@ Router.prototype.resolve = function () {
     return false;
   }
 
-  var routes = this.getRoutes(elements).map(function ($el) {
-    return $el.route.resolve();
+  var routes = this.getRoutes().map(function (route) {
+    return route.resolve();
   });
 
   return !~routes.indexOf(false);
+};
+
+Router.prototype.getRootRouter = function () {
+  var $el = this.container;
+  var part = [];
+  do {
+    if ($el.hasAttribute('router-root')) {
+      break;
+    }
+    $el = $el.parentNode;
+  } while ($el);
+  return $el;
 };
 
 Router.prototype.getRoot = function () {
   var $el = this.container;
   var part = [];
   do {
-    part.unshift($el.getAttribute('base'));
-    if (!!$el.getAttribute('router-root')) {
+    part.unshift($el.getAttribute('router-base') || '');
+    if ($el.hasAttribute('router-root')) {
       break;
     }
     $el = $el.parentNode;
@@ -177,7 +187,7 @@ Router.prototype.getParams = function () {
 };
 
 Router.prototype.useHash = function () {
-  this.container.hasAttribute('use-hash');
+  this.getRootRouter().hasAttribute('use-hash');
 };
 
 Router.prototype.getGlobalPath = function () {
@@ -199,16 +209,16 @@ Router.prototype.rootMatches = function () {
 };
 
 Router.prototype.add = function (path, callback) {
-  var _this3 = this;
+  var _this4 = this;
 
   if ((typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object') {
     Object.keys(path).forEach(function (path_item) {
-      _this3.add(path_item, path[path_item]);
+      _this4.add(path_item, path[path_item]);
     });
     return;
   }
-  var route = new Route(path, callback);
-  this.container.appendChild(route.container);
+  var route = new Route(path, callback, this);
+  this.routes.push(route);
 };
 
 Router.prototype.navigate = function (path) {
@@ -227,13 +237,11 @@ Router.prototype.navigate = function (path) {
 };
 
 Router.prototype.getRoutes = function () {
-  var childrenElements = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getChildrenElements();
-
-  return childrenElements.routes;
+  return this.routes;
 };
 
 Router.prototype.mount = function (path, router) {
-  router.container.setAttribute('base', path);
+  router.container.setAttribute('router-base', path);
   router.container.removeAttribute('router-root');
   this.container.appendChild(router.container);
 };
@@ -247,8 +255,5 @@ Router.prototype.destroy = function () {
   window.removeEventListener('url-changed', this.onRouteChange);
   this.container.removeEventListener('router-navigated', this.onRouterNavigated);
   delete this.container.router;
-  this.getRoutes().forEach(function (route) {
-    return route.remove();
-  });
-  this.container.remove();
+  this.routes = [];
 };

@@ -2,21 +2,15 @@ import pathToRegexp from 'path-to-regexp';
 import { fireEvent, walkDOM } from './ascesis';
 
 
-function Route(path = '*', callback = () => {}){
-  this.container = document.createElement('script');
-  this.container.setAttribute('path', path);
-
-  this.container.route = this;
+function Route(path = '*', callback = () => {}, router){
+  this.path = path;
+  this.router = router;
 
   this.callback = (result) => callback.apply(this, result.slice(1).concat(this.getParams()));
 }
 
 Route.prototype.getRouter = function(){
-  let $el = this.container;
-  while($el && !$el.hasAttribute('base')){
-    $el = $el.parentNode;
-  }
-  return ($el || {}).router;
+  return this.router;
 }
 
 Route.prototype.getPath = function(){
@@ -31,7 +25,7 @@ Route.prototype.getParams = function(){
 
 Route.prototype.routeMatches = function(){
   let path = this.getPath();
-  let routeRegex = pathToRegexp(this.container.getAttribute('path'));
+  let routeRegex = pathToRegexp(this.path);
   return path.match(routeRegex);
 }
 
@@ -50,12 +44,21 @@ Route.prototype.resolve = function(root){
 
 export function Router(options = {}){
   this.options = options;
-  this.container = options.container || document.createElement('script');
+
+  if(options.container){
+    this.container = options.container;
+    options.isRoot && this.container.setAttribute('router-root', true);
+    options.base && this.container.setAttribute('router-base', options.base);
+  } else {
+    this.container = document.createElement('script');
+    this.container.setAttribute('router-base', options.base || '/');
+    this.container.setAttribute('router-root', true);
+  }
+
+  this.routes = [];
 
   this.container.router = this;
 
-  this.container.setAttribute('base', options.base || '/');
-  this.container.setAttribute('router-root', true);
   options.useHash && this.container.setAttribute('use-hash', true);
 
   options.routes && this.add(options.routes);
@@ -81,46 +84,51 @@ Router.prototype.handleRouteChange = function(){
   }
 }
 
-Router.prototype.getChildrenElements = function(){
+Router.prototype.isRouter = function($el){
+  return $el.getAttribute('router-base') && $el.router;
+}
+
+Router.prototype.getChildRouters = function(){
   return walkDOM(
     this.container,
-    (child) => true,
-    (child) => child.getAttribute('base')
-  ).reduce((acc, $el) => {
-    if($el.getAttribute('base') && $el.router && $el.router.rootMatches()){
-      acc.routers.push($el);
-    }
-    if($el.getAttribute('path')){
-      acc.routes.push($el);
-    }
-    return acc;
-  }, {
-    routers: [],
-    routes: []
-  });
+    (child) => this.isRouter(child) && child.router.rootMatches(),
+    this.isRouter
+  );
 }
 
 Router.prototype.resolve = function(){
   //down to up order
-  let elements = this.getChildrenElements();
+  let elements = this.getChildRouters();
 
-  let routers = elements.routers.map(($el) => $el.router.resolve());
+  let routers = elements.map(($el) => $el.router.resolve());
 
   if(~routers.indexOf(false)){
     return false;
   }
 
-  let routes = this.getRoutes(elements).map(($el) => $el.route.resolve());
+  let routes = this.getRoutes().map((route) => route.resolve());
 
   return !~routes.indexOf(false);
+}
+
+Router.prototype.getRootRouter = function(){
+  let $el = this.container;
+  let part = [];
+  do {
+    if($el.hasAttribute('router-root')){
+      break;
+    }
+    $el = $el.parentNode;
+  } while($el);
+  return $el;
 }
 
 Router.prototype.getRoot = function(){
   let $el = this.container;
   let part = [];
   do {
-    part.unshift($el.getAttribute('base'))
-    if(!!$el.getAttribute('router-root')){
+    part.unshift($el.getAttribute('router-base') || '');
+    if($el.hasAttribute('router-root')){
       break;
     }
     $el = $el.parentNode;
@@ -146,7 +154,7 @@ Router.prototype.getParams = function(){
 }
 
 Router.prototype.useHash = function(){
-  this.container.hasAttribute('use-hash');
+  this.getRootRouter().hasAttribute('use-hash');
 }
 
 Router.prototype.getGlobalPath = function(){
@@ -176,8 +184,8 @@ Router.prototype.add = function(path, callback){
     });
     return;
   }
-  let route = new Route(path, callback);
-  this.container.appendChild(route.container);
+  let route = new Route(path, callback, this);
+  this.routes.push(route);
 }
 
 Router.prototype.navigate = function(path, params = {}){
@@ -193,12 +201,12 @@ Router.prototype.navigate = function(path, params = {}){
   !params.silent && fireEvent('router-navigated', this.container);
 }
 
-Router.prototype.getRoutes = function(childrenElements = this.getChildrenElements()){
-  return childrenElements.routes;
+Router.prototype.getRoutes = function(){
+  return this.routes;
 }
 
 Router.prototype.mount = function(path, router){
-  router.container.setAttribute('base', path);
+  router.container.setAttribute('router-base', path);
   router.container.removeAttribute('router-root');
   this.container.appendChild(router.container);
 }
@@ -212,6 +220,5 @@ Router.prototype.destroy = function(){
   window.removeEventListener('url-changed', this.onRouteChange);
   this.container.removeEventListener('router-navigated', this.onRouterNavigated);
   delete this.container.router;
-  this.getRoutes().forEach((route) => route.remove());
-  this.container.remove();
+  this.routes = [];
 }

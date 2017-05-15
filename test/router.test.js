@@ -56,7 +56,7 @@ describe('Base functionality', () => {
     let handler = jest.fn(() => {});
     router.add('/', handler);
     expect(router.getRoutes().length).toEqual(1);
-    expect(typeof router.getRoutes()[0].route.callback).toEqual('function');
+    expect(typeof router.getRoutes()[0].callback).toEqual('function');
   });
 
   it('navigates correctly', () => {
@@ -278,6 +278,70 @@ describe('Nested Routers', () => {
     expect(handler1).not.toHaveBeenCalledTimes(1);
     root_router.navigate('/test2');
     expect(handler2).toHaveBeenCalledTimes(1);
+  });
+
+});
+
+describe('Use existing DOM elements as containers', () => {
+  const $sandbox = document.createElement('div');
+  let root_router, sub_router_1, sub_router_2;
+
+  beforeEach(() => {
+
+    $sandbox.innerHTML = `
+      <div id="root-router" router-root="true" router-base='/'>
+        <div>
+          <div></div>
+          <div id="sub-router-1" router-base="/foo"></div>
+        </div>
+        <div id="sub-router-2" router-base="/bar">
+          <div></div>
+        </div>
+      </div>
+    `;
+
+    root_router = new Router({ container: $sandbox.querySelector('#root-router') });
+    sub_router_1 = new Router({ container: $sandbox.querySelector('#sub-router-1') });
+    sub_router_2 = new Router({ container: $sandbox.querySelector('#sub-router-2') });
+
+    window.history.replaceState(null, null, '/');
+  });
+
+  afterEach(() => {
+    window.history.replaceState(null, null, '/');
+  });
+
+
+
+  it('handles routes correctly', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
+    let handler4 = jest.fn(() => false);
+    root_router.add('/foo', handler1);
+    root_router.add('/bar', handler2);
+    sub_router_1.add('/', handler3);
+    sub_router_2.add('/', handler4);
+    root_router.navigate('/foo');
+    expect(handler1).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(1);
+    root_router.navigate('/bar');
+    expect(handler2).not.toHaveBeenCalled();
+    expect(handler4).toHaveBeenCalledTimes(1);
+  });
+
+  it.only('foo', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    root_router.add('/foo', handler1);
+    sub_router_1.add('/', handler2);
+    root_router.navigate('/foo');
+    expect(handler1).toHaveBeenCalledTimes(1);
+    expect(handler2).toHaveBeenCalledTimes(1);
+    $sandbox.querySelector('#sub-router-1').remove();
+    root_router.navigate('/foo');
+    expect(handler2).toHaveBeenCalledTimes(1);
+    expect(handler1).toHaveBeenCalledTimes(2);
   });
 
 });
