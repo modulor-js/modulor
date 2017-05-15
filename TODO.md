@@ -25,7 +25,7 @@
 
 **delegate**
 
-* add setParam function
+* add capturing support
 
 **common**
 
