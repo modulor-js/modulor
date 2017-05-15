@@ -22,6 +22,11 @@
 
 * add setParam function
 
+
+**delegate**
+
+* add setParam function
+
 **common**
 
 * refactor tests
