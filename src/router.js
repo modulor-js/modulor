@@ -25,6 +25,10 @@ Route.prototype.getParams = function(){
 
 Route.prototype.routeMatches = function(){
   let path = this.getPath();
+  if(!path){
+    console.warn(`route doesn't match base`);
+    return false;
+  }
   let routeRegex = pathToRegexp(this.path);
   return path.match(routeRegex);
 }
