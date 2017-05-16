@@ -330,7 +330,7 @@ describe('Use existing DOM elements as containers', () => {
     expect(handler4).toHaveBeenCalledTimes(1);
   });
 
-  it.only('foo', () => {
+  it('handles removed router nodes correctly', () => {
     let handler1 = jest.fn();
     let handler2 = jest.fn();
     root_router.add('/foo', handler1);
