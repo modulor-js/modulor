@@ -54,6 +54,10 @@ Route.prototype.getParams = function () {
 
 Route.prototype.routeMatches = function () {
   var path = this.getPath();
+  if (path === false) {
+    console.warn('route ' + this.getRouter().getRoot() + this.path + ' doesn\'t match base');
+    return false;
+  }
   var routeRegex = (0, _pathToRegexp2.default)(this.path);
   return path.match(routeRegex);
 };
@@ -116,7 +120,7 @@ Router.prototype.handleRouteChange = function () {
 };
 
 Router.prototype.isRouter = function ($el) {
-  return $el.getAttribute('router-base') && $el.router;
+  return $el.hasAttribute('router-base') && $el.router;
 };
 
 Router.prototype.getChildRouters = function () {
@@ -196,7 +200,7 @@ Router.prototype.getGlobalPath = function () {
 
 Router.prototype.getPath = function () {
   var root = this.getRoot();
-  var re = new RegExp('^' + (root === '/' ? '' : root) + '(/|$)');
+  var re = new RegExp('^' + root.replace(/\/$/, '') + '(/|$)');
   var globalPath = this.getGlobalPath();
   if (!re.test(globalPath)) {
     return false;

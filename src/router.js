@@ -25,8 +25,8 @@ Route.prototype.getParams = function(){
 
 Route.prototype.routeMatches = function(){
   let path = this.getPath();
-  if(!path){
-    console.warn(`route doesn't match base`);
+  if(path === false){
+    console.warn(`route ${this.getRouter().getRoot()}${this.path} doesn't match base`);
     return false;
   }
   let routeRegex = pathToRegexp(this.path);
@@ -89,7 +89,7 @@ Router.prototype.handleRouteChange = function(){
 }
 
 Router.prototype.isRouter = function($el){
-  return $el.getAttribute('router-base') && $el.router;
+  return $el.hasAttribute('router-base') && $el.router;
 }
 
 Router.prototype.getChildRouters = function(){
@@ -169,7 +169,7 @@ Router.prototype.getGlobalPath = function(){
 
 Router.prototype.getPath = function(){
   let root = this.getRoot();
-  let re = new RegExp(`^${root === '/' ? '' : root}(\/|$)`)
+  let re = new RegExp(`^${root.replace(/\/$/, '')}(\/|$)`);
   let globalPath = this.getGlobalPath();
   if(!re.test(globalPath)){
     return false;

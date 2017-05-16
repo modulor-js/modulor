@@ -284,7 +284,7 @@ describe('Nested Routers', () => {
 
 describe('Use existing DOM elements as containers', () => {
   const $sandbox = document.createElement('div');
-  let root_router, sub_router_1, sub_router_2;
+  let root_router, sub_router_1, sub_router_11, sub_router_2, sub_router_21;
 
   beforeEach(() => {
 
@@ -292,9 +292,12 @@ describe('Use existing DOM elements as containers', () => {
       <div id="root-router" router-root="true" router-base='/'>
         <div>
           <div></div>
-          <div id="sub-router-1" router-base="/foo"></div>
+          <div id="sub-router-1" router-base="/foo">
+            <div id="sub-router-1-1" router-base="/"></div>
+          </div>
         </div>
         <div id="sub-router-2" router-base="/bar">
+          <div id="sub-router-2-1" router-base=""></div>
           <div></div>
         </div>
       </div>
@@ -302,7 +305,9 @@ describe('Use existing DOM elements as containers', () => {
 
     root_router = new Router({ container: $sandbox.querySelector('#root-router') });
     sub_router_1 = new Router({ container: $sandbox.querySelector('#sub-router-1') });
+    sub_router_11 = new Router({ container: $sandbox.querySelector('#sub-router-1-1') });
     sub_router_2 = new Router({ container: $sandbox.querySelector('#sub-router-2') });
+    sub_router_21 = new Router({ container: $sandbox.querySelector('#sub-router-2-1') });
 
     window.history.replaceState(null, null, '/');
   });
@@ -342,6 +347,24 @@ describe('Use existing DOM elements as containers', () => {
     root_router.navigate('/foo');
     expect(handler2).toHaveBeenCalledTimes(1);
     expect(handler1).toHaveBeenCalledTimes(2);
+  });
+
+  it('handles more than 1 nesting level', () => {
+    let handler1 = jest.fn();
+    let handler2 = jest.fn();
+    let handler3 = jest.fn();
+    let handler4 = jest.fn();
+    let handler5 = jest.fn();
+    sub_router_1.add('/', handler2);
+    sub_router_11.add('/', handler3);
+    sub_router_2.add('/', handler4);
+    sub_router_21.add('/', handler5);
+    root_router.navigate('/foo');
+    expect(handler2).toHaveBeenCalledTimes(1);
+    expect(handler3).toHaveBeenCalledTimes(1);
+    root_router.navigate('/bar');
+    expect(handler4).toHaveBeenCalledTimes(1);
+    expect(handler5).toHaveBeenCalledTimes(1);
   });
 
 });
