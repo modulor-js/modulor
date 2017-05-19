@@ -8,7 +8,8 @@
     "test:watch": "jest --watch",
     "test:karma": "./node_modules/karma/bin/karma start",
     "build": "node node_modules/babel-cli/bin/babel src --out-dir build",
-    "build:watch": "npm run build -- --watch"
+    "build:watch": "npm run build -- --watch",
+    "doc": "jsdoc2md src/ascesis.js -p list > doc/ascesis.md & jsdoc2md src/router.js -p list > doc/router.md & jsdoc2md src/delegate.js -p list > doc/delegate.md"
   },
   "author": "",
   "license": "ISC",
