@@ -3,8 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/**
+ *  @module delegate
+ * */
+
+/**
+ *  @param {HTMLElement} root Delegate root
+ *  @return {Delegate}
+ * */
 var createDelegate = exports.createDelegate = function createDelegate() {
-  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window.document;
 
   var listeners = {};
   var counter = 0;
@@ -69,7 +77,18 @@ var createDelegate = exports.createDelegate = function createDelegate() {
       nextListenersPool = [];
     }
   }
+  /**
+   *  @constructs Delegate
+   * */
   function _createDelegate() {}
+
+  /**
+   * Subscribe an event
+   * @param {String} eventName Event name
+   * @param {HTMLElement} element Delegate node
+   * @param {String|Null} selector Selector
+   * @param {Function} callback Callback
+   * */
   _createDelegate.prototype.on = function (eventName) {
     var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : root;
     var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -89,6 +108,14 @@ var createDelegate = exports.createDelegate = function createDelegate() {
     root.addEventListener(eventName, handleEvent);
     return this;
   };
+
+  /**
+   * Unsubscribe an event
+   * @param {String} [eventName] Event name
+   * @param {HTMLElement} [element] Delegate node
+   * @param {String|Null} [selector] Selector
+   * @param {Function} [callback] Callback
+   * */
   _createDelegate.prototype.off = function (eventName, element, selector, callback) {
     if (!eventName) {
       delete element.listeners;
@@ -120,6 +147,11 @@ var createDelegate = exports.createDelegate = function createDelegate() {
       delete element.listeners;
     }
   };
+
+  /**
+   * Set delegate root
+   * @param {HTMLElement} newRoot Delegate root
+   * */
   _createDelegate.prototype.setRoot = function () {
     var newRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -132,6 +164,10 @@ var createDelegate = exports.createDelegate = function createDelegate() {
     });
     root = newRoot;
   };
+
+  /**
+   * Destroy delegate
+   * */
   _createDelegate.prototype.destroy = function () {
     Object.keys(listeners).forEach(function (eventName) {
       root.removeEventListener(eventName, handleEvent);
@@ -141,4 +177,8 @@ var createDelegate = exports.createDelegate = function createDelegate() {
   return new _createDelegate();
 };
 
-var delegate = exports.delegate = new createDelegate(document);
+/**
+ *  Delegate instance with root of window.document
+ *  @type Delegate
+ * */
+var delegate = exports.delegate = new createDelegate(window.document);

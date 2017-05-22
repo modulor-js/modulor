@@ -1,4 +1,12 @@
-export const createDelegate = (root = document) => {
+/**
+ *  @module delegate
+ * */
+
+/**
+ *  @param {HTMLElement} root Delegate root
+ *  @return {Delegate}
+ * */
+export const createDelegate = (root = window.document) => {
   let listeners = {};
   let counter = 0;
   function get_id(){
@@ -61,7 +69,18 @@ export const createDelegate = (root = document) => {
       nextListenersPool = [];
     }
   }
+  /**
+   *  @constructs Delegate
+   * */
   function _createDelegate(){}
+
+  /**
+   * Subscribe an event
+   * @param {String} eventName Event name
+   * @param {HTMLElement} element Delegate node
+   * @param {String|Null} selector Selector
+   * @param {Function} callback Callback
+   * */
   _createDelegate.prototype.on = function(eventName, element = root, selector = null, callback){
     if(element instanceof HTMLElement){
       element.listeners || (element.listeners = {});
@@ -77,6 +96,14 @@ export const createDelegate = (root = document) => {
     root.addEventListener(eventName, handleEvent);
     return this;
   }
+
+  /**
+   * Unsubscribe an event
+   * @param {String} [eventName] Event name
+   * @param {HTMLElement} [element] Delegate node
+   * @param {String|Null} [selector] Selector
+   * @param {Function} [callback] Callback
+   * */
   _createDelegate.prototype.off = function(eventName, element, selector, callback){
     if(!eventName){
       delete element.listeners;
@@ -108,6 +135,11 @@ export const createDelegate = (root = document) => {
       delete element.listeners;
     }
   }
+
+  /**
+   * Set delegate root
+   * @param {HTMLElement} newRoot Delegate root
+   * */
   _createDelegate.prototype.setRoot = function(newRoot = null){
     if(!newRoot || newRoot === root){
       return false;
@@ -118,6 +150,10 @@ export const createDelegate = (root = document) => {
     });
     root = newRoot;
   }
+
+  /**
+   * Destroy delegate
+   * */
   _createDelegate.prototype.destroy = function(){
     Object.keys(listeners).forEach((eventName) => {
       root.removeEventListener(eventName, handleEvent);
@@ -127,4 +163,8 @@ export const createDelegate = (root = document) => {
   return new _createDelegate();
 }
 
-export const delegate = new createDelegate(document);
+/**
+ *  Delegate instance with root of window.document
+ *  @type Delegate
+ * */
+export const delegate = new createDelegate(window.document);
