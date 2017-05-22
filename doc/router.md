@@ -157,7 +157,7 @@ Resolves router
 <a name="module_router..Router+setParams"></a>
 
 #### router.setParams(queryParams, navigationParams)
-Set query parameters. Leave only provided parameters in query string
+Set new query parameters. Leave only provided parameters in query string
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
 

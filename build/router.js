@@ -258,7 +258,7 @@ Router.prototype.getParams = function () {
 };
 
 /**
- *  Set query parameters. Leave only provided parameters in query string
+ *  Set new query parameters. Leave only provided parameters in query string
  *  @method
  *  @param {Object} queryParams URL query parameters
  *  @param {NavigationParams} navigationParams Navigation params
