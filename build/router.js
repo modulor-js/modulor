@@ -253,7 +253,7 @@ Router.prototype.getParams = function () {
         key = _param$split2[0],
         value = _param$split2[1];
 
-    return _extends(acc, _defineProperty({}, key, value));
+    return _extends(acc, _defineProperty({}, decodeURIComponent(key), value ? decodeURIComponent(value) : value));
   }, {}) : {};
 };
 
@@ -267,7 +267,7 @@ Router.prototype.setParams = function (queryParams) {
   var navigationParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   var paramsString = Object.keys(queryParams).map(function (key) {
-    return [key, queryParams[key]].join('=');
+    return [encodeURIComponent(key), encodeURIComponent(queryParams[key])].join('=');
   }).join('&');
   return this.navigate('?' + paramsString, navigationParams);
 };

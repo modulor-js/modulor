@@ -220,7 +220,7 @@ Router.prototype.getParams = function(){
          ? this.getQs().split('&').reduce((acc, param) => {
            let [key, value] = param.split('=');
            return Object.assign(acc, {
-              [key]: value
+              [decodeURIComponent(key)]: value ? decodeURIComponent(value) : value
            });
          }, {})
          : {}
@@ -234,7 +234,7 @@ Router.prototype.getParams = function(){
  * */
 Router.prototype.setParams = function(queryParams, navigationParams = {}){
   let paramsString = Object.keys(queryParams).map((key) => {
-    return [key, queryParams[key]].join('=');
+    return [encodeURIComponent(key), encodeURIComponent(queryParams[key])].join('=');
   }).join('&');
   return this.navigate(`?${paramsString}`, navigationParams);
 }

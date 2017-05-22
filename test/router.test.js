@@ -44,7 +44,7 @@ describe('Base functionality', () => {
     expect(router.getParams()).toEqual({ foo: 'bar', bar: 'baz' });
   });
 
-  it.only('sets params correctly', () => {
+  it('sets params correctly', () => {
     router.setParams({
       baz: 'q'
     });
