@@ -227,6 +227,32 @@ Router.prototype.getParams = function(){
 }
 
 /**
+ *  Set query parameters. Leave only provided parameters in query string
+ *  @method
+ *  @param {Object} queryParams URL query parameters
+ *  @param {NavigationParams} navigationParams Navigation params
+ * */
+Router.prototype.setParams = function(queryParams, navigationParams = {}){
+  let paramsString = Object.keys(queryParams).map((key) => {
+    return [key, queryParams[key]].join('=');
+  }).join('&');
+  return this.navigate(`?${paramsString}`, navigationParams);
+}
+
+/**
+ *  Update query parameters. Overwrite if param exists, add if not
+ *  @method
+ *  @param {Object} queryParams URL query parameters
+ *  @param {NavigationParams} navigationParams Navigation params
+ * */
+Router.prototype.updateParams = function(queryParams, navigationParams = {}){
+  return this.setParams(
+    Object.assign({}, this.getParams(), queryParams),
+    navigationParams
+  );
+}
+
+/**
  *  Indicates if router uses hashbang
  *  @method
  *  @return {Boolean}

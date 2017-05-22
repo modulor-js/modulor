@@ -63,10 +63,11 @@ Select nodes
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: <code>Array</code> - Collection of nodes  
-**Params**
 
-- selector <code>String</code> - Selector
-- [element] <code>HTMLElement</code> <code> = window.document</code> - Element
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| selector | <code>String</code> |  | Selector |
+| [element] | <code>HTMLElement</code> | <code>window.document</code> | Element |
 
 <a name="module_ascesis.attr"></a>
 
@@ -75,11 +76,12 @@ Get/set element attribute
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: <code>String</code> - Attribute value  
-**Params**
 
-- element <code>HTMLElement</code> - Element
-- key <code>String</code> - Attribute name
-- [value] <code>String</code> - Attribute value
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | Element |
+| key | <code>String</code> | Attribute name |
+| [value] | <code>String</code> | Attribute value |
 
 <a name="module_ascesis.addClass"></a>
 
@@ -87,10 +89,11 @@ Get/set element attribute
 Add a class to the element
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
-**Params**
 
-- element <code>HTMLElement</code> - Element
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | Element |
+| className | <code>String</code> | Class name |
 
 <a name="module_ascesis.removeClass"></a>
 
@@ -98,10 +101,11 @@ Add a class to the element
 Remove a class from the element
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
-**Params**
 
-- element <code>HTMLElement</code> - Element
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | Element |
+| className | <code>String</code> | Class name |
 
 <a name="module_ascesis.toggleClass"></a>
 
@@ -109,10 +113,11 @@ Remove a class from the element
 Toggle a class at the element
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
-**Params**
 
-- element <code>HTMLElement</code> - Element
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | Element |
+| className | <code>String</code> | Class name |
 
 <a name="module_ascesis.hasClass"></a>
 
@@ -120,10 +125,11 @@ Toggle a class at the element
 Check if the element has a class
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
-**Params**
 
-- element <code>HTMLElement</code> - Element
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | Element |
+| className | <code>String</code> | Class name |
 
 <a name="module_ascesis.walkDOM"></a>
 
@@ -132,11 +138,12 @@ Traverse DOM node
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: <code>Array</code> - Collection of nodes  
-**Params**
 
-- node <code>HTMLElement</code> - Element
-- filter <code>function</code> - Filter child nodes function
-- skipNode <code>function</code> - Skip child nodes function
+| Param | Type | Description |
+| --- | --- | --- |
+| node | <code>HTMLElement</code> | Element |
+| filter | <code>function</code> | Filter child nodes function |
+| skipNode | <code>function</code> | Skip child nodes function |
 
 <a name="module_ascesis.toArray"></a>
 
@@ -145,9 +152,10 @@ Converts NodeList to array
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: <code>Array</code> - Collection of nodes  
-**Params**
 
-- nodes <code>NodeList</code> - Elements collection
+| Param | Type | Description |
+| --- | --- | --- |
+| nodes | <code>NodeList</code> | Elements collection |
 
 <a name="module_ascesis.fireEvent"></a>
 
@@ -155,11 +163,12 @@ Converts NodeList to array
 Fires an event on element
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
-**Params**
 
-- eventName <code>String</code> - Event name
-- target <code>HTMLElement</code> - Element to trigger event on
-- [eventData] <code>\*</code> - Data to attach to event
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>String</code> | Event name |
+| target | <code>HTMLElement</code> | Element to trigger event on |
+| [eventData] | <code>\*</code> | Data to attach to event |
 
 <a name="module_ascesis.html"></a>
 
@@ -168,10 +177,11 @@ Set the HTML content of element, or generate DocumentFragment
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: <code>HTMLElement</code> \| <code>DocumentFragment</code> - Target if target parameter is set or document fragment  
-**Params**
 
-- htmlString <code>String</code> - HTML content string
-- [target] <code>HTMLElement</code> - Element to set content
+| Param | Type | Description |
+| --- | --- | --- |
+| htmlString | <code>String</code> | HTML content string |
+| [target] | <code>HTMLElement</code> | Element to set content |
 
 <a name="module_ascesis.extend"></a>
 
@@ -180,9 +190,10 @@ Extend component class with ascesis methods
 
 **Kind**: static method of [<code>ascesis</code>](#module_ascesis)  
 **Returns**: [<code>AscesisComponent</code>](#AscesisComponent) - Extended component class  
-**Params**
 
-- baseClass <code>Class</code> - Component class
+| Param | Type | Description |
+| --- | --- | --- |
+| baseClass | <code>Class</code> | Component class |
 
 <a name="AscesisComponent"></a>
 
@@ -216,9 +227,10 @@ Select nodes
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Returns**: <code>Array</code> - Collection of nodes  
 **Category**: DOM API  
-**Params**
 
-- selector <code>String</code> - Selector
+| Param | Type | Description |
+| --- | --- | --- |
+| selector | <code>String</code> | Selector |
 
 <a name="AscesisComponent+attr"></a>
 
@@ -228,10 +240,11 @@ Get/set element attribute
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Returns**: <code>String</code> - Attribute value  
 **Category**: DOM API  
-**Params**
 
-- key <code>String</code> - Attribute name
-- [value] <code>String</code> - Attribute value
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | Attribute name |
+| [value] | <code>String</code> | Attribute value |
 
 <a name="AscesisComponent+addClass"></a>
 
@@ -240,9 +253,10 @@ Add a class to the element
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: DOM API  
-**Params**
 
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| className | <code>String</code> | Class name |
 
 <a name="AscesisComponent+removeClass"></a>
 
@@ -251,9 +265,10 @@ Remove a class from the element
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: DOM API  
-**Params**
 
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| className | <code>String</code> | Class name |
 
 <a name="AscesisComponent+toggleClass"></a>
 
@@ -262,9 +277,10 @@ Toggle a class at the element
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: DOM API  
-**Params**
 
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| className | <code>String</code> | Class name |
 
 <a name="AscesisComponent+hasClass"></a>
 
@@ -273,9 +289,10 @@ Check if the element has a class
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: DOM API  
-**Params**
 
-- className <code>String</code> - Class name
+| Param | Type | Description |
+| --- | --- | --- |
+| className | <code>String</code> | Class name |
 
 <a name="AscesisComponent+html"></a>
 
@@ -285,10 +302,11 @@ Set the HTML content of element
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Returns**: <code>HTMLElement</code> - Target if target parameter is set or document fragment  
 **Category**: DOM API  
-**Params**
 
-- htmlString <code>String</code> - HTML content string
-- [$el] <code>HTMLElement</code> - Target element
+| Param | Type | Description |
+| --- | --- | --- |
+| htmlString | <code>String</code> | HTML content string |
+| [$el] | <code>HTMLElement</code> | Target element |
 
 <a name="AscesisComponent+childComponents"></a>
 
@@ -329,11 +347,12 @@ Subscribe an event
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: events  
-**Params**
 
-- eventName <code>String</code> - Event name
-- [selector] <code>String</code> - Selector
-- callback <code>function</code> - Event name
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>String</code> | Event name |
+| [selector] | <code>String</code> | Selector |
+| callback | <code>function</code> | Event name |
 
 <a name="AscesisComponent+off"></a>
 
@@ -344,11 +363,12 @@ Unsubscribe an event
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: events  
-**Params**
 
-- [eventName] <code>String</code> <code> = </code> - Event name
-- [selector] <code>String</code> - Selector
-- [callback] <code>function</code> - Event name
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [eventName] | <code>String</code> | <code></code> | Event name |
+| [selector] | <code>String</code> |  | Selector |
+| [callback] | <code>function</code> |  | Event name |
 
 <a name="AscesisComponent+trigger"></a>
 
@@ -357,8 +377,9 @@ Fires an event on element
 
 **Kind**: instance method of [<code>AscesisComponent</code>](#AscesisComponent)  
 **Category**: events  
-**Params**
 
-- eventName <code>String</code> - Event name
-- [eventData] <code>\*</code> - Data to attach to event
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>String</code> | Event name |
+| [eventData] | <code>\*</code> | Data to attach to event |
 
