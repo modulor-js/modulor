@@ -258,7 +258,7 @@ Router.prototype.updateParams = function(queryParams, navigationParams = {}){
  *  @return {Boolean}
  * */
 Router.prototype.useHash = function(){
-  this.getRootRouter().hasAttribute('use-hash');
+  return this.getRootRouter().hasAttribute('use-hash');
 }
 
 /**
