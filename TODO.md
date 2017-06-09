@@ -20,12 +20,14 @@
 
 **router**
 
-* add setParam function
+* ~~add setParam function~~
 
 
 **delegate**
 
 * add capturing support
+
+* handle errors in handlers + tests
 
 **common**
 
