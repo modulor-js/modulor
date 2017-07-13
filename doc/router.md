@@ -21,6 +21,8 @@ Ascesis router
         * [.getRoot()](#module_router..Router+getRoot) ⇒ <code>String</code>
         * [.getQs()](#module_router..Router+getQs) ⇒ <code>String</code>
         * [.getParams()](#module_router..Router+getParams) ⇒ <code>Object</code>
+        * [.setParams(queryParams, navigationParams)](#module_router..Router+setParams)
+        * [.updateParams(queryParams, navigationParams)](#module_router..Router+updateParams)
         * [.useHash()](#module_router..Router+useHash) ⇒ <code>Boolean</code>
         * [.getGlobalPath()](#module_router..Router+getGlobalPath) ⇒ <code>String</code>
         * [.getPath()](#module_router..Router+getPath) ⇒ <code>String</code>
@@ -93,6 +95,8 @@ Resolves route
     * [.getRoot()](#module_router..Router+getRoot) ⇒ <code>String</code>
     * [.getQs()](#module_router..Router+getQs) ⇒ <code>String</code>
     * [.getParams()](#module_router..Router+getParams) ⇒ <code>Object</code>
+    * [.setParams(queryParams, navigationParams)](#module_router..Router+setParams)
+    * [.updateParams(queryParams, navigationParams)](#module_router..Router+updateParams)
     * [.useHash()](#module_router..Router+useHash) ⇒ <code>Boolean</code>
     * [.getGlobalPath()](#module_router..Router+getGlobalPath) ⇒ <code>String</code>
     * [.getPath()](#module_router..Router+getPath) ⇒ <code>String</code>
@@ -114,9 +118,10 @@ Resolves route
 Indicates if element is router node
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
-**Params**
 
-- $el <code>HTMLElement</code>
+| Param | Type |
+| --- | --- |
+| $el | <code>HTMLElement</code> | 
 
 <a name="module_router..Router+getChildRouters"></a>
 
@@ -149,6 +154,30 @@ Resolves router
 #### router.getParams() ⇒ <code>Object</code>
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
 **Returns**: <code>Object</code> - URL query parameters  
+<a name="module_router..Router+setParams"></a>
+
+#### router.setParams(queryParams, navigationParams)
+Set new query parameters. Leave only provided parameters in query string
+
+**Kind**: instance method of [<code>Router</code>](#module_router..Router)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| queryParams | <code>Object</code> | URL query parameters |
+| navigationParams | <code>NavigationParams</code> | Navigation params |
+
+<a name="module_router..Router+updateParams"></a>
+
+#### router.updateParams(queryParams, navigationParams)
+Update query parameters. Overwrite if param exists, add if not
+
+**Kind**: instance method of [<code>Router</code>](#module_router..Router)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| queryParams | <code>Object</code> | URL query parameters |
+| navigationParams | <code>NavigationParams</code> | Navigation params |
+
 <a name="module_router..Router+useHash"></a>
 
 #### router.useHash() ⇒ <code>Boolean</code>
@@ -177,10 +206,11 @@ Indicates if router base matches current path
 Add route
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
-**Params**
 
-- path <code>String</code> - Path
-- callback <code>function</code> - Callback
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>String</code> | Path |
+| callback | <code>function</code> | Callback |
 
 <a name="module_router..Router+navigate"></a>
 
@@ -188,10 +218,11 @@ Add route
 Navigate to path
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
-**Params**
 
-- path <code>String</code> - Path relative to router base
-- params <code>NavigationParams</code> - Navigation params
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>String</code> | Path relative to router base |
+| params | <code>NavigationParams</code> | Navigation params |
 
 <a name="module_router..Router+getRoutes"></a>
 
@@ -205,10 +236,11 @@ Get routes
 Mount another router on subpath of current one
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
-**Params**
 
-- path <code>String</code> - Path
-- router <code>Router</code> - Router
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>String</code> | Path |
+| router | <code>Router</code> | Router |
 
 <a name="module_router..Router+unmount"></a>
 
@@ -216,9 +248,10 @@ Mount another router on subpath of current one
 Unmount child router
 
 **Kind**: instance method of [<code>Router</code>](#module_router..Router)  
-**Params**
 
-- router <code>Router</code> - Router
+| Param | Type | Description |
+| --- | --- | --- |
+| router | <code>Router</code> | Router |
 
 <a name="module_router..Router+destroy"></a>
 

@@ -220,10 +220,36 @@ Router.prototype.getParams = function(){
          ? this.getQs().split('&').reduce((acc, param) => {
            let [key, value] = param.split('=');
            return Object.assign(acc, {
-              [key]: value
+              [decodeURIComponent(key)]: value ? decodeURIComponent(value) : value
            });
          }, {})
          : {}
+}
+
+/**
+ *  Set new query parameters. Leave only provided parameters in query string
+ *  @method
+ *  @param {Object} queryParams URL query parameters
+ *  @param {NavigationParams} navigationParams Navigation params
+ * */
+Router.prototype.setParams = function(queryParams, navigationParams = {}){
+  let paramsString = Object.keys(queryParams).map((key) => {
+    return [encodeURIComponent(key), encodeURIComponent(queryParams[key])].join('=');
+  }).join('&');
+  return this.navigate(`?${paramsString}`, navigationParams);
+}
+
+/**
+ *  Update query parameters. Overwrite if param exists, add if not
+ *  @method
+ *  @param {Object} queryParams URL query parameters
+ *  @param {NavigationParams} navigationParams Navigation params
+ * */
+Router.prototype.updateParams = function(queryParams, navigationParams = {}){
+  return this.setParams(
+    Object.assign({}, this.getParams(), queryParams),
+    navigationParams
+  );
 }
 
 /**
@@ -232,7 +258,7 @@ Router.prototype.getParams = function(){
  *  @return {Boolean}
  * */
 Router.prototype.useHash = function(){
-  this.getRootRouter().hasAttribute('use-hash');
+  return this.getRootRouter().hasAttribute('use-hash');
 }
 
 /**

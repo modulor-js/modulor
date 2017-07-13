@@ -44,6 +44,26 @@ describe('Base functionality', () => {
     expect(router.getParams()).toEqual({ foo: 'bar', bar: 'baz' });
   });
 
+  it('sets params correctly', () => {
+    router.setParams({
+      baz: 'q'
+    });
+    expect(window.location.search).toEqual('?baz=q');
+
+    router.setParams({
+      foo: 'bla',
+      test: 'ok'
+    });
+    expect(window.location.search).toEqual('?foo=bla&test=ok');
+
+    router.updateParams({
+      foo: 'updated',
+      bla: 'added'
+    });
+
+    expect(window.location.search).toEqual('?foo=updated&test=ok&bla=added');
+  });
+
   it('returns absolute path correctly', () => {
     expect(router.getGlobalPath()).toEqual('/');
   });

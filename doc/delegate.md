@@ -24,9 +24,10 @@
 
 ### delegate.createDelegate ⇒ [<code>Delegate</code>](#Delegate)
 **Kind**: static constant of [<code>delegate</code>](#module_delegate)  
-**Params**
 
-- root <code>HTMLElement</code> - Delegate root
+| Param | Type | Description |
+| --- | --- | --- |
+| root | <code>HTMLElement</code> | Delegate root |
 
 <a name="module_delegate.delegate"></a>
 
@@ -51,12 +52,13 @@ Delegate instance with root of window.document
 Subscribe an event
 
 **Kind**: instance method of [<code>Delegate</code>](#Delegate)  
-**Params**
 
-- eventName <code>String</code> - Event name
-- element <code>HTMLElement</code> - Delegate node
-- selector <code>String</code> | <code>Null</code> - Selector
-- callback <code>function</code> - Callback
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>String</code> | Event name |
+| element | <code>HTMLElement</code> | Delegate node |
+| selector | <code>String</code> \| <code>Null</code> | Selector |
+| callback | <code>function</code> | Callback |
 
 <a name="Delegate+off"></a>
 
@@ -64,12 +66,13 @@ Subscribe an event
 Unsubscribe an event
 
 **Kind**: instance method of [<code>Delegate</code>](#Delegate)  
-**Params**
 
-- [eventName] <code>String</code> - Event name
-- [element] <code>HTMLElement</code> - Delegate node
-- [selector] <code>String</code> | <code>Null</code> - Selector
-- [callback] <code>function</code> - Callback
+| Param | Type | Description |
+| --- | --- | --- |
+| [eventName] | <code>String</code> | Event name |
+| [element] | <code>HTMLElement</code> | Delegate node |
+| [selector] | <code>String</code> \| <code>Null</code> | Selector |
+| [callback] | <code>function</code> | Callback |
 
 <a name="Delegate+setRoot"></a>
 
@@ -77,9 +80,10 @@ Unsubscribe an event
 Set delegate root
 
 **Kind**: instance method of [<code>Delegate</code>](#Delegate)  
-**Params**
 
-- newRoot <code>HTMLElement</code> - Delegate root
+| Param | Type | Description |
+| --- | --- | --- |
+| newRoot | <code>HTMLElement</code> | Delegate root |
 
 <a name="Delegate+destroy"></a>
 
