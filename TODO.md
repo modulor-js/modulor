@@ -22,6 +22,8 @@
 
 * ~~add setParam function~~
 
+* handle quesy params un hashmode (??)
+
 
 **delegate**
 
