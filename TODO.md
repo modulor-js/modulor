@@ -22,7 +22,9 @@
 
 * ~~add setParam function~~
 
-* handle quesy params un hashmode (??)
+* support custom query parser/builder
+
+* handle query params in hashmode (??)
 
 
 **delegate**
