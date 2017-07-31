@@ -16,7 +16,7 @@
 
 * ~~rewrite toArray according to tests https://jsperf.com/nodelist-to-array and https://jsperf.com/slice-call-vs-for-loop454545~~
 
-* implement mixins according to http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/ or similar
+* implement mixins according to http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/ or https://hacks.mozilla.org/2015/08/es6-in-depth-subclassing/ (check this one on transpileability) similar
 
 **router**
 
