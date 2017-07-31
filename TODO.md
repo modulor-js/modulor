@@ -1,6 +1,8 @@
 **core**
 
-* ?? extract acsesis_utils from ascesis.js 
+* extract dom_utils.js from ascesis.js, still export them from ascesis.js, mark them as deprecated
+
+* make dom_utils suitable for functional programming, implement currying of utils 
 
 * ~~put 'proxy files' on root level ([filename].js -> build/[filename].js, [filename].es6.js -> src/[filename].js)~~
 
