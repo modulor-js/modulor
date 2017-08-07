@@ -35,6 +35,8 @@
 
 * handle errors in handlers + tests
 
+* rename 'listeners' property of observed elements to something more uniq (e.g. __ascesis_delegate_listeners)
+
 **common**
 
 * refactor tests
