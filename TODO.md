@@ -37,6 +37,8 @@
 
 * rename 'listeners' property of observed elements to something more uniq (e.g. __ascesis_delegate_listeners)
 
+* handle .off('event') error when there are no listeners of this event
+
 **common**
 
 * refactor tests
