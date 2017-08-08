@@ -10,7 +10,9 @@
 
 * ~~add $ function which returns array of elements by selector~~
 
-* add $$ hash with refs
+* add $$ hash with refs (??)
+
+* .html() should return refs
 
 * ~~replace childComponents with getter, use DOM traverse~~
 
