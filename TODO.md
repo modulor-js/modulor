@@ -14,6 +14,8 @@
 
 * .html() should return refs
 
+* allow html() to take DocumentFragment as first argument
+
 * ~~replace childComponents with getter, use DOM traverse~~
 
 * remove QueriableArray class, remove querySelector[All] methods on child components
