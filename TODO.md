@@ -43,6 +43,8 @@
 
 * handle .off('event') error when there are no listeners of this event
 
+* fix stopPropagation() (addEventListener catches stopped events anyway)
+
 **common**
 
 * refactor tests
