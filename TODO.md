@@ -32,6 +32,8 @@
 
 * handle query params in hashmode (??)
 
+* fix bug with parameters update when there is no base (path gets removed)
+
 
 **delegate**
 
