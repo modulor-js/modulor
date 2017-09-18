@@ -7,6 +7,23 @@ import pathToRegexp from 'path-to-regexp';
 import { fireEvent, walkDOM } from './ascesis';
 
 
+const defaultParamsSerializer = {
+  parse(qs){
+    return !qs ? {} : qs.split('&').reduce((acc, param) => {
+      let [key, value] = param.split('=');
+      return Object.assign(acc, {
+        [decodeURIComponent(key)]: value ? decodeURIComponent(value) : value
+      });
+    }, {});
+  },
+  stringify(params){
+    return Object.keys(params).map((key) => {
+      return [encodeURIComponent(key), encodeURIComponent(params[key])].join('=');
+    }).join('&');
+  }
+};
+
+
 /**
  *  @class Route
  * */
@@ -77,13 +94,13 @@ Route.prototype.resolve = function(root){
 
 
 
-
-
 /**
  *  @class Router
  * */
-export function Router(options = {}){
+export function Router(options = {}, paramsSerializer = defaultParamsSerializer){
   this.options = options;
+
+  this.paramsSerializer = paramsSerializer;
 
   if(options.container){
     this.container = options.container;
@@ -216,14 +233,7 @@ Router.prototype.getQs = function(){
  *  @return {Object} URL query parameters
  * */
 Router.prototype.getParams = function(){
-  return this.getQs()
-         ? this.getQs().split('&').reduce((acc, param) => {
-           let [key, value] = param.split('=');
-           return Object.assign(acc, {
-              [decodeURIComponent(key)]: value ? decodeURIComponent(value) : value
-           });
-         }, {})
-         : {}
+  return this.paramsSerializer.parse(this.getQs());
 }
 
 /**
@@ -233,9 +243,7 @@ Router.prototype.getParams = function(){
  *  @param {NavigationParams} navigationParams Navigation params
  * */
 Router.prototype.setParams = function(queryParams, navigationParams = {}){
-  let paramsString = Object.keys(queryParams).map((key) => {
-    return [encodeURIComponent(key), encodeURIComponent(queryParams[key])].join('=');
-  }).join('&');
+  let paramsString = this.paramsSerializer.stringify(queryParams);
   return this.navigate(`?${paramsString}`, navigationParams);
 }
 

@@ -28,7 +28,7 @@
 
 * ~~add setParam function~~
 
-* support custom query parser/builder
+* ~~support custom query parser/builder~~
 
 * handle query params in hashmode (??)
 
