@@ -25,6 +25,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var defaultParamsSerializer = {
+  parse: function parse(qs) {
+    return !qs ? {} : qs.split('&').reduce(function (acc, param) {
+      var _param$split = param.split('='),
+          _param$split2 = _slicedToArray(_param$split, 2),
+          key = _param$split2[0],
+          value = _param$split2[1];
+
+      return _extends(acc, _defineProperty({}, decodeURIComponent(key), value ? decodeURIComponent(value) : value));
+    }, {});
+  },
+  stringify: function stringify(params) {
+    return Object.keys(params).map(function (key) {
+      return [encodeURIComponent(key), encodeURIComponent(params[key])].join('=');
+    }).join('&');
+  }
+};
+
 /**
  *  @class Route
  * */
@@ -109,8 +127,11 @@ function Router() {
   var _this2 = this;
 
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var paramsSerializer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : defaultParamsSerializer;
 
   this.options = options;
+
+  this.paramsSerializer = paramsSerializer;
 
   if (options.container) {
     this.container = options.container;
@@ -247,14 +268,7 @@ Router.prototype.getQs = function () {
  *  @return {Object} URL query parameters
  * */
 Router.prototype.getParams = function () {
-  return this.getQs() ? this.getQs().split('&').reduce(function (acc, param) {
-    var _param$split = param.split('='),
-        _param$split2 = _slicedToArray(_param$split, 2),
-        key = _param$split2[0],
-        value = _param$split2[1];
-
-    return _extends(acc, _defineProperty({}, decodeURIComponent(key), value ? decodeURIComponent(value) : value));
-  }, {}) : {};
+  return this.paramsSerializer.parse(this.getQs());
 };
 
 /**
@@ -266,9 +280,7 @@ Router.prototype.getParams = function () {
 Router.prototype.setParams = function (queryParams) {
   var navigationParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  var paramsString = Object.keys(queryParams).map(function (key) {
-    return [encodeURIComponent(key), encodeURIComponent(queryParams[key])].join('=');
-  }).join('&');
+  var paramsString = this.paramsSerializer.stringify(queryParams);
   return this.navigate('?' + paramsString, navigationParams);
 };
 
