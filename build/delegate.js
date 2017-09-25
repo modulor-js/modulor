@@ -3,6 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var matches = function matches(el, selector) {
+  return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+};
+
 /**
  *  @module delegate
  * */
@@ -61,7 +65,7 @@ var createDelegate = exports.createDelegate = function createDelegate() {
       var item = path[l];
       for (var _i = 0; _i < listenersPool.length; _i++) {
         var listener = listenersPool[_i];
-        if (listener.level === l && listener.selector === null || listener.level > l && item.matches(listener.selector)) {
+        if (listener.level === l && listener.selector === null || listener.level > l && matches(item, listener.selector)) {
           listener.callback.call(item, event, item);
           continue;
         }

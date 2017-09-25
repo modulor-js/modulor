@@ -1,3 +1,15 @@
+const matches = (el, selector) => {
+  return (
+    el.matches ||
+    el.matchesSelector ||
+    el.msMatchesSelector ||
+    el.mozMatchesSelector ||
+    el.webkitMatchesSelector ||
+    el.oMatchesSelector
+  ).call(el, selector);
+};
+
+
 /**
  *  @module delegate
  * */
@@ -53,7 +65,7 @@ export const createDelegate = (root = window.document) => {
       for(let i = 0; i < listenersPool.length; i++){
         let listener = listenersPool[i];
         if((listener.level === l && listener.selector === null) ||
-           (listener.level > l && item.matches(listener.selector))){
+           (listener.level > l && matches(item, listener.selector))){
           listener.callback.call(item, event, item);
           continue;
         }
