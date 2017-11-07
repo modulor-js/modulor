@@ -1,4 +1,4 @@
-let { fireEvent } = require('../src/ascesis');
+let { fireEvent } = require('../src/modulor');
 let { Router } = require('../src/router');
 
 

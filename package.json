@@ -1,15 +1,15 @@
 {
-  "name": "ascesis",
+  "name": "modulor",
   "version": "0.0.1",
   "description": "",
-  "main": "build/ascesis.js",
+  "main": "build/modulor.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:karma": "./node_modules/karma/bin/karma start",
     "build": "node node_modules/babel-cli/bin/babel src --out-dir build",
     "build:watch": "npm run build -- --watch",
-    "doc": "jsdoc2md src/ascesis.js > doc/ascesis.md & jsdoc2md src/router.js > doc/router.md & jsdoc2md src/delegate.js > doc/delegate.md"
+    "doc": "jsdoc2md src/modulor.js > doc/modulor.md & jsdoc2md src/router.js > doc/router.md & jsdoc2md src/delegate.js > doc/delegate.md"
   },
   "author": "",
   "license": "ISC",

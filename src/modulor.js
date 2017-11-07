@@ -1,6 +1,6 @@
 /**
- * Ascesis library
- * @module ascesis
+ * Modulor library
+ * @module modulor
  * */
 
 
@@ -142,21 +142,21 @@ export function html(htmlString, target){
 }
 
 /**
- *  Extend component class with ascesis methods
+ *  Extend component class with modulor methods
  *  @param {Class} baseClass Component class
- *  @return {AscesisComponent} Extended component class
+ *  @return {ModulorComponent} Extended component class
  * */
 export function extend(baseClass){
   return class extends baseClass {
     /**
-     *  @constructs AscesisComponent
+     *  @constructs ModulorComponent
      *  @inner
      * */
     constructor(){
       super();
     }
 
-    get __isAscesis(){
+    get __isModulor(){
       return true;
     }
 
@@ -164,28 +164,28 @@ export function extend(baseClass){
      *  *Getter*.
      *  List of child components.
      *  **Use only for debug purposes due to low efficiency**
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
-     *  @type {Array.<AscesisComponent>}
+     *  @type {Array.<ModulorComponent>}
      *  @category debug
      */
     get childComponents(){
-      return walkDOM(this, (node) => node.__isAscesis, (node) => node.__isAscesis);
+      return walkDOM(this, (node) => node.__isModulor, (node) => node.__isModulor);
     }
 
     /**
      *  *Getter*.
      *  Parent component.
      *  **Use only for debug purposes due to low efficiency**
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
-     *  @type {AscesisComponent}
+     *  @type {ModulorComponent}
      *  @category debug
      */
     get parentComponent(){
       let parent = this;
       while(parent = parent.parentNode){
-        if(parent.__isAscesis){
+        if(parent.__isModulor){
           break;
         }
       }
@@ -195,7 +195,7 @@ export function extend(baseClass){
     //debug highlighting
     /**
      *  Toggle debug class on component
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category debug
      */
@@ -205,7 +205,7 @@ export function extend(baseClass){
 
     /**
      *  Toggle debug class on component and child components
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category debug
      */
@@ -220,7 +220,7 @@ export function extend(baseClass){
 
     /**
      *  Select nodes
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} selector Selector
@@ -232,7 +232,7 @@ export function extend(baseClass){
 
     /**
      *  Get/set element attribute
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} key Attribute name
@@ -245,7 +245,7 @@ export function extend(baseClass){
 
     /**
      *  Add a class to the element
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} className Class name
@@ -256,7 +256,7 @@ export function extend(baseClass){
 
     /**
      *  Remove a class from the element
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} className Class name
@@ -267,7 +267,7 @@ export function extend(baseClass){
 
     /**
      *  Toggle a class at the element
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} className Class name
@@ -278,7 +278,7 @@ export function extend(baseClass){
 
     /**
      *  Check if the element has a class
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} className Class name
@@ -289,7 +289,7 @@ export function extend(baseClass){
 
     /**
      *  Set the HTML content of element
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category DOM API
      *  @param {String} htmlString HTML content string
@@ -304,7 +304,7 @@ export function extend(baseClass){
     //events
     /**
      *  Subscribe an event
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category events
      *  @param {String} eventName Event name
@@ -323,7 +323,7 @@ export function extend(baseClass){
      *  Unsubscribe an event
      *  Unsibscribe all events when called without arguments
      *  Unsibscribe all events by selector when called without *selector* argument
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category events
      *  @param {String} [eventName] Event name
@@ -340,7 +340,7 @@ export function extend(baseClass){
 
     /**
      *  Fires an event on element
-     *  @memberof AscesisComponent
+     *  @memberof ModulorComponent
      *  @instance
      *  @category events
      *  @param {String} eventName Event name

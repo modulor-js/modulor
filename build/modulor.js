@@ -21,8 +21,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Ascesis library
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module ascesis
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Modulor library
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module modulor
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * */
 
 /**
@@ -179,9 +179,9 @@ function _html(htmlString, target) {
 }
 
 /**
- *  Extend component class with ascesis methods
+ *  Extend component class with modulor methods
  *  @param {Class} baseClass Component class
- *  @return {AscesisComponent} Extended component class
+ *  @return {ModulorComponent} Extended component class
  * */
 exports.html = _html;
 function extend(baseClass) {
@@ -189,7 +189,7 @@ function extend(baseClass) {
     _inherits(_class, _baseClass);
 
     /**
-     *  @constructs AscesisComponent
+     *  @constructs ModulorComponent
      *  @inner
      * */
     function _class() {
@@ -205,7 +205,7 @@ function extend(baseClass) {
       //debug highlighting
       /**
        *  Toggle debug class on component
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category debug
        */
@@ -215,7 +215,7 @@ function extend(baseClass) {
 
       /**
        *  Toggle debug class on component and child components
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category debug
        */
@@ -233,7 +233,7 @@ function extend(baseClass) {
 
       /**
        *  Select nodes
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} selector Selector
@@ -248,7 +248,7 @@ function extend(baseClass) {
 
       /**
        *  Get/set element attribute
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} key Attribute name
@@ -264,7 +264,7 @@ function extend(baseClass) {
 
       /**
        *  Add a class to the element
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} className Class name
@@ -278,7 +278,7 @@ function extend(baseClass) {
 
       /**
        *  Remove a class from the element
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} className Class name
@@ -292,7 +292,7 @@ function extend(baseClass) {
 
       /**
        *  Toggle a class at the element
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} className Class name
@@ -306,7 +306,7 @@ function extend(baseClass) {
 
       /**
        *  Check if the element has a class
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} className Class name
@@ -320,7 +320,7 @@ function extend(baseClass) {
 
       /**
        *  Set the HTML content of element
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category DOM API
        *  @param {String} htmlString HTML content string
@@ -340,7 +340,7 @@ function extend(baseClass) {
       //events
       /**
        *  Subscribe an event
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category events
        *  @param {String} eventName Event name
@@ -362,7 +362,7 @@ function extend(baseClass) {
        *  Unsubscribe an event
        *  Unsibscribe all events when called without arguments
        *  Unsibscribe all events by selector when called without *selector* argument
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category events
        *  @param {String} [eventName] Event name
@@ -386,7 +386,7 @@ function extend(baseClass) {
 
       /**
        *  Fires an event on element
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
        *  @category events
        *  @param {String} eventName Event name
@@ -420,7 +420,7 @@ function extend(baseClass) {
       key: "attributeChangedCallback",
       value: function attributeChangedCallback() {}
     }, {
-      key: "__isAscesis",
+      key: "__isModulor",
       get: function get() {
         return true;
       }
@@ -429,9 +429,9 @@ function extend(baseClass) {
        *  *Getter*.
        *  List of child components.
        *  **Use only for debug purposes due to low efficiency**
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
-       *  @type {Array.<AscesisComponent>}
+       *  @type {Array.<ModulorComponent>}
        *  @category debug
        */
 
@@ -439,9 +439,9 @@ function extend(baseClass) {
       key: "childComponents",
       get: function get() {
         return walkDOM(this, function (node) {
-          return node.__isAscesis;
+          return node.__isModulor;
         }, function (node) {
-          return node.__isAscesis;
+          return node.__isModulor;
         });
       }
 
@@ -449,9 +449,9 @@ function extend(baseClass) {
        *  *Getter*.
        *  Parent component.
        *  **Use only for debug purposes due to low efficiency**
-       *  @memberof AscesisComponent
+       *  @memberof ModulorComponent
        *  @instance
-       *  @type {AscesisComponent}
+       *  @type {ModulorComponent}
        *  @category debug
        */
 
@@ -460,7 +460,7 @@ function extend(baseClass) {
       get: function get() {
         var parent = this;
         while (parent = parent.parentNode) {
-          if (parent.__isAscesis) {
+          if (parent.__isModulor) {
             break;
           }
         }

@@ -9,7 +9,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Ascesis router
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Modulor router
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * @module router
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * */
 
@@ -19,7 +19,7 @@ var _pathToRegexp = require('path-to-regexp');
 
 var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
 
-var _ascesis = require('./ascesis');
+var _modulor = require('./modulor');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -155,7 +155,7 @@ function Router() {
     return _this2.handleRouteChange();
   };
   this.onRouterNavigated = function (e) {
-    (0, _ascesis.fireEvent)('url-changed', window);
+    (0, _modulor.fireEvent)('url-changed', window);
     e.stopPropagation(); //strange!
   };
 
@@ -194,7 +194,7 @@ Router.prototype.isRouter = function ($el) {
 Router.prototype.getChildRouters = function () {
   var _this3 = this;
 
-  return (0, _ascesis.walkDOM)(this.container, function (child) {
+  return (0, _modulor.walkDOM)(this.container, function (child) {
     return _this3.isRouter(child) && child.router.rootMatches();
   }, this.isRouter);
 };
@@ -380,7 +380,7 @@ Router.prototype.navigate = function (path) {
   } else {
     window.history[params.replace ? 'replaceState' : 'pushState'](null, null, newPath);
   }
-  !params.silent && (0, _ascesis.fireEvent)('router-navigated', this.container);
+  !params.silent && (0, _modulor.fireEvent)('router-navigated', this.container);
 };
 
 /**

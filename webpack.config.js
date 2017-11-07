@@ -8,7 +8,7 @@ module.exports = {
   context: CLIENT_DIR,
   entry: {
     'router': './router.js',
-    'ascesis': ['./ascesis.js']
+    'modulor': ['./modulor.js']
   },
   output: {
     path: OUTPUT_DIR,
