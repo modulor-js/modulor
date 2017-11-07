@@ -6,14 +6,14 @@ module.exports = function(config) {
 
     preprocessors: {
       'src/**/*.js': ['webpack'],
-      'test/**/*_spec.js': ['webpack'],
+      'test/**/*.test.js': ['webpack'],
     },
 
     files: [
       'node_modules/document-register-element/build/document-register-element.js',
-      'test/**/ascesis_spec.js',
-      'test/**/router_spec.js',
-      'test/**/delegate_spec.js',
+      'test/**/modulor.test.js',
+      'test/**/router.test.js',
+      'test/**/delegate.test.js',
     ],
 
     client: {

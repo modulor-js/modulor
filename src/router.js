@@ -1,10 +1,10 @@
 /**
- * Ascesis router
+ * Modulor router
  * @module router
  * */
 
 import pathToRegexp from 'path-to-regexp';
-import { fireEvent, walkDOM } from './ascesis';
+import { fireEvent, walkDOM } from './modulor';
 
 
 const defaultParamsSerializer = {

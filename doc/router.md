@@ -1,7 +1,7 @@
 <a name="module_router"></a>
 
 ## router
-Ascesis router
+Modulor router
 
 
 * [router](#module_router)

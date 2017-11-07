@@ -1,7 +1,7 @@
 //customElements
 require('document-register-element');
 
-let { BaseComponent, BaseController, toArray, extend } = require('../src/ascesis');
+let { BaseComponent, BaseController, toArray, extend } = require('../src/modulor');
 
 
 describe('Single component functionality', () => {

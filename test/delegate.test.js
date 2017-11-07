@@ -1,5 +1,5 @@
 let { delegate, createDelegate } = require('../src/delegate');
-let { fireEvent } = require('../src/ascesis');
+let { fireEvent } = require('../src/modulor');
 
 describe('Delegation', () => {
   let container = document.createElement('div');
