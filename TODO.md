@@ -14,7 +14,7 @@
 
 * .html() should return refs
 
-* allow html() to take DocumentFragment as first argument
+* allow html() to take DocumentFragment as first argument [#10](holidaypirates/modulor#10)
 
 * ~~replace childComponents with getter, use DOM traverse~~
 
