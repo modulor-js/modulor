@@ -1,7 +1,7 @@
 //customElements
-require('document-register-element');
+import 'document-register-element';
 
-let { BaseComponent, BaseController, toArray, extend } = require('../src/modulor');
+import { BaseComponent, BaseController, toArray, extend } from '../src/modulor';
 
 
 describe('Single component functionality', () => {
@@ -29,13 +29,13 @@ describe('Single component functionality', () => {
       </div>
     `;
     component.html(fixture);
-    expect(component.innerHTML, fixture);
+    expect(component.innerHTML).toEqual(fixture);
   });
 
   it('$ function works correctly', () => {
     let result = component.$('[data-test="bar"], span');
-    expect(result instanceof Array, true);
-    expect(result.length, 2);
+    expect(result instanceof Array).toBe(true);
+    expect(result.length).toBe(2);
   });
 
   it('attr function works correctly', () => {

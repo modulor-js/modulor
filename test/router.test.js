@@ -1,5 +1,5 @@
-let { fireEvent } = require('../src/modulor');
-let { Router } = require('../src/router');
+import { fireEvent } from '../src/modulor';
+import { Router } from '../src/router';
 
 
 describe('Base functionality', () => {
@@ -166,13 +166,13 @@ describe('Mount on subpath', () => {
   });
 
   it('returns relative path correctly', () => {
-    expect(router.getPath(), false);
+    expect(router.getPath()).toBe(false);
     window.history.replaceState(null, null, '/subpath');
-    expect(router.getPath(), '');
+    expect(router.getPath()).toBe('');
     window.history.replaceState(null, null, '/subpath/bar');
-    expect(router.getPath(), '/bar');
+    expect(router.getPath()).toBe('/bar');
     window.history.replaceState(null, null, '/subpath_/foo');
-    expect(router.getPath(), false);
+    expect(router.getPath()).toBe(false);
   });
 
   it('navigates correctly', () => {
