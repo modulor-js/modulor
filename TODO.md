@@ -24,6 +24,9 @@
 
 * implement mixins according to http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/ or https://hacks.mozilla.org/2015/08/es6-in-depth-subclassing/ (check this one on transpileability) similar
 
+* implement attribute to property proxy like in skatejs
+```
+
 **router**
 
 * ~~add setParam function~~
