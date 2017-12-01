@@ -1,8 +1,8 @@
 //customElements
-import 'document-register-element';
+//import 'document-register-element';
+import 'custom-elements-jest';
 
 import { BaseComponent, BaseController, toArray, extend } from '../src/modulor';
-
 
 describe('Single component functionality', () => {
 
@@ -10,12 +10,7 @@ describe('Single component functionality', () => {
 
   customElements.define('my-test-component', BaseComponent);
 
-  beforeAll((done) => {
-    customElements.whenDefined('my-test-component').then(() => {
-      component = document.createElement('my-test-component');
-      done();
-    });
-  });
+  component = document.createElement('my-test-component');
 
   it('html function works correctly', () => {
     const fixture = `
@@ -127,15 +122,6 @@ describe('Complex functionality', () => {
       [component_name]: container.querySelectorAll(component_name)
     });
   }, {});
-
-  beforeAll((done) => {
-    let promises = Object.keys(components_map).map((component_name) => {
-      return customElements.whenDefined(component_name);
-    });
-    Promise.all(promises).then(() => {
-      done();
-    });
-  });
 
 
   it('creates child components correctly', () => {

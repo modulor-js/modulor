@@ -20,6 +20,7 @@
     "babel-preset-es2015": "^6.24.1",
     "chai": "^3.5.0",
     "chai-spies": "^0.7.1",
+    "custom-elements-jest": "github:nogizhopaboroda/custom-elements",
     "document-register-element": "^1.7.0",
     "jest": "^21.2.1",
     "karma": "^1.3.0",
