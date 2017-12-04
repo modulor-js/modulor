@@ -8,44 +8,98 @@ describe('Dom utils module', () => {
 
   const component = document.createElement('div');
 
-  it('html function works correctly', () => {
-    const fixture = `
-      <div class="foo" data-test="bar">
-        <div>
-          <span>test</span>
+  describe('html()', () => {
+    it('html function works correctly', () => {
+      const fixture = `
+        <div class="foo" data-test="bar">
+          <div>
+            <span>test</span>
+          </div>
         </div>
-      </div>
-      <div>
-        test 2
-      </div>
-    `;
-    html(fixture, component);
-    expect(component.innerHTML).toEqual(fixture);
+        <div>
+          test 2
+        </div>
+      `;
+      html(fixture, component);
+      expect(component.innerHTML).toEqual(fixture);
+    });
   });
 
-  it('$ function works correctly', () => {
-    let result = $('[data-test="bar"], span', component);
-    expect(result instanceof Array).toBe(true);
-    expect(result.length).toBe(2);
+  describe('$()', () => {
+    const selector = '[data-test="bar"], span';
+
+    it('classic', () => {
+      const result = $(component, selector);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(2);
+    });
+
+    it('functional', () => {
+      const fn = $(component);
+      expect(fn).toBeInstanceOf(Function);
+      const result = fn(selector);
+      expect(result).toHaveLength(2);
+    });
   });
 
-  it('attr function works correctly', () => {
-    attr(component, 'foo', 'bar');
-    expect(attr(component, 'foo')).toEqual('bar');
-    attr(component, 'foo', null);
-    expect(component.hasAttribute('foo')).toEqual(false);
+  describe('attr()', () => {
+    it('classic', () => {
+      const $el = attr('foo', 'bar', component);
+      expect($el).toBe(component);
+      expect(attr('foo', component)).toEqual('bar');
+      attr('foo', null, component);
+      expect(component.hasAttribute('foo')).toEqual(false);
+    });
+
+    it('functional', () => {
+      const fnSetter = attr('foo', 'bar');
+      const fnGetter = attr('foo');
+      expect(fnSetter).toBeInstanceOf(Function);
+      expect(fnGetter).toBeInstanceOf(Function);
+      const $el = fnSetter(component);
+      expect($el).toBe(component);
+      expect(component.getAttribute('foo')).toBe('bar');
+      expect(fnGetter(component)).toBe('bar');
+    });
   });
 
-  it('class functions works correctly', () => {
-    addClass(component, 'foo');
-    expect(component.classList.contains('foo')).toEqual(true);
-    removeClass(component, 'foo');
-    expect(component.classList.contains('foo')).toEqual(false);
-    toggleClass(component, 'foo');
-    expect(component.classList.contains('foo')).toEqual(true);
-    expect(component.classList.contains('foo')).toEqual(hasClass(component, 'foo'));
-    toggleClass(component, 'foo');
-    expect(component.classList.contains('foo')).toEqual(false);
+  describe('class functions', () => {
+    it('classic', () => {
+      addClass('foo', component);
+      expect(component.classList.contains('foo')).toEqual(true);
+
+      expect(removeClass('foo', component)).toBe(component);
+      expect(component.classList.contains('foo')).toEqual(false);
+
+      expect(toggleClass('foo', component)).toBe(component);
+      expect(component.classList.contains('foo')).toEqual(true);
+      expect(hasClass('foo', component)).toBe(true);
+      toggleClass('foo', component);
+      expect(component.classList.contains('foo')).toEqual(false);
+      expect(hasClass('foo', component)).toBe(false);
+    });
+
+    it('functional', () => {
+      const fnAdd = addClass('bar');
+      expect(fnAdd).toBeInstanceOf(Function);
+      expect(fnAdd(component)).toBe(component);
+      expect(component.classList.contains('bar')).toEqual(true);
+
+      const fnRemove = removeClass('bar');
+      expect(fnRemove).toBeInstanceOf(Function);
+      expect(fnRemove(component)).toBe(component);
+      expect(component.classList.contains('bar')).toEqual(false);
+
+      const fnToggle = toggleClass('bar');
+      const fnHas = hasClass('bar');
+      expect(fnToggle).toBeInstanceOf(Function);
+      expect(fnToggle(component)).toBe(component);
+      expect(component.classList.contains('bar')).toEqual(true);
+      expect(fnHas(component)).toBe(true);
+      fnToggle(component);
+      expect(component.classList.contains('bar')).toEqual(false);
+      expect(fnHas(component)).toBe(false);
+    });
   });
 
   it('triggers events correctly', () => {

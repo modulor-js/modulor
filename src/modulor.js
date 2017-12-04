@@ -18,7 +18,7 @@ import * as domUtils from './dom_utils';
  *  @param {HTMLElement} [element=window.document] Element
  *  @return {Array} Collection of nodes
  * */
-export const $ = (selector, element) => domUtils.$(selector, element);
+export const $ = (selector, element) => domUtils.$(element, selector);
 
 
 /**
@@ -35,7 +35,7 @@ export const toArray = (nodes) => domUtils.toArray(nodes);
  *  @param {String} [value] Attribute value
  *  @return {String} Attribute value
  * */
-export const attr = (element, key, value) => domUtils.attr(element, key, value);
+export const attr = (element, key, value) => domUtils.attr(key, value, element);
 
 /**
  *  Set the HTML content of element, or generate DocumentFragment
@@ -52,7 +52,7 @@ export const html = (htmlString, target) => domUtils.html(htmlString, target);
  *  @param {String} className Class name
  * */
 export const addClass = (element, className) =>
-  domUtils.addClass(element, className);
+  domUtils.addClass(className, element);
 
 /**
  *  Remove a class from the element
@@ -60,7 +60,7 @@ export const addClass = (element, className) =>
  *  @param {String} className Class name
  * */
 export const removeClass = (element, className) =>
-  domUtils.removeClass(element, className);
+  domUtils.removeClass(className, element);
 
 /**
  *  Toggle a class at the element
@@ -68,14 +68,14 @@ export const removeClass = (element, className) =>
  *  @param {String} className Class name
  * */
 export const toggleClass = (element, className) =>
-  domUtils.toggleClass(element, className);
+  domUtils.toggleClass(className, element);
 
 /**
  *  Check if the element has a class
  *  @param {HTMLElement} element Element
  *  @param {String} className Class name
  * */
-export const hasClass = (element, className) => domUtils.hasClass(element, className);
+export const hasClass = (element, className) => domUtils.hasClass(className, element);
 
 /**
  *  Fires an event on element
@@ -183,7 +183,7 @@ export function extend(baseClass){
      *  @return {Array} Collection of nodes
      */
     $(selector){
-      return domUtils.$(selector, this);
+      return domUtils.$(this, selector);
     }
 
     /**
@@ -196,7 +196,7 @@ export function extend(baseClass){
      *  @return {String} Attribute value
      * */
     attr(key, value){
-      return domUtils.attr(this, key, value);
+      return domUtils.attr(key, value, this);
     }
 
     /**
@@ -207,7 +207,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     addClass(className){
-      return domUtils.addClass(this, className);
+      return domUtils.addClass(className, this);
     }
 
     /**
@@ -218,7 +218,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     removeClass(className){
-      return domUtils.removeClass(this, className);
+      return domUtils.removeClass(className, this);
     }
 
     /**
@@ -229,7 +229,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     toggleClass(className){
-      return domUtils.toggleClass(this, className);
+      return domUtils.toggleClass(className, this);
     }
 
     /**
@@ -240,7 +240,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     hasClass(className){
-      return domUtils.hasClass(this, className);
+      return domUtils.hasClass(className, this);
     }
 
     /**

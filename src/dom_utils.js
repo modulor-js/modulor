@@ -1,14 +1,4 @@
 /**
- *  Select nodes
- *  @param {String} selector Selector
- *  @param {HTMLElement} [element=window.document] Element
- *  @return {Array} Collection of nodes
- * */
-export function $(selector, element = document){
-  return toArray(element.querySelectorAll(selector));
-}
-
-/**
  *  Converts NodeList to array
  *  @param {NodeList} nodes Elements collection
  *  @return {Array} Collection of nodes
@@ -22,56 +12,92 @@ export function toArray(nodes){
 }
 
 /**
+ *  Select nodes
+ *  @param {HTMLElement} Element
+ *  @param {String} [selector] Selector
+ *  @return {Function|Array} Curried function (if selector is not provided) or collection of nodes
+ * */
+export function $(element, selector){
+  const fn = (selector) => toArray(element.querySelectorAll(selector));
+  return selector ? fn(selector) : fn;
+}
+
+/**
  *  Get/set element attribute
- *  @param {HTMLElement} element Element
  *  @param {String} key Attribute name
  *  @param {String} [value] Attribute value
- *  @return {String} Attribute value
+ *  @param {HTMLElement} [element] Element
+ *  @return {Function|String|HTMLElement} Curried function (if element is not provided) or attribute value
  * */
-export function attr(element, key, value){
-  if(value){
-    return element.setAttribute(key, value);
+export function attr(key, value, element){
+  if(!element && value instanceof HTMLElement){
+    element = value;
+    value = undefined;
   }
-  if(value === null){
-    return element.removeAttribute(key);
+  const fn = (element) => {
+    if(value){
+      element.setAttribute(key, value);
+      return element;
+    }
+    if(value === null){
+      return element.removeAttribute(key);
+    }
+    return element.getAttribute(key);
   }
-  return element.getAttribute(key);
+  return element ? fn(element) : fn;
 }
 
 /**
  *  Add a class to the element
- *  @param {HTMLElement} element Element
  *  @param {String} className Class name
+ *  @param {HTMLElement} [element] Element
+ *  @return {Function|HTMLElement} Curried function (if element is not provided) or element
  * */
-export function addClass(element, className){
-  return element.classList.add(className);
+export function addClass(className, element){
+  const fn = (element) => {
+    element.classList.add(className);
+    return element;
+  }
+  return element ? fn(element) : fn;
 }
 
 /**
  *  Remove a class from the element
- *  @param {HTMLElement} element Element
  *  @param {String} className Class name
+ *  @param {HTMLElement} [element] Element
+ *  @return {Function|HTMLElement} Curried function (if element is not provided) or element
  * */
-export function removeClass(element, className){
-  return element.classList.remove(className);
+export function removeClass(className, element){
+  const fn = (element) => {
+    element.classList.remove(className)
+    return element;
+  };
+  return element ? fn(element) : fn;
 }
 
 /**
  *  Toggle a class at the element
- *  @param {HTMLElement} element Element
  *  @param {String} className Class name
+ *  @param {HTMLElement} [element] Element
+ *  @return {Function|HTMLElement} Curried function (if element is not provided) or element
  * */
-export function toggleClass(element, className){
-  return element.classList.toggle(className);
+export function toggleClass(className, element){
+  const fn = (element) => {
+    element.classList.toggle(className);
+    return element;
+  }
+  return element ? fn(element) : fn;
 }
 
 /**
  *  Check if the element has a class
- *  @param {HTMLElement} element Element
  *  @param {String} className Class name
+ *  @param {HTMLElement} element Element
+ *  @return {Function|Boolean} Curried function (if element is not provided) or boolean
  * */
-export function hasClass(element, className){
-  return element.classList.contains(className);
+export function hasClass(className, element){
+  const fn = (element) => element.classList.contains(className);
+  return element ? fn(element) : fn;
 }
 
 

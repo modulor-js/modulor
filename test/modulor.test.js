@@ -25,7 +25,7 @@ describe('Dom utils proxy functions', () => {
   it('$ function', () => {
     const spy = jest.spyOn(domUtils, '$');
     $('div', $element);
-    expect(spy).toHaveBeenCalledWith('div', $element);
+    expect(spy).toHaveBeenCalledWith($element, 'div');
   });
 
   it('toArray function', () => {
@@ -38,7 +38,7 @@ describe('Dom utils proxy functions', () => {
   it('attr function', () => {
     const spy = jest.spyOn(domUtils, 'attr');
     attr($element, 'foo', 'bar');
-    expect(spy).toHaveBeenCalledWith($element, 'foo', 'bar');
+    expect(spy).toHaveBeenCalledWith('foo', 'bar', $element);
   });
 
   it('html function', () => {
@@ -50,25 +50,25 @@ describe('Dom utils proxy functions', () => {
   it('addClass function', () => {
     const spy = jest.spyOn(domUtils, 'addClass');
     addClass($element, 'foo');
-    expect(spy).toHaveBeenCalledWith($element, 'foo');
+    expect(spy).toHaveBeenCalledWith('foo', $element);
   });
 
   it('removeClass function', () => {
     const spy = jest.spyOn(domUtils, 'removeClass');
     removeClass($element, 'foo');
-    expect(spy).toHaveBeenCalledWith($element, 'foo');
+    expect(spy).toHaveBeenCalledWith('foo', $element);
   });
 
   it('toggleClass function', () => {
     const spy = jest.spyOn(domUtils, 'toggleClass');
     toggleClass($element, 'foo');
-    expect(spy).toHaveBeenCalledWith($element, 'foo');
+    expect(spy).toHaveBeenCalledWith('foo', $element);
   });
 
   it('hasClass function', () => {
     const spy = jest.spyOn(domUtils, 'hasClass');
     hasClass($element, 'foo');
-    expect(spy).toHaveBeenCalledWith($element, 'foo');
+    expect(spy).toHaveBeenCalledWith('foo', $element);
   });
 
   it('fireEvent function', () => {
