@@ -1,8 +1,8 @@
 //customElements
-require('document-register-element');
+//import 'document-register-element';
+import 'custom-elements-jest';
 
-let { BaseComponent, BaseController, toArray, extend } = require('../src/modulor');
-
+import { BaseComponent, BaseController, toArray, extend } from '../src/modulor';
 
 describe('Single component functionality', () => {
 
@@ -10,12 +10,7 @@ describe('Single component functionality', () => {
 
   customElements.define('my-test-component', BaseComponent);
 
-  beforeAll((done) => {
-    customElements.whenDefined('my-test-component').then(() => {
-      component = document.createElement('my-test-component');
-      done();
-    });
-  });
+  component = document.createElement('my-test-component');
 
   it('html function works correctly', () => {
     const fixture = `
@@ -29,13 +24,13 @@ describe('Single component functionality', () => {
       </div>
     `;
     component.html(fixture);
-    expect(component.innerHTML, fixture);
+    expect(component.innerHTML).toEqual(fixture);
   });
 
   it('$ function works correctly', () => {
     let result = component.$('[data-test="bar"], span');
-    expect(result instanceof Array, true);
-    expect(result.length, 2);
+    expect(result instanceof Array).toBe(true);
+    expect(result.length).toBe(2);
   });
 
   it('attr function works correctly', () => {
@@ -127,15 +122,6 @@ describe('Complex functionality', () => {
       [component_name]: container.querySelectorAll(component_name)
     });
   }, {});
-
-  beforeAll((done) => {
-    let promises = Object.keys(components_map).map((component_name) => {
-      return customElements.whenDefined(component_name);
-    });
-    Promise.all(promises).then(() => {
-      done();
-    });
-  });
 
 
   it('creates child components correctly', () => {
