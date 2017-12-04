@@ -1,5 +1,5 @@
 import {
-  html, $, attr,
+  html, $, createElement, attr,
   addClass, removeClass, toggleClass, hasClass,
   fireEvent, walkDOM
 } from '../src/dom_utils';
@@ -102,19 +102,36 @@ describe('Dom utils module', () => {
     });
   });
 
-  it('triggers events correctly', () => {
-    let handler = jest.fn();
-    component.addEventListener('test-event', handler);
-    fireEvent('test-event', component);
-    expect(handler).toHaveBeenCalledTimes(1);
+  describe('events', () => {
+    it('triggers events correctly', () => {
+      let handler = jest.fn();
+      component.addEventListener('test-event', handler);
+      fireEvent('test-event', component);
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('passes event data correctly', () => {
+      let data;
+      let handler = jest.fn(({eventData}) => { data = eventData });
+      component.addEventListener('test-event', handler);
+      fireEvent('test-event', component, { foo: 'bar' });
+      expect(data).toEqual({ foo: 'bar' });
+    });
   });
 
-  it('passes event data correctly', () => {
-    let data;
-    let handler = jest.fn(({eventData}) => { data = eventData });
-    component.addEventListener('test-event', handler);
-    fireEvent('test-event', component, { foo: 'bar' });
-    expect(data).toEqual({ foo: 'bar' });
+  it('createElement()', () => {
+    const $element = createElement('input', {
+      foo: 'bar',
+      value: 'test'
+    });
+
+    expect($element).toBeInstanceOf(HTMLElement);
+
+    expect($element.getAttribute('value')).toBe(null);
+    expect($element.value).toBe('test');
+
+    expect($element.getAttribute('foo')).toBe('bar');
+    expect($element.foo).toBeUndefined();
   });
 
 });

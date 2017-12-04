@@ -158,3 +158,24 @@ export function html(htmlString, target){
   }
   return fragment;
 }
+
+
+
+
+/**
+ *  creates HTML Element
+ *  @param {String} name tag name
+ *  @param {Object} [attributes] element attributes
+ *  @return {HTMLElement} created element
+ * */
+export function createElement(name, attributes){
+  const $el = document.createElement(name);
+  Object.keys(attributes).forEach((attr) => {
+    if (attr in $el) {
+      $el[attr] = attributes[attr];
+    } else {
+      $el.setAttribute(attr, attributes[attr]);
+    }
+  });
+  return $el;
+};
