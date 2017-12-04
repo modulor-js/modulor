@@ -44,7 +44,7 @@ export const attr = (element, key, value) => domUtils.attr(key, value, element);
  *  @return {HTMLElement|DocumentFragment}
  *    Target if target parameter is set or document fragment
  * */
-export const html = (htmlString, target) => domUtils.html(htmlString, target);
+export const html = (htmlString, target) => domUtils.html(target, htmlString)[0];
 
 /**
  *  Add a class to the element
@@ -254,7 +254,7 @@ export function extend(baseClass){
      *    Target if target parameter is set or document fragment
      * */
     html(html_string, $el = this){
-      domUtils.html(html_string, $el);
+      return domUtils.html($el, html_string)[1];
     }
 
     //events

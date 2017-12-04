@@ -44,7 +44,10 @@ describe('Dom utils proxy functions', () => {
   it('html function', () => {
     const spy = jest.spyOn(domUtils, 'html');
     html('ok', $element);
-    expect(spy).toHaveBeenCalledWith('ok', $element);
+    expect(spy).toHaveBeenCalledWith($element, 'ok');
+
+    const result = html('<span></span>');
+    expect(result).toBeInstanceOf(DocumentFragment);
   });
 
   it('addClass function', () => {
@@ -97,24 +100,22 @@ describe('Single component functionality', () => {
   component = document.createElement('my-test-component');
 
   it('html function works correctly', () => {
-    const fixture = `
-      <div class="foo" data-test="bar">
+    const fixture = `<div class="foo" data-test="bar">
         <div>
           <span>test</span>
         </div>
-      </div>
-      <div>
+      </div><div>
         test 2
-      </div>
-    `;
-    component.html(fixture);
+      </div>`;
+    const refs = component.html(fixture);
     expect(component.innerHTML).toEqual(fixture);
+    expect(refs).toBeInstanceOf(Object);
   });
 
   it('$ function works correctly', () => {
     let result = component.$('[data-test="bar"], span');
-    expect(result instanceof Array).toBe(true);
-    expect(result.length).toBe(2);
+    expect(result).toBeInstanceOf(Array);
+    expect(result).toHaveLength(2);
   });
 
   it('attr function works correctly', () => {

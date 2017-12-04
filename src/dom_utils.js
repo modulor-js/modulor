@@ -100,6 +100,34 @@ export function hasClass(className, element){
   return element ? fn(element) : fn;
 }
 
+/**
+ *  appends one HTML Element to another HTML Element
+ *  @param {HTMLElement} parent element to attach to
+ *  @param {HTMLElement} [element] new node
+ *  @return {HTMLElement|Function} parent
+ * */
+export function append(parent, element){
+  const fn = (element) => {
+    parent.appendChild(element);
+    return parent;
+  };
+  return element ? fn(element) : fn;
+};
+
+/**
+ *  prepends one HTML Element to another HTML Element
+ *  @param {HTMLElement} parent element to attach to
+ *  @param {HTMLElement} [element] new node
+ *  @return {HTMLElement|Function} parent
+ * */
+export function prepend(parent, element){
+  const fn = (element) => {
+    parent.insertBefore(element, parent.firstChild);
+    return parent;
+  };
+  return element ? fn(element) : fn;
+};
+
 
 /**
  *  Traverse DOM node
@@ -135,31 +163,77 @@ export function fireEvent(eventName, target, eventData = null){
   }
   event.eventData = eventData;
   target.dispatchEvent(event);
-}
+};
 
 /**
  *  Set the HTML content of element, or generate DocumentFragment
- *  @param {String} htmlString HTML content string
  *  @param {HTMLElement} [target] Element to set content
- *  @return {HTMLElement|DocumentFragment}
- *    Target if target parameter is set or document fragment
+ *  @param {String} [htmlString] HTML content string
+ *  @return {Array|Function} tuple [target || DocumentFragment, refs object] or render function
  * */
-export function html(htmlString, target){
-  var fragment = document.createDocumentFragment();
-  var temp_container = document.createElement('div');
-  temp_container.innerHTML = htmlString;
-  while(temp_container.firstChild){
-    fragment.appendChild(temp_container.firstChild);
+export function html(target, htmlString){
+  const fn = (htmlString) => {
+    const fragment = isNode(htmlString) ? htmlString : toArray(
+      createElement('div', {}, htmlString).childNodes
+    ).reduce(append, document.createDocumentFragment());
+    const refs = getRefs(fragment);
+    return [
+      target ? append(empty(target), fragment) : fragment,
+      refs
+    ];
   }
-  if(target){
-    target.innerHTML = '';
-    target.appendChild(fragment);
-    return target;
+  if(typeof htmlString === 'undefined' && !isNode(target)){
+    htmlString = target;
+    target = undefined;
   }
-  return fragment;
-}
+  return htmlString ? fn(htmlString) : fn;
+};
 
 
+/**
+ *  Check if element is HTMLElement or DocumentFragment
+ *  @param {HTMLElement} element Element to check
+ *  @return {Boolean}
+ * */
+export function isNode(element){
+  return element instanceof HTMLElement || element instanceof DocumentFragment;
+};
+
+/**
+ *  Empty element
+ *  @param {HTMLElement} element Element to empty
+ *  @return {HTMLElement} element
+ * */
+export function empty(element){
+  element.innerHTML = '';
+  return element;
+};
+
+/**
+ *  Find refs
+ *  @param {HTMLElement} element Element to empty
+ *  @return {HTMLElement} element
+ * */
+export function getRefs(element){
+  const refGetter = attr('ref');
+  const refsGetter = attr('refs');
+  return walkDOM(
+    element,
+    ($el) => refGetter($el) || refsGetter($el),
+    ($el) => $el.__isModulor
+  ).reduce((accum, $el) => {
+    const ref = refGetter($el);
+    const refs = refsGetter($el);
+    if(refs){
+      return Object.assign(accum, {
+        [refs]: (accum[refs] || []).concat($el)
+      });
+    }
+    return Object.assign(accum, {
+      [ref]: $el
+    });
+  }, {})
+};
 
 
 /**
@@ -168,7 +242,7 @@ export function html(htmlString, target){
  *  @param {Object} [attributes] element attributes
  *  @return {HTMLElement} created element
  * */
-export function createElement(name, attributes){
+export function createElement(name, attributes, content){
   const $el = document.createElement(name);
   Object.keys(attributes).forEach((attr) => {
     if (attr in $el) {
@@ -177,5 +251,6 @@ export function createElement(name, attributes){
       $el.setAttribute(attr, attributes[attr]);
     }
   });
+  content && ($el.innerHTML = content);
   return $el;
 };

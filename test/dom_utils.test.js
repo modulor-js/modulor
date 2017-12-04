@@ -1,5 +1,5 @@
 import {
-  html, $, createElement, attr,
+  html, $, createElement, append, prepend, attr, getRefs,
   addClass, removeClass, toggleClass, hasClass,
   fireEvent, walkDOM
 } from '../src/dom_utils';
@@ -9,19 +9,52 @@ describe('Dom utils module', () => {
   const component = document.createElement('div');
 
   describe('html()', () => {
-    it('html function works correctly', () => {
-      const fixture = `
-        <div class="foo" data-test="bar">
-          <div>
-            <span>test</span>
-          </div>
-        </div>
+    const fixture = `<div class="foo" data-test="bar">
         <div>
-          test 2
+          <span>test</span>
         </div>
-      `;
-      html(fixture, component);
+      </div><div>
+        test 2
+      </div>`;
+
+    it('renders fragment from string', () => {
+      const $fragment = html(fixture)[0];
+      expect($fragment).toBeInstanceOf(DocumentFragment);
+      expect($fragment.childNodes).toHaveLength(2);
+    });
+
+    it('renders html into node', () => {
+      html(component, fixture);
       expect(component.innerHTML).toEqual(fixture);
+    });
+
+    it('takes node as 2nd argument', () => {
+      const $parent = document.createElement('div');
+      const $element = document.createElement('div');
+      html($parent, $element);
+      expect($parent.childNodes).toHaveLength(1);
+      expect($parent.firstChild).toEqual($element);
+    });
+
+    it('returns correct tuple', () => {
+      const $parent = document.createElement('div');
+      const result = html($parent, `
+        <div ref="single"></div>
+        <div refs="multiple"></div>
+      `);
+      expect(result).toHaveLength(2);
+      expect(result[0]).toBe($parent);
+      expect(result[1]).toEqual(expect.objectContaining({
+        single: expect.any(HTMLElement),
+        multiple: expect.any(Array),
+      }));
+    });
+
+    it('functional', () => {
+      const $parent = document.createElement('div');
+      const render = html($parent);
+      render(fixture);
+      expect($parent.innerHTML).toEqual(fixture);
     });
   });
 
@@ -119,6 +152,49 @@ describe('Dom utils module', () => {
     });
   });
 
+  describe('append()', () => {
+    it('classic', () => {
+      const $parent = document.createElement('div');
+      const $child = document.createElement('div');
+      const $child1 = document.createElement('div');
+      const $child2 = document.createElement('div');
+
+      expect(append($parent, $child)).toBe($parent);
+      expect($parent.firstChild).toBe($child);
+
+      prepend($parent, $child1);
+      expect($parent.firstChild).toBe($child1);
+
+      append($parent, $child2);
+      expect($parent.lastChild).toBe($child2);
+      expect($parent.children[1]).toBe($child);
+    });
+
+    it('functional', () => {
+      const $parent = document.createElement('div');
+      const $child = document.createElement('div');
+      const $child1 = document.createElement('div');
+      const $child2 = document.createElement('div');
+
+      const fnAppend = append($parent);
+      const fnPrepend = prepend($parent);
+
+      expect(fnAppend).toBeInstanceOf(Function);
+      expect(fnPrepend).toBeInstanceOf(Function);
+
+
+      expect(fnAppend($child)).toBe($parent);
+      expect($parent.firstChild).toBe($child);
+
+      expect(fnPrepend($child1)).toBe($parent);
+      expect($parent.firstChild).toBe($child1);
+
+      fnAppend($child2);
+      expect($parent.lastChild).toBe($child2);
+      expect($parent.children[1]).toBe($child);
+    });
+  });
+
   it('createElement()', () => {
     const $element = createElement('input', {
       foo: 'bar',
@@ -132,6 +208,32 @@ describe('Dom utils module', () => {
 
     expect($element.getAttribute('foo')).toBe('bar');
     expect($element.foo).toBeUndefined();
+  });
+
+  it('getRefs()', () => {
+    const fixture = `
+      <div ref="first-block">
+          <span refs="children"></span>
+          <span refs="children"></span>
+          <span refs="children"></span>
+      </div>
+      <div ref="second-block">
+        test 2
+      </div>
+    `;
+    const $fragment = document.createElement('div');
+    $fragment.innerHTML = fixture;
+    const $firstBlock = $fragment.querySelector('[ref="first-block"]');
+    const $secondBlock = $fragment.querySelector('[ref="second-block"]');
+    const $childrenList = $fragment.querySelectorAll('[refs="children"]');
+    const refs = getRefs($fragment);
+
+    expect(refs['first-block']).toBe($firstBlock);
+    expect(refs['second-block']).toBe($secondBlock);
+
+    expect(refs['children'][0]).toBe($childrenList[0]);
+    expect(refs['children'][1]).toBe($childrenList[1]);
+    expect(refs['children'][2]).toBe($childrenList[2]);
   });
 
 });
