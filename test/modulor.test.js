@@ -2,7 +2,91 @@
 //import 'document-register-element';
 import 'custom-elements-jest';
 
-import { BaseComponent, BaseController, toArray, extend } from '../src/modulor';
+import {
+  BaseComponent, BaseController, extend,
+  html, $, toArray, attr,
+  addClass, removeClass, toggleClass, hasClass,
+  fireEvent, walkDOM
+} from '../src/modulor';
+
+import * as domUtils from '../src/dom_utils';
+
+/**
+ *  @deprecated block. will be removed
+ * */
+describe('Dom utils proxy functions', () => {
+
+  const $element = document.createElement('div');
+  $element.innerHTML = `
+    <div></div>
+    <div></div>
+  `;
+
+  it('$ function', () => {
+    const spy = jest.spyOn(domUtils, '$');
+    $('div', $element);
+    expect(spy).toHaveBeenCalledWith('div', $element);
+  });
+
+  it('toArray function', () => {
+    const spy = jest.spyOn(domUtils, 'toArray');
+    const nodes = $('div', $element);
+    toArray(nodes);
+    expect(spy).toHaveBeenCalledWith(nodes);
+  });
+
+  it('attr function', () => {
+    const spy = jest.spyOn(domUtils, 'attr');
+    attr($element, 'foo', 'bar');
+    expect(spy).toHaveBeenCalledWith($element, 'foo', 'bar');
+  });
+
+  it('html function', () => {
+    const spy = jest.spyOn(domUtils, 'html');
+    html('ok', $element);
+    expect(spy).toHaveBeenCalledWith('ok', $element);
+  });
+
+  it('addClass function', () => {
+    const spy = jest.spyOn(domUtils, 'addClass');
+    addClass($element, 'foo');
+    expect(spy).toHaveBeenCalledWith($element, 'foo');
+  });
+
+  it('removeClass function', () => {
+    const spy = jest.spyOn(domUtils, 'removeClass');
+    removeClass($element, 'foo');
+    expect(spy).toHaveBeenCalledWith($element, 'foo');
+  });
+
+  it('toggleClass function', () => {
+    const spy = jest.spyOn(domUtils, 'toggleClass');
+    toggleClass($element, 'foo');
+    expect(spy).toHaveBeenCalledWith($element, 'foo');
+  });
+
+  it('hasClass function', () => {
+    const spy = jest.spyOn(domUtils, 'hasClass');
+    hasClass($element, 'foo');
+    expect(spy).toHaveBeenCalledWith($element, 'foo');
+  });
+
+  it('fireEvent function', () => {
+    const spy = jest.spyOn(domUtils, 'fireEvent');
+    const data = {};
+    fireEvent('foo', $element, data);
+    expect(spy).toHaveBeenCalledWith('foo', $element, data);
+  });
+
+  it('walkDOM function', () => {
+    const spy = jest.spyOn(domUtils, 'walkDOM');
+    const filterFn = () => {};
+    const skipNodeFn = () => {};
+    walkDOM($element, filterFn, skipNodeFn);
+    expect(spy).toHaveBeenCalledWith($element, filterFn, skipNodeFn);
+  });
+});
+
 
 describe('Single component functionality', () => {
 
@@ -155,16 +239,6 @@ describe('Complex functionality', () => {
     expect(components_elements['component-two'][0].parentComponent).toEqual(components_elements['child-controller'][0]);
     expect(components_elements['component-three'][0].parentComponent).not.toEqual(components_elements['root-controller'][0]);
     expect(components_elements['child-controller'][0].parentComponent).toEqual(components_elements['root-controller'][0]);
-  });
-
-  //deprecated
-  it('child components selectors work correctly', () => {
-    let child_controller = components_elements['root-controller'][0].childComponents.querySelector('child-controller');
-    expect(child_controller).toEqual(components_elements['child-controller'][0]);
-    let component_one = components_elements['root-controller'][0].childComponents.querySelectorAll('component-one');
-    expect(component_one.length).toEqual(2);
-    expect(component_one[0]).toEqual(components_elements['component-one'][0]);
-    expect(component_one[1]).toEqual(components_elements['component-one'][1]);
   });
 
   it('handles events correctly', () => {

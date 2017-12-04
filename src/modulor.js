@@ -4,7 +4,13 @@
  * */
 
 
-import { delegate } from './delegate'
+import { delegate } from './delegate';
+import * as domUtils from './dom_utils';
+
+/**
+ *  dom utils proxy functions
+ *  @deprecated use dom_utils.js directly instead
+ * */
 
 /**
  *  Select nodes
@@ -12,9 +18,15 @@ import { delegate } from './delegate'
  *  @param {HTMLElement} [element=window.document] Element
  *  @return {Array} Collection of nodes
  * */
-export function $(selector, element = document){
-  return toArray(element.querySelectorAll(selector));
-}
+export const $ = (selector, element) => domUtils.$(selector, element);
+
+
+/**
+ *  Converts NodeList to array
+ *  @param {NodeList} nodes Elements collection
+ *  @return {Array} Collection of nodes
+ * */
+export const toArray = (nodes) => domUtils.toArray(nodes);
 
 /**
  *  Get/set element attribute
@@ -23,101 +35,7 @@ export function $(selector, element = document){
  *  @param {String} [value] Attribute value
  *  @return {String} Attribute value
  * */
-export function attr(element, key, value){
-  if(value){
-    return element.setAttribute(key, value);
-  }
-  if(value === null){
-    return element.removeAttribute(key);
-  }
-  return element.getAttribute(key);
-}
-
-/**
- *  Add a class to the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-export function addClass(element, className){
-  return element.classList.add(className);
-}
-
-/**
- *  Remove a class from the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-export function removeClass(element, className){
-  return element.classList.remove(className);
-}
-
-/**
- *  Toggle a class at the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-export function toggleClass(element, className){
-  return element.classList.toggle(className);
-}
-
-/**
- *  Check if the element has a class
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-export function hasClass(element, className){
-  return element.classList.contains(className);
-}
-
-
-/**
- *  Traverse DOM node
- *  @param {HTMLElement} node Element
- *  @param {Function} filter Filter child nodes function
- *  @param {Function} skipNode Skip child nodes function
- *  @return {Array} Collection of nodes
- * */
-export function walkDOM(node, filter = () => true, skipNode = () => false) {
-  let arr = new QueryableArray();
-  let loop = (node) => toArray(node.children).forEach((child) => {
-    filter(child) && arr.push(child);
-    (!skipNode(child) && child.hasChildNodes()) && loop(child);
-  });
-  loop(node);
-  return arr;
-}
-
-/**
- *  Converts NodeList to array
- *  @param {NodeList} nodes Elements collection
- *  @return {Array} Collection of nodes
- * */
-export function toArray(nodes){
-  let arr = [];
-  for (let i = 0, ref = arr.length = nodes.length; i < ref; i++){
-   arr[i] = nodes[i];
-  }
-  return arr;
-}
-
-/**
- *  Fires an event on element
- *  @param {String} eventName Event name
- *  @param {HTMLElement} target Element to trigger event on
- *  @param {*} [eventData] Data to attach to event
- * */
-export function fireEvent(eventName, target, eventData = null){
-  target = target || document.body;
-  var event;
-  try {
-    event = new Event(eventName, { "bubbles": true, "cancelable": true });
-  } catch(e) {
-    event = document.createEvent('Event');
-    event.initEvent(eventName, true, true);
-  }
-  event.eventData = eventData;
-  target.dispatchEvent(event);
-}
+export const attr = (element, key, value) => domUtils.attr(element, key, value);
 
 /**
  *  Set the HTML content of element, or generate DocumentFragment
@@ -126,20 +44,58 @@ export function fireEvent(eventName, target, eventData = null){
  *  @return {HTMLElement|DocumentFragment}
  *    Target if target parameter is set or document fragment
  * */
-export function html(htmlString, target){
-  var fragment = document.createDocumentFragment();
-  var temp_container = document.createElement('div');
-  temp_container.innerHTML = htmlString;
-  while(temp_container.firstChild){
-    fragment.appendChild(temp_container.firstChild);
-  }
-  if(target){
-    target.innerHTML = '';
-    target.appendChild(fragment);
-    return target;
-  }
-  return fragment;
-}
+export const html = (htmlString, target) => domUtils.html(htmlString, target);
+
+/**
+ *  Add a class to the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+export const addClass = (element, className) =>
+  domUtils.addClass(element, className);
+
+/**
+ *  Remove a class from the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+export const removeClass = (element, className) =>
+  domUtils.removeClass(element, className);
+
+/**
+ *  Toggle a class at the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+export const toggleClass = (element, className) =>
+  domUtils.toggleClass(element, className);
+
+/**
+ *  Check if the element has a class
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+export const hasClass = (element, className) => domUtils.hasClass(element, className);
+
+/**
+ *  Fires an event on element
+ *  @param {String} eventName Event name
+ *  @param {HTMLElement} target Element to trigger event on
+ *  @param {*} [eventData] Data to attach to event
+ * */
+export const fireEvent = (eventName, target, eventData) =>
+  domUtils.fireEvent(eventName, target, eventData);
+
+/**
+ *  Traverse DOM node
+ *  @param {HTMLElement} node Element
+ *  @param {Function} filter Filter child nodes function
+ *  @param {Function} skipNode Skip child nodes function
+ *  @return {Array} Collection of nodes
+ * */
+export const walkDOM = (node, filter, skipNode) =>
+  domUtils.walkDOM(node, filter, skipNode);
+
 
 /**
  *  Extend component class with modulor methods
@@ -170,7 +126,7 @@ export function extend(baseClass){
      *  @category debug
      */
     get childComponents(){
-      return walkDOM(this, (node) => node.__isModulor, (node) => node.__isModulor);
+      return domUtils.walkDOM(this, (node) => node.__isModulor, (node) => node.__isModulor);
     }
 
     /**
@@ -227,7 +183,7 @@ export function extend(baseClass){
      *  @return {Array} Collection of nodes
      */
     $(selector){
-      return $(selector, this);
+      return domUtils.$(selector, this);
     }
 
     /**
@@ -240,7 +196,7 @@ export function extend(baseClass){
      *  @return {String} Attribute value
      * */
     attr(key, value){
-      return attr(this, key, value);
+      return domUtils.attr(this, key, value);
     }
 
     /**
@@ -251,7 +207,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     addClass(className){
-      return addClass(this, className);
+      return domUtils.addClass(this, className);
     }
 
     /**
@@ -262,7 +218,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     removeClass(className){
-      return removeClass(this, className);
+      return domUtils.removeClass(this, className);
     }
 
     /**
@@ -273,7 +229,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     toggleClass(className){
-      return toggleClass(this, className);
+      return domUtils.toggleClass(this, className);
     }
 
     /**
@@ -284,7 +240,7 @@ export function extend(baseClass){
      *  @param {String} className Class name
      * */
     hasClass(className){
-      return hasClass(this, className);
+      return domUtils.hasClass(this, className);
     }
 
     /**
@@ -298,7 +254,7 @@ export function extend(baseClass){
      *    Target if target parameter is set or document fragment
      * */
     html(html_string, $el = this){
-      html(html_string, $el);
+      domUtils.html(html_string, $el);
     }
 
     //events
@@ -347,7 +303,7 @@ export function extend(baseClass){
      *  @param {*} [eventData] Data to attach to event
      * */
     trigger(eventName, eventData){
-      fireEvent(eventName, this, eventData);
+      domUtils.fireEvent(eventName, this, eventData);
     }
 
     //lifecycle callbacks
@@ -366,32 +322,6 @@ export function extend(baseClass){
     }
 
     attributeChangedCallback(){}
-  }
-}
-
-/**
- *  @class QueryableArray Extends array with querySelector(All) methods
- *  @extends Array
- *  @deprecated
- * */
-export class QueryableArray extends Array {
-   constructor(){
-    super();
-    this.querySelector = (selector) => {
-      for(var index = 0; index < this.length; index++){
-        if(this[index].matches(selector)){
-          return this[index];
-        }
-      }
-      return null;
-    }
-    this.querySelectorAll = (selector) => {
-      var output = new QueryableArray();
-      for(var index = 0; index < this.length; index++){
-        this[index].matches(selector) && output.push(this[index]);
-      }
-      return output;
-    }
   }
 }
 
