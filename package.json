@@ -5,7 +5,7 @@
   "main": "build/modulor.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --no-cache",
     "test:karma": "./node_modules/karma/bin/karma start",
     "build": "node node_modules/babel-cli/bin/babel src --out-dir build",
     "build:watch": "npm run build -- --watch",
