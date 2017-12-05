@@ -20,30 +20,20 @@ Modulor library
 
 
 * [modulor](#module_modulor)
-    * ~~[.QueryableArray](#module_modulor.QueryableArray) ⇐ <code>Array</code>~~
     * [.BaseController](#module_modulor.BaseController)
     * [.BaseComponent](#module_modulor.BaseComponent)
-    * [.$(selector, [element])](#module_modulor.$) ⇒ <code>Array</code>
-    * [.attr(element, key, [value])](#module_modulor.attr) ⇒ <code>String</code>
-    * [.addClass(element, className)](#module_modulor.addClass)
-    * [.removeClass(element, className)](#module_modulor.removeClass)
-    * [.toggleClass(element, className)](#module_modulor.toggleClass)
-    * [.hasClass(element, className)](#module_modulor.hasClass)
-    * [.walkDOM(node, filter, skipNode)](#module_modulor.walkDOM) ⇒ <code>Array</code>
-    * [.toArray(nodes)](#module_modulor.toArray) ⇒ <code>Array</code>
-    * [.fireEvent(eventName, target, [eventData])](#module_modulor.fireEvent)
-    * [.html(htmlString, [target])](#module_modulor.html) ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
+    * [.$](#module_modulor.$) ⇒ <code>Array</code>
+    * [.toArray](#module_modulor.toArray) ⇒ <code>Array</code>
+    * [.attr](#module_modulor.attr) ⇒ <code>String</code>
+    * [.html](#module_modulor.html) ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
+    * [.addClass](#module_modulor.addClass)
+    * [.removeClass](#module_modulor.removeClass)
+    * [.toggleClass](#module_modulor.toggleClass)
+    * [.hasClass](#module_modulor.hasClass)
+    * [.fireEvent](#module_modulor.fireEvent)
+    * [.walkDOM](#module_modulor.walkDOM) ⇒ <code>Array</code>
     * [.extend(baseClass)](#module_modulor.extend) ⇒ [<code>ModulorComponent</code>](#ModulorComponent)
 
-<a name="module_modulor.QueryableArray"></a>
-
-### ~~modulor.QueryableArray ⇐ <code>Array</code>~~
-***Deprecated***
-
-QueryableArray Extends array with querySelector(All) methods
-
-**Kind**: static class of [<code>modulor</code>](#module_modulor)  
-**Extends**: <code>Array</code>  
 <a name="module_modulor.BaseController"></a>
 
 ### modulor.BaseController
@@ -58,10 +48,10 @@ BaseComponent Base component
 **Kind**: static class of [<code>modulor</code>](#module_modulor)  
 <a name="module_modulor.$"></a>
 
-### modulor.$(selector, [element]) ⇒ <code>Array</code>
+### modulor.$ ⇒ <code>Array</code>
 Select nodes
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 **Returns**: <code>Array</code> - Collection of nodes  
 
 | Param | Type | Default | Description |
@@ -69,12 +59,24 @@ Select nodes
 | selector | <code>String</code> |  | Selector |
 | [element] | <code>HTMLElement</code> | <code>window.document</code> | Element |
 
+<a name="module_modulor.toArray"></a>
+
+### modulor.toArray ⇒ <code>Array</code>
+Converts NodeList to array
+
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
+**Returns**: <code>Array</code> - Collection of nodes  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| nodes | <code>NodeList</code> | Elements collection |
+
 <a name="module_modulor.attr"></a>
 
-### modulor.attr(element, key, [value]) ⇒ <code>String</code>
+### modulor.attr ⇒ <code>String</code>
 Get/set element attribute
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 **Returns**: <code>String</code> - Attribute value  
 
 | Param | Type | Description |
@@ -83,12 +85,25 @@ Get/set element attribute
 | key | <code>String</code> | Attribute name |
 | [value] | <code>String</code> | Attribute value |
 
+<a name="module_modulor.html"></a>
+
+### modulor.html ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
+Set the HTML content of element, or generate DocumentFragment
+
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
+**Returns**: <code>HTMLElement</code> \| <code>DocumentFragment</code> - Target if target parameter is set or document fragment  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| htmlString | <code>String</code> | HTML content string |
+| [target] | <code>HTMLElement</code> | Element to set content |
+
 <a name="module_modulor.addClass"></a>
 
-### modulor.addClass(element, className)
+### modulor.addClass
 Add a class to the element
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -97,10 +112,10 @@ Add a class to the element
 
 <a name="module_modulor.removeClass"></a>
 
-### modulor.removeClass(element, className)
+### modulor.removeClass
 Remove a class from the element
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -109,10 +124,10 @@ Remove a class from the element
 
 <a name="module_modulor.toggleClass"></a>
 
-### modulor.toggleClass(element, className)
+### modulor.toggleClass
 Toggle a class at the element
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -121,48 +136,22 @@ Toggle a class at the element
 
 <a name="module_modulor.hasClass"></a>
 
-### modulor.hasClass(element, className)
+### modulor.hasClass
 Check if the element has a class
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | element | <code>HTMLElement</code> | Element |
 | className | <code>String</code> | Class name |
 
-<a name="module_modulor.walkDOM"></a>
-
-### modulor.walkDOM(node, filter, skipNode) ⇒ <code>Array</code>
-Traverse DOM node
-
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
-**Returns**: <code>Array</code> - Collection of nodes  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| node | <code>HTMLElement</code> | Element |
-| filter | <code>function</code> | Filter child nodes function |
-| skipNode | <code>function</code> | Skip child nodes function |
-
-<a name="module_modulor.toArray"></a>
-
-### modulor.toArray(nodes) ⇒ <code>Array</code>
-Converts NodeList to array
-
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
-**Returns**: <code>Array</code> - Collection of nodes  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| nodes | <code>NodeList</code> | Elements collection |
-
 <a name="module_modulor.fireEvent"></a>
 
-### modulor.fireEvent(eventName, target, [eventData])
+### modulor.fireEvent
 Fires an event on element
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -170,18 +159,19 @@ Fires an event on element
 | target | <code>HTMLElement</code> | Element to trigger event on |
 | [eventData] | <code>\*</code> | Data to attach to event |
 
-<a name="module_modulor.html"></a>
+<a name="module_modulor.walkDOM"></a>
 
-### modulor.html(htmlString, [target]) ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
-Set the HTML content of element, or generate DocumentFragment
+### modulor.walkDOM ⇒ <code>Array</code>
+Traverse DOM node
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
-**Returns**: <code>HTMLElement</code> \| <code>DocumentFragment</code> - Target if target parameter is set or document fragment  
+**Kind**: static constant of [<code>modulor</code>](#module_modulor)  
+**Returns**: <code>Array</code> - Collection of nodes  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| htmlString | <code>String</code> | HTML content string |
-| [target] | <code>HTMLElement</code> | Element to set content |
+| node | <code>HTMLElement</code> | Element |
+| filter | <code>function</code> | Filter child nodes function |
+| skipNode | <code>function</code> | Skip child nodes function |
 
 <a name="module_modulor.extend"></a>
 

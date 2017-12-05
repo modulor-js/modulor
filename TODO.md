@@ -1,8 +1,8 @@
 **core**
 
-* extract dom_utils.js from modulor.js, still export them from modulor.js, mark them as deprecated
+* ~~extract dom_utils.js from modulor.js, still export them from modulor.js, mark them as deprecated~~
 
-* make dom_utils suitable for functional programming, implement currying of utils 
+* ~~make dom_utils suitable for functional programming, implement currying of utils~~
 
 * ~~put 'proxy files' on root level ([filename].js -> build/[filename].js, [filename].es6.js -> src/[filename].js)~~
 
@@ -12,13 +12,13 @@
 
 * add $$ hash with refs (??)
 
-* .html() should return refs
+* ~~.html() should return refs~~
 
-* allow html() to take DocumentFragment as first argument [#10](https://github.com/holidaypirates/modulor/issues/10)
+* ~~allow html() to take DocumentFragment as first argument [#10](https://github.com/holidaypirates/modulor/issues/10)~~
 
 * ~~replace childComponents with getter, use DOM traverse~~
 
-* remove QueriableArray class, remove querySelector[All] methods on child components
+* ~~remove QueriableArray class, remove querySelector[All] methods on child components~~
 
 * ~~rewrite toArray according to tests https://jsperf.com/nodelist-to-array and https://jsperf.com/slice-call-vs-for-loop454545~~
 
