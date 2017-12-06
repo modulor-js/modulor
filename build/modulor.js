@@ -1,20 +1,23 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.BaseComponent = exports.BaseController = exports.QueryableArray = exports.html = exports.hasClass = exports.toggleClass = exports.removeClass = exports.addClass = exports.attr = exports.$ = undefined;
+exports.BaseComponent = exports.BaseController = exports.walkDOM = exports.fireEvent = exports.hasClass = exports.toggleClass = exports.removeClass = exports.addClass = exports.html = exports.attr = exports.toArray = exports.$ = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-exports.walkDOM = walkDOM;
-exports.toArray = toArray;
-exports.fireEvent = fireEvent;
 exports.extend = extend;
 
-var _delegate = require("./delegate");
+var _delegate = require('./delegate');
+
+var _dom_utils = require('./dom_utils');
+
+var domUtils = _interopRequireWildcard(_dom_utils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -26,16 +29,28 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * */
 
 /**
+ *  dom utils proxy functions
+ *  @deprecated use dom_utils.js directly instead
+ * */
+
+/**
  *  Select nodes
  *  @param {String} selector Selector
  *  @param {HTMLElement} [element=window.document] Element
  *  @return {Array} Collection of nodes
  * */
-function _$(selector) {
-  var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
+var $ = exports.$ = function $(selector, element) {
+  return domUtils.$(element, selector);
+};
 
-  return toArray(element.querySelectorAll(selector));
-}
+/**
+ *  Converts NodeList to array
+ *  @param {NodeList} nodes Elements collection
+ *  @return {Array} Collection of nodes
+ * */
+var toArray = exports.toArray = function toArray(nodes) {
+  return domUtils.toArray(nodes);
+};
 
 /**
  *  Get/set element attribute
@@ -44,117 +59,9 @@ function _$(selector) {
  *  @param {String} [value] Attribute value
  *  @return {String} Attribute value
  * */
-exports.$ = _$;
-function _attr(element, key, value) {
-  if (value) {
-    return element.setAttribute(key, value);
-  }
-  if (value === null) {
-    return element.removeAttribute(key);
-  }
-  return element.getAttribute(key);
-}
-
-/**
- *  Add a class to the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-exports.attr = _attr;
-function _addClass(element, className) {
-  return element.classList.add(className);
-}
-
-/**
- *  Remove a class from the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-exports.addClass = _addClass;
-function _removeClass(element, className) {
-  return element.classList.remove(className);
-}
-
-/**
- *  Toggle a class at the element
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-exports.removeClass = _removeClass;
-function _toggleClass(element, className) {
-  return element.classList.toggle(className);
-}
-
-/**
- *  Check if the element has a class
- *  @param {HTMLElement} element Element
- *  @param {String} className Class name
- * */
-exports.toggleClass = _toggleClass;
-function _hasClass(element, className) {
-  return element.classList.contains(className);
-}
-
-/**
- *  Traverse DOM node
- *  @param {HTMLElement} node Element
- *  @param {Function} filter Filter child nodes function
- *  @param {Function} skipNode Skip child nodes function
- *  @return {Array} Collection of nodes
- * */
-exports.hasClass = _hasClass;
-function walkDOM(node) {
-  var filter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
-    return true;
-  };
-  var skipNode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {
-    return false;
-  };
-
-  var arr = new QueryableArray();
-  var loop = function loop(node) {
-    return toArray(node.children).forEach(function (child) {
-      filter(child) && arr.push(child);
-      !skipNode(child) && child.hasChildNodes() && loop(child);
-    });
-  };
-  loop(node);
-  return arr;
-}
-
-/**
- *  Converts NodeList to array
- *  @param {NodeList} nodes Elements collection
- *  @return {Array} Collection of nodes
- * */
-function toArray(nodes) {
-  var arr = [];
-  for (var i = 0, ref = arr.length = nodes.length; i < ref; i++) {
-    arr[i] = nodes[i];
-  }
-  return arr;
-}
-
-/**
- *  Fires an event on element
- *  @param {String} eventName Event name
- *  @param {HTMLElement} target Element to trigger event on
- *  @param {*} [eventData] Data to attach to event
- * */
-function fireEvent(eventName, target) {
-  var eventData = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-  target = target || document.body;
-  var event;
-  try {
-    event = new Event(eventName, { "bubbles": true, "cancelable": true });
-  } catch (e) {
-    event = document.createEvent('Event');
-    event.initEvent(eventName, true, true);
-  }
-  event.eventData = eventData;
-  target.dispatchEvent(event);
-}
+var attr = exports.attr = function attr(element, key, value) {
+  return domUtils.attr(key, value, element);
+};
 
 /**
  *  Set the HTML content of element, or generate DocumentFragment
@@ -163,27 +70,72 @@ function fireEvent(eventName, target) {
  *  @return {HTMLElement|DocumentFragment}
  *    Target if target parameter is set or document fragment
  * */
-function _html(htmlString, target) {
-  var fragment = document.createDocumentFragment();
-  var temp_container = document.createElement('div');
-  temp_container.innerHTML = htmlString;
-  while (temp_container.firstChild) {
-    fragment.appendChild(temp_container.firstChild);
-  }
-  if (target) {
-    target.innerHTML = '';
-    target.appendChild(fragment);
-    return target;
-  }
-  return fragment;
-}
+var html = exports.html = function html(htmlString, target) {
+  return domUtils.html(target, htmlString)[0];
+};
+
+/**
+ *  Add a class to the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+var addClass = exports.addClass = function addClass(element, className) {
+  return domUtils.addClass(className, element);
+};
+
+/**
+ *  Remove a class from the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+var removeClass = exports.removeClass = function removeClass(element, className) {
+  return domUtils.removeClass(className, element);
+};
+
+/**
+ *  Toggle a class at the element
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+var toggleClass = exports.toggleClass = function toggleClass(element, className) {
+  return domUtils.toggleClass(className, element);
+};
+
+/**
+ *  Check if the element has a class
+ *  @param {HTMLElement} element Element
+ *  @param {String} className Class name
+ * */
+var hasClass = exports.hasClass = function hasClass(element, className) {
+  return domUtils.hasClass(className, element);
+};
+
+/**
+ *  Fires an event on element
+ *  @param {String} eventName Event name
+ *  @param {HTMLElement} target Element to trigger event on
+ *  @param {*} [eventData] Data to attach to event
+ * */
+var fireEvent = exports.fireEvent = function fireEvent(eventName, target, eventData) {
+  return domUtils.fireEvent(eventName, target, eventData);
+};
+
+/**
+ *  Traverse DOM node
+ *  @param {HTMLElement} node Element
+ *  @param {Function} filter Filter child nodes function
+ *  @param {Function} skipNode Skip child nodes function
+ *  @return {Array} Collection of nodes
+ * */
+var walkDOM = exports.walkDOM = function walkDOM(node, filter, skipNode) {
+  return domUtils.walkDOM(node, filter, skipNode);
+};
 
 /**
  *  Extend component class with modulor methods
  *  @param {Class} baseClass Component class
  *  @return {ModulorComponent} Extended component class
  * */
-exports.html = _html;
 function extend(baseClass) {
   return function (_baseClass) {
     _inherits(_class, _baseClass);
@@ -199,7 +151,7 @@ function extend(baseClass) {
     }
 
     _createClass(_class, [{
-      key: "toggleHighlight",
+      key: 'toggleHighlight',
 
 
       //debug highlighting
@@ -221,7 +173,7 @@ function extend(baseClass) {
        */
 
     }, {
-      key: "toggleHighlightAll",
+      key: 'toggleHighlightAll',
       value: function toggleHighlightAll() {
         this.toggleHighlight();
         this.childComponents.forEach(function (child) {
@@ -241,9 +193,9 @@ function extend(baseClass) {
        */
 
     }, {
-      key: "$",
+      key: '$',
       value: function $(selector) {
-        return _$(selector, this);
+        return domUtils.$(this, selector);
       }
 
       /**
@@ -257,9 +209,9 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "attr",
+      key: 'attr',
       value: function attr(key, value) {
-        return _attr(this, key, value);
+        return domUtils.attr(key, value, this);
       }
 
       /**
@@ -271,9 +223,9 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "addClass",
+      key: 'addClass',
       value: function addClass(className) {
-        return _addClass(this, className);
+        return domUtils.addClass(className, this);
       }
 
       /**
@@ -285,9 +237,9 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "removeClass",
+      key: 'removeClass',
       value: function removeClass(className) {
-        return _removeClass(this, className);
+        return domUtils.removeClass(className, this);
       }
 
       /**
@@ -299,9 +251,9 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "toggleClass",
+      key: 'toggleClass',
       value: function toggleClass(className) {
-        return _toggleClass(this, className);
+        return domUtils.toggleClass(className, this);
       }
 
       /**
@@ -313,9 +265,9 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "hasClass",
+      key: 'hasClass',
       value: function hasClass(className) {
-        return _hasClass(this, className);
+        return domUtils.hasClass(className, this);
       }
 
       /**
@@ -330,11 +282,11 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "html",
+      key: 'html',
       value: function html(html_string) {
         var $el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 
-        _html(html_string, $el);
+        return domUtils.html($el, html_string)[1];
       }
 
       //events
@@ -349,7 +301,7 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "on",
+      key: 'on',
       value: function on(eventName, selector, callback) {
         if (!callback) {
           callback = selector;
@@ -371,7 +323,7 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "off",
+      key: 'off',
       value: function off() {
         var eventName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
         var selector = arguments[1];
@@ -394,33 +346,33 @@ function extend(baseClass) {
        * */
 
     }, {
-      key: "trigger",
+      key: 'trigger',
       value: function trigger(eventName, eventData) {
-        fireEvent(eventName, this, eventData);
+        domUtils.fireEvent(eventName, this, eventData);
       }
 
       //lifecycle callbacks
 
     }, {
-      key: "connectedCallback",
+      key: 'connectedCallback',
       value: function connectedCallback() {
         this.trigger('component-attached');
         this.on('component-attached', function (event) {
           event.stopPropagation();
         });
-        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "connectedCallback", this).call(this);
+        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'connectedCallback', this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'connectedCallback', this).call(this);
       }
     }, {
-      key: "disconnectedCallback",
+      key: 'disconnectedCallback',
       value: function disconnectedCallback() {
         this.off();
-        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "disconnectedCallback", this).call(this);
+        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'disconnectedCallback', this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'disconnectedCallback', this).call(this);
       }
     }, {
-      key: "attributeChangedCallback",
+      key: 'attributeChangedCallback',
       value: function attributeChangedCallback() {}
     }, {
-      key: "__isModulor",
+      key: '__isModulor',
       get: function get() {
         return true;
       }
@@ -436,9 +388,9 @@ function extend(baseClass) {
        */
 
     }, {
-      key: "childComponents",
+      key: 'childComponents',
       get: function get() {
-        return walkDOM(this, function (node) {
+        return domUtils.walkDOM(this, function (node) {
           return node.__isModulor;
         }, function (node) {
           return node.__isModulor;
@@ -456,7 +408,7 @@ function extend(baseClass) {
        */
 
     }, {
-      key: "parentComponent",
+      key: 'parentComponent',
       get: function get() {
         var parent = this;
         while (parent = parent.parentNode) {
@@ -473,44 +425,8 @@ function extend(baseClass) {
 }
 
 /**
- *  @class QueryableArray Extends array with querySelector(All) methods
- *  @extends Array
- *  @deprecated
- * */
-
-var QueryableArray = exports.QueryableArray = function (_Array) {
-  _inherits(QueryableArray, _Array);
-
-  function QueryableArray() {
-    _classCallCheck(this, QueryableArray);
-
-    var _this2 = _possibleConstructorReturn(this, (QueryableArray.__proto__ || Object.getPrototypeOf(QueryableArray)).call(this));
-
-    _this2.querySelector = function (selector) {
-      for (var index = 0; index < _this2.length; index++) {
-        if (_this2[index].matches(selector)) {
-          return _this2[index];
-        }
-      }
-      return null;
-    };
-    _this2.querySelectorAll = function (selector) {
-      var output = new QueryableArray();
-      for (var index = 0; index < _this2.length; index++) {
-        _this2[index].matches(selector) && output.push(_this2[index]);
-      }
-      return output;
-    };
-    return _this2;
-  }
-
-  return QueryableArray;
-}(Array);
-
-/**
  *  @class BaseController Base controller
  * */
-
 
 var BaseController = exports.BaseController = function (_extend) {
   _inherits(BaseController, _extend);
@@ -522,7 +438,7 @@ var BaseController = exports.BaseController = function (_extend) {
   }
 
   _createClass(BaseController, [{
-    key: "componentType",
+    key: 'componentType',
     get: function get() {
       return 'controller';
     }
@@ -546,7 +462,7 @@ var BaseComponent = exports.BaseComponent = function (_extend2) {
   }
 
   _createClass(BaseComponent, [{
-    key: "componentType",
+    key: 'componentType',
     get: function get() {
       return 'component';
     }
