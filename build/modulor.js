@@ -3,13 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.BaseComponent = exports.BaseController = exports.walkDOM = exports.fireEvent = exports.hasClass = exports.toggleClass = exports.removeClass = exports.addClass = exports.html = exports.attr = exports.toArray = exports.$ = undefined;
+exports.BaseController = exports.BaseComponent = exports.walkDOM = exports.fireEvent = exports.hasClass = exports.toggleClass = exports.removeClass = exports.addClass = exports.html = exports.attr = exports.toArray = exports.$ = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-exports.extend = extend;
 
 var _delegate = require('./delegate');
 
@@ -132,304 +128,280 @@ var walkDOM = exports.walkDOM = function walkDOM(node, filter, skipNode) {
 };
 
 /**
- *  Extend component class with modulor methods
- *  @param {Class} baseClass Component class
- *  @return {ModulorComponent} Extended component class
+ * @class BaseComponent
  * */
-function extend(baseClass) {
-  return function (_baseClass) {
-    _inherits(_class, _baseClass);
 
+var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
+  _inherits(BaseComponent, _HTMLElement);
+
+  function BaseComponent() {
+    _classCallCheck(this, BaseComponent);
+
+    return _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).apply(this, arguments));
+  }
+
+  _createClass(BaseComponent, [{
+    key: 'toggleHighlight',
+
+
+    //debug highlighting
     /**
-     *  @constructs ModulorComponent
-     *  @inner
-     * */
-    function _class() {
-      _classCallCheck(this, _class);
-
-      return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this));
+     *  Toggle debug class on component
+     *  @category debug
+     */
+    value: function toggleHighlight() {
+      this.toggleClass(this.componentType + '-highlighted');
     }
 
-    _createClass(_class, [{
-      key: 'toggleHighlight',
+    /**
+     *  Toggle debug class on component and child components
+     *  @category debug
+     */
 
+  }, {
+    key: 'toggleHighlightAll',
+    value: function toggleHighlightAll() {
+      this.toggleHighlight();
+      this.childComponents.forEach(function (child) {
+        child.toggleHighlightAll();
+      });
+    }
 
-      //debug highlighting
-      /**
-       *  Toggle debug class on component
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category debug
-       */
-      value: function toggleHighlight() {
-        this.classList.toggle(this.componentType + '-highlighted');
+    //DOM
+
+    /**
+     *  Select nodes
+     *  @category DOM API
+     *  @param {String} selector Selector
+     *  @return {Array} Collection of nodes
+     */
+
+  }, {
+    key: '$',
+    value: function $(selector) {
+      return domUtils.$(this, selector);
+    }
+
+    /**
+     *  Get/set element attribute
+     *  @category DOM API
+     *  @param {String} key Attribute name
+     *  @param {String} [value] Attribute value
+     *  @return {String} Attribute value
+     * */
+
+  }, {
+    key: 'attr',
+    value: function attr(key, value) {
+      return domUtils.attr(key, value, this);
+    }
+
+    /**
+     *  Add a class to the element
+     *  @category DOM API
+     *  @param {String} className Class name
+     * */
+
+  }, {
+    key: 'addClass',
+    value: function addClass(className) {
+      return domUtils.addClass(className, this);
+    }
+
+    /**
+     *  Remove a class from the element
+     *  @category DOM API
+     *  @param {String} className Class name
+     * */
+
+  }, {
+    key: 'removeClass',
+    value: function removeClass(className) {
+      return domUtils.removeClass(className, this);
+    }
+
+    /**
+     *  Toggle a class at the element
+     *  @category DOM API
+     *  @param {String} className Class name
+     * */
+
+  }, {
+    key: 'toggleClass',
+    value: function toggleClass(className) {
+      return domUtils.toggleClass(className, this);
+    }
+
+    /**
+     *  Check if the element has a class
+     *  @category DOM API
+     *  @param {String} className Class name
+     *  @return {Boolean}
+     * */
+
+  }, {
+    key: 'hasClass',
+    value: function hasClass(className) {
+      return domUtils.hasClass(className, this);
+    }
+
+    /**
+     *  Set the HTML content of element
+     *  @category DOM API
+     *  @param {String} htmlString HTML content string
+     *  @param {HTMLElement} [$el] Target element
+     *  @return {Array.<HTMLElement>} refs
+     * */
+
+  }, {
+    key: 'html',
+    value: function html(html_string) {
+      var $el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+      return domUtils.html($el, html_string)[1];
+    }
+
+    //events
+    /**
+     *  Subscribe an event
+     *  @category events
+     *  @param {String} eventName Event name
+     *  @param {String} [selector] Selector
+     *  @param {Function} callback Event name
+     * */
+
+  }, {
+    key: 'on',
+    value: function on(eventName, selector, callback) {
+      if (!callback) {
+        callback = selector;
+        selector = null;
       }
+      _delegate.delegate.on(eventName, this, selector, callback);
+    }
 
-      /**
-       *  Toggle debug class on component and child components
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category debug
-       */
+    /**
+     *  Unsubscribe an event
+     *  Unsibscribe all events when called without arguments
+     *  Unsibscribe all events by selector when called without *selector* argument
+     *  @category events
+     *  @param {String} [eventName] Event name
+     *  @param {String} [selector] Selector
+     *  @param {Function} [callback] Event name
+     * */
 
-    }, {
-      key: 'toggleHighlightAll',
-      value: function toggleHighlightAll() {
-        this.toggleHighlight();
-        this.childComponents.forEach(function (child) {
-          child.toggleHighlightAll();
-        });
+  }, {
+    key: 'off',
+    value: function off() {
+      var eventName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var selector = arguments[1];
+      var callback = arguments[2];
+
+      if (!callback) {
+        callback = selector;
+        selector = null;
       }
+      _delegate.delegate.off(eventName, this, selector, callback);
+    }
 
-      //DOM
+    /**
+     *  Fires an event on element
+     *  @category events
+     *  @param {String} eventName Event name
+     *  @param {*} [eventData] Data to attach to event
+     * */
 
-      /**
-       *  Select nodes
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} selector Selector
-       *  @return {Array} Collection of nodes
-       */
+  }, {
+    key: 'trigger',
+    value: function trigger(eventName, eventData) {
+      domUtils.fireEvent(eventName, this, eventData);
+    }
 
-    }, {
-      key: '$',
-      value: function $(selector) {
-        return domUtils.$(this, selector);
-      }
+    //lifecycle callbacks
 
-      /**
-       *  Get/set element attribute
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} key Attribute name
-       *  @param {String} [value] Attribute value
-       *  @return {String} Attribute value
-       * */
+  }, {
+    key: 'connectedCallback',
+    value: function connectedCallback() {
+      this.trigger('component-attached');
+      this.on('component-attached', function (event) {
+        event.stopPropagation();
+      });
+    }
+  }, {
+    key: 'disconnectedCallback',
+    value: function disconnectedCallback() {
+      this.off();
+    }
+  }, {
+    key: 'attributeChangedCallback',
+    value: function attributeChangedCallback() {}
+  }, {
+    key: 'componentType',
 
-    }, {
-      key: 'attr',
-      value: function attr(key, value) {
-        return domUtils.attr(key, value, this);
-      }
 
-      /**
-       *  Add a class to the element
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} className Class name
-       * */
+    /**
+     * @property {String} - Component type (`component`)
+     */
+    get: function get() {
+      return 'component';
+    }
+  }, {
+    key: '__isModulor',
+    get: function get() {
+      return true;
+    }
 
-    }, {
-      key: 'addClass',
-      value: function addClass(className) {
-        return domUtils.addClass(className, this);
-      }
+    /**
+     *  *Getter*.
+     *  List of child components.
+     *  **Use only for debug purposes due to low efficiency**
+     *  @category debug
+     *  @return {Array.<ModulorComponent>}
+     */
 
-      /**
-       *  Remove a class from the element
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} className Class name
-       * */
+  }, {
+    key: 'childComponents',
+    get: function get() {
+      return domUtils.walkDOM(this, function (node) {
+        return node.__isModulor;
+      }, function (node) {
+        return node.__isModulor;
+      });
+    }
 
-    }, {
-      key: 'removeClass',
-      value: function removeClass(className) {
-        return domUtils.removeClass(className, this);
-      }
+    /**
+     *  *Getter*.
+     *  Parent component.
+     *  **Use only for debug purposes due to low efficiency**
+     *  @category debug
+     *  @return {ModulorComponent}
+     */
 
-      /**
-       *  Toggle a class at the element
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} className Class name
-       * */
-
-    }, {
-      key: 'toggleClass',
-      value: function toggleClass(className) {
-        return domUtils.toggleClass(className, this);
-      }
-
-      /**
-       *  Check if the element has a class
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} className Class name
-       * */
-
-    }, {
-      key: 'hasClass',
-      value: function hasClass(className) {
-        return domUtils.hasClass(className, this);
-      }
-
-      /**
-       *  Set the HTML content of element
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category DOM API
-       *  @param {String} htmlString HTML content string
-       *  @param {HTMLElement} [$el] Target element
-       *  @return {HTMLElement}
-       *    Target if target parameter is set or document fragment
-       * */
-
-    }, {
-      key: 'html',
-      value: function html(html_string) {
-        var $el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
-
-        return domUtils.html($el, html_string)[1];
-      }
-
-      //events
-      /**
-       *  Subscribe an event
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category events
-       *  @param {String} eventName Event name
-       *  @param {String} [selector] Selector
-       *  @param {Function} callback Event name
-       * */
-
-    }, {
-      key: 'on',
-      value: function on(eventName, selector, callback) {
-        if (!callback) {
-          callback = selector;
-          selector = null;
+  }, {
+    key: 'parentComponent',
+    get: function get() {
+      var parent = this;
+      while (parent = parent.parentNode) {
+        if (parent.__isModulor) {
+          break;
         }
-        _delegate.delegate.on(eventName, this, selector, callback);
       }
+      return parent;
+    }
+  }]);
 
-      /**
-       *  Unsubscribe an event
-       *  Unsibscribe all events when called without arguments
-       *  Unsibscribe all events by selector when called without *selector* argument
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category events
-       *  @param {String} [eventName] Event name
-       *  @param {String} [selector] Selector
-       *  @param {Function} [callback] Event name
-       * */
-
-    }, {
-      key: 'off',
-      value: function off() {
-        var eventName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-        var selector = arguments[1];
-        var callback = arguments[2];
-
-        if (!callback) {
-          callback = selector;
-          selector = null;
-        }
-        _delegate.delegate.off(eventName, this, selector, callback);
-      }
-
-      /**
-       *  Fires an event on element
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @category events
-       *  @param {String} eventName Event name
-       *  @param {*} [eventData] Data to attach to event
-       * */
-
-    }, {
-      key: 'trigger',
-      value: function trigger(eventName, eventData) {
-        domUtils.fireEvent(eventName, this, eventData);
-      }
-
-      //lifecycle callbacks
-
-    }, {
-      key: 'connectedCallback',
-      value: function connectedCallback() {
-        this.trigger('component-attached');
-        this.on('component-attached', function (event) {
-          event.stopPropagation();
-        });
-        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'connectedCallback', this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'connectedCallback', this).call(this);
-      }
-    }, {
-      key: 'disconnectedCallback',
-      value: function disconnectedCallback() {
-        this.off();
-        _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'disconnectedCallback', this) && _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'disconnectedCallback', this).call(this);
-      }
-    }, {
-      key: 'attributeChangedCallback',
-      value: function attributeChangedCallback() {}
-    }, {
-      key: '__isModulor',
-      get: function get() {
-        return true;
-      }
-
-      /**
-       *  *Getter*.
-       *  List of child components.
-       *  **Use only for debug purposes due to low efficiency**
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @type {Array.<ModulorComponent>}
-       *  @category debug
-       */
-
-    }, {
-      key: 'childComponents',
-      get: function get() {
-        return domUtils.walkDOM(this, function (node) {
-          return node.__isModulor;
-        }, function (node) {
-          return node.__isModulor;
-        });
-      }
-
-      /**
-       *  *Getter*.
-       *  Parent component.
-       *  **Use only for debug purposes due to low efficiency**
-       *  @memberof ModulorComponent
-       *  @instance
-       *  @type {ModulorComponent}
-       *  @category debug
-       */
-
-    }, {
-      key: 'parentComponent',
-      get: function get() {
-        var parent = this;
-        while (parent = parent.parentNode) {
-          if (parent.__isModulor) {
-            break;
-          }
-        }
-        return parent;
-      }
-    }]);
-
-    return _class;
-  }(baseClass);
-}
+  return BaseComponent;
+}(HTMLElement);
 
 /**
- *  @class BaseController Base controller
+ *  @deprecated
+ *  @class BaseController
+ *  @extends BaseComponent
  * */
 
-var BaseController = exports.BaseController = function (_extend) {
-  _inherits(BaseController, _extend);
+
+var BaseController = exports.BaseController = function (_BaseComponent) {
+  _inherits(BaseController, _BaseComponent);
 
   function BaseController() {
     _classCallCheck(this, BaseController);
@@ -439,34 +411,14 @@ var BaseController = exports.BaseController = function (_extend) {
 
   _createClass(BaseController, [{
     key: 'componentType',
+
+    /**
+     * @property {String} - Component type (`controller`)
+     */
     get: function get() {
       return 'controller';
     }
   }]);
 
   return BaseController;
-}(extend(HTMLElement));
-
-/**
- *  @class BaseComponent Base component
- * */
-
-
-var BaseComponent = exports.BaseComponent = function (_extend2) {
-  _inherits(BaseComponent, _extend2);
-
-  function BaseComponent() {
-    _classCallCheck(this, BaseComponent);
-
-    return _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).apply(this, arguments));
-  }
-
-  _createClass(BaseComponent, [{
-    key: 'componentType',
-    get: function get() {
-      return 'component';
-    }
-  }]);
-
-  return BaseComponent;
-}(extend(HTMLElement));
+}(BaseComponent);

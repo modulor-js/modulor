@@ -3,7 +3,7 @@
 import 'custom-elements-jest';
 
 import {
-  BaseComponent, BaseController, extend,
+  BaseComponent, BaseController,
   html, $, toArray, attr,
   addClass, removeClass, toggleClass, hasClass,
   fireEvent, walkDOM
