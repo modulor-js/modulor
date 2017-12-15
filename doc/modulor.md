@@ -1,18 +1,3 @@
-## Modules
-
-<dl>
-<dt><a href="#module_modulor">modulor</a></dt>
-<dd><p>Modulor library</p>
-</dd>
-</dl>
-
-## Classes
-
-<dl>
-<dt><a href="#ModulorComponent">ModulorComponent</a></dt>
-<dd></dd>
-</dl>
-
 <a name="module_modulor"></a>
 
 ## modulor
@@ -20,32 +5,40 @@ Modulor library
 
 
 * [modulor](#module_modulor)
-    * [.BaseController](#module_modulor.BaseController)
-    * [.BaseComponent](#module_modulor.BaseComponent)
-    * [.$](#module_modulor.$) ⇒ <code>Array</code>
-    * [.toArray](#module_modulor.toArray) ⇒ <code>Array</code>
-    * [.attr](#module_modulor.attr) ⇒ <code>String</code>
-    * [.html](#module_modulor.html) ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
-    * [.addClass](#module_modulor.addClass)
-    * [.removeClass](#module_modulor.removeClass)
-    * [.toggleClass](#module_modulor.toggleClass)
-    * [.hasClass](#module_modulor.hasClass)
-    * [.fireEvent](#module_modulor.fireEvent)
-    * [.walkDOM](#module_modulor.walkDOM) ⇒ <code>Array</code>
-    * [.extend(baseClass)](#module_modulor.extend) ⇒ [<code>ModulorComponent</code>](#ModulorComponent)
+    * _static_
+        * [.$](#module_modulor.$) ⇒ <code>Array</code>
+        * [.toArray](#module_modulor.toArray) ⇒ <code>Array</code>
+        * [.attr](#module_modulor.attr) ⇒ <code>String</code>
+        * [.html](#module_modulor.html) ⇒ <code>HTMLElement</code> \| <code>DocumentFragment</code>
+        * [.addClass](#module_modulor.addClass)
+        * [.removeClass](#module_modulor.removeClass)
+        * [.toggleClass](#module_modulor.toggleClass)
+        * [.hasClass](#module_modulor.hasClass)
+        * [.fireEvent](#module_modulor.fireEvent)
+        * [.walkDOM](#module_modulor.walkDOM) ⇒ <code>Array</code>
+    * _inner_
+        * [~BaseComponent](#module_modulor..BaseComponent)
+            * [.componentType](#module_modulor..BaseComponent+componentType)
+            * _DOM API_
+                * [.$(selector)](#module_modulor..BaseComponent+$) ⇒ <code>Array</code>
+                * [.attr(key, [value])](#module_modulor..BaseComponent+attr) ⇒ <code>String</code>
+                * [.addClass(className)](#module_modulor..BaseComponent+addClass)
+                * [.removeClass(className)](#module_modulor..BaseComponent+removeClass)
+                * [.toggleClass(className)](#module_modulor..BaseComponent+toggleClass)
+                * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
+                * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+            * _debug_
+                * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
+                * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>ModulorComponent</code>
+                * [.toggleHighlight()](#module_modulor..BaseComponent+toggleHighlight)
+                * [.toggleHighlightAll()](#module_modulor..BaseComponent+toggleHighlightAll)
+            * _events_
+                * [.on(eventName, [selector], callback)](#module_modulor..BaseComponent+on)
+                * [.off([eventName], [selector], [callback])](#module_modulor..BaseComponent+off)
+                * [.trigger(eventName, [eventData])](#module_modulor..BaseComponent+trigger)
+        * ~~[~BaseController](#module_modulor..BaseController) ⇐ <code>BaseComponent</code>~~
+            * [.componentType](#module_modulor..BaseController+componentType)
 
-<a name="module_modulor.BaseController"></a>
-
-### modulor.BaseController
-BaseController Base controller
-
-**Kind**: static class of [<code>modulor</code>](#module_modulor)  
-<a name="module_modulor.BaseComponent"></a>
-
-### modulor.BaseComponent
-BaseComponent Base component
-
-**Kind**: static class of [<code>modulor</code>](#module_modulor)  
 <a name="module_modulor.$"></a>
 
 ### modulor.$ ⇒ <code>Array</code>
@@ -173,48 +166,47 @@ Traverse DOM node
 | filter | <code>function</code> | Filter child nodes function |
 | skipNode | <code>function</code> | Skip child nodes function |
 
-<a name="module_modulor.extend"></a>
+<a name="module_modulor..BaseComponent"></a>
 
-### modulor.extend(baseClass) ⇒ [<code>ModulorComponent</code>](#ModulorComponent)
-Extend component class with modulor methods
+### modulor~BaseComponent
+**Kind**: inner class of [<code>modulor</code>](#module_modulor)  
 
-**Kind**: static method of [<code>modulor</code>](#module_modulor)  
-**Returns**: [<code>ModulorComponent</code>](#ModulorComponent) - Extended component class  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| baseClass | <code>Class</code> | Component class |
-
-<a name="ModulorComponent"></a>
-
-## ModulorComponent
-**Kind**: global class  
-
-* [ModulorComponent](#ModulorComponent)
+* [~BaseComponent](#module_modulor..BaseComponent)
+    * [.componentType](#module_modulor..BaseComponent+componentType)
     * _DOM API_
-        * [.$(selector)](#ModulorComponent+$) ⇒ <code>Array</code>
-        * [.attr(key, [value])](#ModulorComponent+attr) ⇒ <code>String</code>
-        * [.addClass(className)](#ModulorComponent+addClass)
-        * [.removeClass(className)](#ModulorComponent+removeClass)
-        * [.toggleClass(className)](#ModulorComponent+toggleClass)
-        * [.hasClass(className)](#ModulorComponent+hasClass)
-        * [.html(htmlString, [$el])](#ModulorComponent+html) ⇒ <code>HTMLElement</code>
+        * [.$(selector)](#module_modulor..BaseComponent+$) ⇒ <code>Array</code>
+        * [.attr(key, [value])](#module_modulor..BaseComponent+attr) ⇒ <code>String</code>
+        * [.addClass(className)](#module_modulor..BaseComponent+addClass)
+        * [.removeClass(className)](#module_modulor..BaseComponent+removeClass)
+        * [.toggleClass(className)](#module_modulor..BaseComponent+toggleClass)
+        * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
+        * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
     * _debug_
-        * [.childComponents](#ModulorComponent+childComponents) : [<code>Array.&lt;ModulorComponent&gt;</code>](#ModulorComponent)
-        * [.parentComponent](#ModulorComponent+parentComponent) : [<code>ModulorComponent</code>](#ModulorComponent)
-        * [.toggleHighlight()](#ModulorComponent+toggleHighlight)
-        * [.toggleHighlightAll()](#ModulorComponent+toggleHighlightAll)
+        * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
+        * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>ModulorComponent</code>
+        * [.toggleHighlight()](#module_modulor..BaseComponent+toggleHighlight)
+        * [.toggleHighlightAll()](#module_modulor..BaseComponent+toggleHighlightAll)
     * _events_
-        * [.on(eventName, [selector], callback)](#ModulorComponent+on)
-        * [.off([eventName], [selector], [callback])](#ModulorComponent+off)
-        * [.trigger(eventName, [eventData])](#ModulorComponent+trigger)
+        * [.on(eventName, [selector], callback)](#module_modulor..BaseComponent+on)
+        * [.off([eventName], [selector], [callback])](#module_modulor..BaseComponent+off)
+        * [.trigger(eventName, [eventData])](#module_modulor..BaseComponent+trigger)
 
-<a name="ModulorComponent+$"></a>
+<a name="module_modulor..BaseComponent+componentType"></a>
 
-### modulorComponent.$(selector) ⇒ <code>Array</code>
+#### baseComponent.componentType
+**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
+**Properties**
+
+| Type | Description |
+| --- | --- |
+| <code>String</code> | Component type (`component`) |
+
+<a name="module_modulor..BaseComponent+$"></a>
+
+#### baseComponent.$(selector) ⇒ <code>Array</code>
 Select nodes
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Returns**: <code>Array</code> - Collection of nodes  
 **Category**: DOM API  
 
@@ -222,12 +214,12 @@ Select nodes
 | --- | --- | --- |
 | selector | <code>String</code> | Selector |
 
-<a name="ModulorComponent+attr"></a>
+<a name="module_modulor..BaseComponent+attr"></a>
 
-### modulorComponent.attr(key, [value]) ⇒ <code>String</code>
+#### baseComponent.attr(key, [value]) ⇒ <code>String</code>
 Get/set element attribute
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Returns**: <code>String</code> - Attribute value  
 **Category**: DOM API  
 
@@ -236,61 +228,61 @@ Get/set element attribute
 | key | <code>String</code> | Attribute name |
 | [value] | <code>String</code> | Attribute value |
 
-<a name="ModulorComponent+addClass"></a>
+<a name="module_modulor..BaseComponent+addClass"></a>
 
-### modulorComponent.addClass(className)
+#### baseComponent.addClass(className)
 Add a class to the element
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: DOM API  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | className | <code>String</code> | Class name |
 
-<a name="ModulorComponent+removeClass"></a>
+<a name="module_modulor..BaseComponent+removeClass"></a>
 
-### modulorComponent.removeClass(className)
+#### baseComponent.removeClass(className)
 Remove a class from the element
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: DOM API  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | className | <code>String</code> | Class name |
 
-<a name="ModulorComponent+toggleClass"></a>
+<a name="module_modulor..BaseComponent+toggleClass"></a>
 
-### modulorComponent.toggleClass(className)
+#### baseComponent.toggleClass(className)
 Toggle a class at the element
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: DOM API  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | className | <code>String</code> | Class name |
 
-<a name="ModulorComponent+hasClass"></a>
+<a name="module_modulor..BaseComponent+hasClass"></a>
 
-### modulorComponent.hasClass(className)
+#### baseComponent.hasClass(className) ⇒ <code>Boolean</code>
 Check if the element has a class
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: DOM API  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | className | <code>String</code> | Class name |
 
-<a name="ModulorComponent+html"></a>
+<a name="module_modulor..BaseComponent+html"></a>
 
-### modulorComponent.html(htmlString, [$el]) ⇒ <code>HTMLElement</code>
+#### baseComponent.html(htmlString, [$el]) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
 Set the HTML content of element
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
-**Returns**: <code>HTMLElement</code> - Target if target parameter is set or document fragment  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
+**Returns**: <code>Array.&lt;HTMLElement&gt;</code> - refs  
 **Category**: DOM API  
 
 | Param | Type | Description |
@@ -298,44 +290,44 @@ Set the HTML content of element
 | htmlString | <code>String</code> | HTML content string |
 | [$el] | <code>HTMLElement</code> | Target element |
 
-<a name="ModulorComponent+childComponents"></a>
+<a name="module_modulor..BaseComponent+childComponents"></a>
 
-### modulorComponent.childComponents : [<code>Array.&lt;ModulorComponent&gt;</code>](#ModulorComponent)
+#### baseComponent.childComponents ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
 *Getter*.
  List of child components.
  **Use only for debug purposes due to low efficiency**
 
-**Kind**: instance property of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: debug  
-<a name="ModulorComponent+parentComponent"></a>
+<a name="module_modulor..BaseComponent+parentComponent"></a>
 
-### modulorComponent.parentComponent : [<code>ModulorComponent</code>](#ModulorComponent)
+#### baseComponent.parentComponent ⇒ <code>ModulorComponent</code>
 *Getter*.
  Parent component.
  **Use only for debug purposes due to low efficiency**
 
-**Kind**: instance property of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: debug  
-<a name="ModulorComponent+toggleHighlight"></a>
+<a name="module_modulor..BaseComponent+toggleHighlight"></a>
 
-### modulorComponent.toggleHighlight()
+#### baseComponent.toggleHighlight()
 Toggle debug class on component
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: debug  
-<a name="ModulorComponent+toggleHighlightAll"></a>
+<a name="module_modulor..BaseComponent+toggleHighlightAll"></a>
 
-### modulorComponent.toggleHighlightAll()
+#### baseComponent.toggleHighlightAll()
 Toggle debug class on component and child components
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: debug  
-<a name="ModulorComponent+on"></a>
+<a name="module_modulor..BaseComponent+on"></a>
 
-### modulorComponent.on(eventName, [selector], callback)
+#### baseComponent.on(eventName, [selector], callback)
 Subscribe an event
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: events  
 
 | Param | Type | Description |
@@ -344,14 +336,14 @@ Subscribe an event
 | [selector] | <code>String</code> | Selector |
 | callback | <code>function</code> | Event name |
 
-<a name="ModulorComponent+off"></a>
+<a name="module_modulor..BaseComponent+off"></a>
 
-### modulorComponent.off([eventName], [selector], [callback])
+#### baseComponent.off([eventName], [selector], [callback])
 Unsubscribe an event
  Unsibscribe all events when called without arguments
  Unsibscribe all events by selector when called without *selector* argument
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: events  
 
 | Param | Type | Default | Description |
@@ -360,16 +352,33 @@ Unsubscribe an event
 | [selector] | <code>String</code> |  | Selector |
 | [callback] | <code>function</code> |  | Event name |
 
-<a name="ModulorComponent+trigger"></a>
+<a name="module_modulor..BaseComponent+trigger"></a>
 
-### modulorComponent.trigger(eventName, [eventData])
+#### baseComponent.trigger(eventName, [eventData])
 Fires an event on element
 
-**Kind**: instance method of [<code>ModulorComponent</code>](#ModulorComponent)  
+**Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
 **Category**: events  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | eventName | <code>String</code> | Event name |
 | [eventData] | <code>\*</code> | Data to attach to event |
+
+<a name="module_modulor..BaseController"></a>
+
+### ~~modulor~BaseController ⇐ <code>BaseComponent</code>~~
+***Deprecated***
+
+**Kind**: inner class of [<code>modulor</code>](#module_modulor)  
+**Extends**: <code>BaseComponent</code>  
+<a name="module_modulor..BaseController+componentType"></a>
+
+#### baseController.componentType
+**Kind**: instance property of [<code>BaseController</code>](#module_modulor..BaseController)  
+**Properties**
+
+| Type | Description |
+| --- | --- |
+| <code>String</code> | Component type (`controller`) |
 

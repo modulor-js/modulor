@@ -208,21 +208,21 @@ function fireEvent(eventName, target) {
 
 /**
  *  Set the HTML content of element, or generate DocumentFragment
- *  @param {HTMLElement} [target] Element to set content
- *  @param {String} [htmlString] HTML content string
+ *  @param {HTMLElement|String} target Element to set content or html string
+ *  @param {String|HTMLElement|DocumentFragment} [content] HTML content string
  *  @return {Array|Function} tuple [target || DocumentFragment, refs object] or render function
  * */
-function html(target, htmlString) {
-  var fn = function fn(htmlString) {
-    var fragment = isNode(htmlString) ? htmlString : toArray(createElement('div', {}, htmlString).childNodes).reduce(append, document.createDocumentFragment());
+function html(target, content) {
+  var fn = function fn(content) {
+    var fragment = isNode(content) ? content : toArray(createElement('div', {}, content).childNodes).reduce(append, document.createDocumentFragment());
     var refs = getRefs(fragment);
     return [target ? append(empty(target), fragment) : fragment, refs];
   };
-  if (typeof htmlString === 'undefined' && !isNode(target)) {
-    htmlString = target;
+  if (typeof content === 'undefined' && !isNode(target)) {
+    content = target;
     target = undefined;
   }
-  return htmlString ? fn(htmlString) : fn;
+  return content ? fn(content) : fn;
 };
 
 /**
@@ -246,8 +246,8 @@ function empty(element) {
 
 /**
  *  Find refs
- *  @param {HTMLElement} element Element to empty
- *  @return {HTMLElement} element
+ *  @param {HTMLElement} element Element to find refs on
+ *  @return {Object} refs object
  * */
 function getRefs(element) {
   var refGetter = attr('ref');
@@ -270,6 +270,7 @@ function getRefs(element) {
  *  creates HTML Element
  *  @param {String} name tag name
  *  @param {Object} [attributes] element attributes
+ *  @param {String} [content] element content
  *  @return {HTMLElement} created element
  * */
 function createElement(name, attributes, content) {
