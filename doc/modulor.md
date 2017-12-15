@@ -18,7 +18,6 @@ Modulor library
         * [.walkDOM](#module_modulor.walkDOM) ⇒ <code>Array</code>
     * _inner_
         * [~BaseComponent](#module_modulor..BaseComponent)
-            * [.componentType](#module_modulor..BaseComponent+componentType)
             * _DOM API_
                 * [.$(selector)](#module_modulor..BaseComponent+$) ⇒ <code>Array</code>
                 * [.attr(key, [value])](#module_modulor..BaseComponent+attr) ⇒ <code>String</code>
@@ -28,14 +27,17 @@ Modulor library
                 * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
                 * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
             * _debug_
-                * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
-                * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>ModulorComponent</code>
+                * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;BaseComponent&gt;</code>
+                * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>BaseComponent</code>
                 * [.toggleHighlight()](#module_modulor..BaseComponent+toggleHighlight)
                 * [.toggleHighlightAll()](#module_modulor..BaseComponent+toggleHighlightAll)
             * _events_
                 * [.on(eventName, [selector], callback)](#module_modulor..BaseComponent+on)
                 * [.off([eventName], [selector], [callback])](#module_modulor..BaseComponent+off)
                 * [.trigger(eventName, [eventData])](#module_modulor..BaseComponent+trigger)
+            * _properties_
+                * [.componentType](#module_modulor..BaseComponent+componentType)
+                * [.proxyAttributes](#module_modulor..BaseComponent+proxyAttributes)
         * ~~[~BaseController](#module_modulor..BaseController) ⇐ <code>BaseComponent</code>~~
             * [.componentType](#module_modulor..BaseController+componentType)
 
@@ -172,7 +174,6 @@ Traverse DOM node
 **Kind**: inner class of [<code>modulor</code>](#module_modulor)  
 
 * [~BaseComponent](#module_modulor..BaseComponent)
-    * [.componentType](#module_modulor..BaseComponent+componentType)
     * _DOM API_
         * [.$(selector)](#module_modulor..BaseComponent+$) ⇒ <code>Array</code>
         * [.attr(key, [value])](#module_modulor..BaseComponent+attr) ⇒ <code>String</code>
@@ -182,24 +183,17 @@ Traverse DOM node
         * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
         * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
     * _debug_
-        * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
-        * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>ModulorComponent</code>
+        * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;BaseComponent&gt;</code>
+        * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>BaseComponent</code>
         * [.toggleHighlight()](#module_modulor..BaseComponent+toggleHighlight)
         * [.toggleHighlightAll()](#module_modulor..BaseComponent+toggleHighlightAll)
     * _events_
         * [.on(eventName, [selector], callback)](#module_modulor..BaseComponent+on)
         * [.off([eventName], [selector], [callback])](#module_modulor..BaseComponent+off)
         * [.trigger(eventName, [eventData])](#module_modulor..BaseComponent+trigger)
-
-<a name="module_modulor..BaseComponent+componentType"></a>
-
-#### baseComponent.componentType
-**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
-**Properties**
-
-| Type | Description |
-| --- | --- |
-| <code>String</code> | Component type (`component`) |
+    * _properties_
+        * [.componentType](#module_modulor..BaseComponent+componentType)
+        * [.proxyAttributes](#module_modulor..BaseComponent+proxyAttributes)
 
 <a name="module_modulor..BaseComponent+$"></a>
 
@@ -292,7 +286,7 @@ Set the HTML content of element
 
 <a name="module_modulor..BaseComponent+childComponents"></a>
 
-#### baseComponent.childComponents ⇒ <code>Array.&lt;ModulorComponent&gt;</code>
+#### baseComponent.childComponents ⇒ <code>Array.&lt;BaseComponent&gt;</code>
 *Getter*.
  List of child components.
  **Use only for debug purposes due to low efficiency**
@@ -301,7 +295,7 @@ Set the HTML content of element
 **Category**: debug  
 <a name="module_modulor..BaseComponent+parentComponent"></a>
 
-#### baseComponent.parentComponent ⇒ <code>ModulorComponent</code>
+#### baseComponent.parentComponent ⇒ <code>BaseComponent</code>
 *Getter*.
  Parent component.
  **Use only for debug purposes due to low efficiency**
@@ -365,6 +359,28 @@ Fires an event on element
 | eventName | <code>String</code> | Event name |
 | [eventData] | <code>\*</code> | Data to attach to event |
 
+<a name="module_modulor..BaseComponent+componentType"></a>
+
+#### baseComponent.componentType
+**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
+**Category**: properties  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| componentType | <code>String</code> | <code>&quot;component&quot;</code> | Component type |
+
+<a name="module_modulor..BaseComponent+proxyAttributes"></a>
+
+#### baseComponent.proxyAttributes
+**Kind**: instance property of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
+**Category**: properties  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| proxyAttributes | <code>Object.&lt;String, function()&gt;</code> | <code>{}</code> | Proxy attributes to properties |
+
 <a name="module_modulor..BaseController"></a>
 
 ### ~~modulor~BaseController ⇐ <code>BaseComponent</code>~~
@@ -376,9 +392,10 @@ Fires an event on element
 
 #### baseController.componentType
 **Kind**: instance property of [<code>BaseController</code>](#module_modulor..BaseController)  
+**Category**: properties  
 **Properties**
 
-| Type | Description |
-| --- | --- |
-| <code>String</code> | Component type (`controller`) |
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| componentType | <code>String</code> | <code>&quot;controller&quot;</code> | Component type |
 

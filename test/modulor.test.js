@@ -1,6 +1,6 @@
 //customElements
-//import 'document-register-element';
-import 'custom-elements-jest';
+import 'document-register-element';
+//import 'custom-elements-jest';
 
 import {
   BaseComponent, BaseController,
@@ -93,11 +93,9 @@ describe('Dom utils proxy functions', () => {
 
 describe('Single component functionality', () => {
 
-  let component;
-
   customElements.define('my-test-component', BaseComponent);
 
-  component = document.createElement('my-test-component');
+  let component = document.createElement('my-test-component');
 
   it('html function works correctly', () => {
     const fixture = `<div class="foo" data-test="bar">
@@ -157,6 +155,49 @@ describe('Single component functionality', () => {
     component.addEventListener('test-event', handler);
     component.trigger('test-event', { foo: 'bar' });
     expect(data).toEqual({ foo: 'bar' });
+  });
+
+  it('proxies attributes', () => {
+
+    const testData = { "prop": true };
+    const attributeProxyFn = jest.fn();
+
+    let $container = document.createElement('div');
+
+    $container.innerHTML = `
+      <my-component foo="1" bar="ok" baz='${JSON.stringify(testData)}' qux="true" fred="test"></my-component>
+    `;
+
+    document.body.appendChild($container);
+
+    const $component = $container.querySelector('my-component');
+
+    class MyComponent extends BaseComponent {
+
+      static get observedAttributes() {
+        return ['foo', 'bar', 'baz', 'qux', 'fred'];
+      }
+
+      get proxyAttributes(){
+        return {
+          foo: Number,
+          bar: String,
+          baz: JSON.parse,
+          qux: attributeProxyFn
+        };
+      }
+    };
+
+    customElements.define('my-component', MyComponent);
+
+    expect($component.foo).toEqual(1);
+    expect($component.bar).toEqual('ok');
+    expect($component.baz).toEqual(testData);
+    expect($component.fred).toBeUndefined();
+    expect(attributeProxyFn).toBeCalledWith('true', null);
+
+    $component.setAttribute('foo', 2);
+    expect($component.foo).toEqual(2);
   });
 
 });

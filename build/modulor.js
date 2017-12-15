@@ -144,7 +144,6 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
     key: 'toggleHighlight',
 
 
-    //debug highlighting
     /**
      *  Toggle debug class on component
      *  @category debug
@@ -334,16 +333,10 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
     }
   }, {
     key: 'attributeChangedCallback',
-    value: function attributeChangedCallback() {}
-  }, {
-    key: 'componentType',
-
-
-    /**
-     * @property {String} - Component type (`component`)
-     */
-    get: function get() {
-      return 'component';
+    value: function attributeChangedCallback(name, oldValue, newValue) {
+      if (this.proxyAttributes[name]) {
+        this[name] = this.proxyAttributes[name](newValue, oldValue);
+      }
     }
   }, {
     key: '__isModulor',
@@ -352,11 +345,33 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
     }
 
     /**
+     * @category properties
+     * @property {String} componentType="component" - Component type
+     */
+
+  }, {
+    key: 'componentType',
+    get: function get() {
+      return 'component';
+    }
+
+    /**
+     * @category properties
+     * @property {Object.<String, Function>} proxyAttributes={} - Proxy attributes to properties
+     */
+
+  }, {
+    key: 'proxyAttributes',
+    get: function get() {
+      return {};
+    }
+
+    /**
      *  *Getter*.
      *  List of child components.
      *  **Use only for debug purposes due to low efficiency**
      *  @category debug
-     *  @return {Array.<ModulorComponent>}
+     *  @return {Array.<BaseComponent>}
      */
 
   }, {
@@ -374,7 +389,7 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
      *  Parent component.
      *  **Use only for debug purposes due to low efficiency**
      *  @category debug
-     *  @return {ModulorComponent}
+     *  @return {BaseComponent}
      */
 
   }, {
@@ -413,7 +428,8 @@ var BaseController = exports.BaseController = function (_BaseComponent) {
     key: 'componentType',
 
     /**
-     * @property {String} - Component type (`controller`)
+     * @category properties
+     * @property {String} componentType="controller" - Component type
      */
     get: function get() {
       return 'controller';
