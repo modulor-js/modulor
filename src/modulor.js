@@ -103,21 +103,28 @@ export const walkDOM = (node, filter, skipNode) =>
  * */
 export class BaseComponent extends HTMLElement {
 
-  /**
-   * @property {String} - Component type (`component`)
-   */
-  get componentType(){ return 'component'; }
-
   get __isModulor(){
     return true;
   }
+
+  /**
+   * @category properties
+   * @property {String} componentType="component" - Component type
+   */
+  get componentType(){ return 'component'; }
+
+  /**
+   * @category properties
+   * @property {Object.<String, Function>} proxyAttributes={} - Proxy attributes to properties
+   */
+  get proxyAttributes(){ return {}; }
 
   /**
    *  *Getter*.
    *  List of child components.
    *  **Use only for debug purposes due to low efficiency**
    *  @category debug
-   *  @return {Array.<ModulorComponent>}
+   *  @return {Array.<BaseComponent>}
    */
   get childComponents(){
     return domUtils.walkDOM(this, (node) => node.__isModulor, (node) => node.__isModulor);
@@ -128,7 +135,7 @@ export class BaseComponent extends HTMLElement {
    *  Parent component.
    *  **Use only for debug purposes due to low efficiency**
    *  @category debug
-   *  @return {ModulorComponent}
+   *  @return {BaseComponent}
    */
   get parentComponent(){
     let parent = this;
@@ -140,7 +147,6 @@ export class BaseComponent extends HTMLElement {
     return parent;
   }
 
-  //debug highlighting
   /**
    *  Toggle debug class on component
    *  @category debug
@@ -287,7 +293,11 @@ export class BaseComponent extends HTMLElement {
     this.off();
   }
 
-  attributeChangedCallback(){}
+  attributeChangedCallback(name, oldValue, newValue){
+    if(this.proxyAttributes[name]){
+      this[name] = this.proxyAttributes[name](newValue, oldValue);
+    }
+  }
 }
 
 /**
@@ -297,7 +307,8 @@ export class BaseComponent extends HTMLElement {
  * */
 export class BaseController extends BaseComponent {
   /**
-   * @property {String} - Component type (`controller`)
+   * @category properties
+   * @property {String} componentType="controller" - Component type
    */
   get componentType(){ return 'controller'; }
 }
