@@ -305,3 +305,38 @@ describe('Complex functionality', () => {
   });
 
 });
+
+describe('connected callback routines', () => {
+
+  class ParentComponent extends BaseComponent {
+    render(){
+      return this.html(`
+        <child-component ref="child-component"></child-component>
+      `);
+    }
+  }
+  customElements.define('parent-component', ParentComponent);
+
+  const $container = document.createElement('div');
+  document.body.appendChild($container);
+
+  const refs = domUtils.html($container, `
+    <parent-component ref="parent-component"></parent-component>
+  `)[1];
+
+  const $parentComponent = refs['parent-component'];
+
+  it('resolves promises', async () => {
+    const connectedPromise = $parentComponent.whenComponentConnected;
+    await expect(connectedPromise).resolves.toBe($parentComponent);
+    const childRefs = $parentComponent.render();
+
+    class ChildComponent extends BaseComponent {}
+    customElements.define('child-component', ChildComponent);
+
+    const $childComponent = childRefs['child-component'];
+    const childConnectedPromise = $childComponent.whenComponentConnected;
+    await expect(childConnectedPromise).resolves.toBe($childComponent);
+  });
+
+});

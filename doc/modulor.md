@@ -25,7 +25,7 @@ Modulor library
                 * [.removeClass(className)](#module_modulor..BaseComponent+removeClass)
                 * [.toggleClass(className)](#module_modulor..BaseComponent+toggleClass)
                 * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
-                * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+                * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Object</code>
             * _debug_
                 * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;BaseComponent&gt;</code>
                 * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>BaseComponent</code>
@@ -181,7 +181,7 @@ Traverse DOM node
         * [.removeClass(className)](#module_modulor..BaseComponent+removeClass)
         * [.toggleClass(className)](#module_modulor..BaseComponent+toggleClass)
         * [.hasClass(className)](#module_modulor..BaseComponent+hasClass) ⇒ <code>Boolean</code>
-        * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+        * [.html(htmlString, [$el])](#module_modulor..BaseComponent+html) ⇒ <code>Object</code>
     * _debug_
         * [.childComponents](#module_modulor..BaseComponent+childComponents) ⇒ <code>Array.&lt;BaseComponent&gt;</code>
         * [.parentComponent](#module_modulor..BaseComponent+parentComponent) ⇒ <code>BaseComponent</code>
@@ -272,11 +272,11 @@ Check if the element has a class
 
 <a name="module_modulor..BaseComponent+html"></a>
 
-#### baseComponent.html(htmlString, [$el]) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+#### baseComponent.html(htmlString, [$el]) ⇒ <code>Object</code>
 Set the HTML content of element
 
 **Kind**: instance method of [<code>BaseComponent</code>](#module_modulor..BaseComponent)  
-**Returns**: <code>Array.&lt;HTMLElement&gt;</code> - refs  
+**Returns**: <code>Object</code> - refs  
 **Category**: DOM API  
 
 | Param | Type | Description |
@@ -284,6 +284,36 @@ Set the HTML content of element
 | htmlString | <code>String</code> | HTML content string |
 | [$el] | <code>HTMLElement</code> | Target element |
 
+**Example**  
+```js
+// set content
+this.html(`<div></div>`);
+```
+**Example**  
+```js
+// set content of another element
+this.html(`<div></div>`, <HTMLElement>);
+```
+**Example**  
+```js
+// get refs
+const refs = this.html(`
+  <div id="some_id" ref="some_ref">
+    <span refs="span_elements" id="span_1"></span>
+    <span refs="span_elements" id="span_2"></span>
+  </div>
+`) //=> { some_ref: <HTMLElement#some_id>, span_elements: [<HTMLElement#span_1>, <HTMLElement#span_2>] }
+```
+**Example**  
+```js
+// await child elements (only when instance of modulor component)
+const refs = this.html(`
+  <child-component ref="$childComponent"></child-component>
+  <div ref="$someDiv"></div>
+`);
+refs['$childComponent'].whenComponentConnected.then(($childComponent) => ...);
+refs['$someDiv'].whenComponentConnected.then(...never resolves...);
+```
 <a name="module_modulor..BaseComponent+childComponents"></a>
 
 #### baseComponent.childComponents ⇒ <code>Array.&lt;BaseComponent&gt;</code>

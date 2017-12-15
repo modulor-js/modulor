@@ -50,6 +50,32 @@ describe('Dom utils module', () => {
       }));
     });
 
+    it('patches elements', async () => {
+      const $parent = document.createElement('div');
+      const result = html($parent, `
+        <div ref="single"></div>
+        <div refs="multiple"></div>
+        <div refs="multiple"></div>
+      `)[1];
+      expect(result.single.whenComponentConnected).toBeInstanceOf(Promise);
+      expect(result.single.__whenConnectedResolver).toBeInstanceOf(Function);
+
+      expect(result.multiple[0].whenComponentConnected).toBeInstanceOf(Promise);
+      expect(result.multiple[0].__whenConnectedResolver).toBeInstanceOf(Function);
+
+      expect(result.multiple[1].whenComponentConnected).toBeInstanceOf(Promise);
+      expect(result.multiple[1].__whenConnectedResolver).toBeInstanceOf(Function);
+
+      const handlerSingle = jest.fn();
+      const handlerMultiple0 = jest.fn();
+      const handlerMultiple1 = jest.fn();
+
+      result.single.whenComponentConnected.then(handlerSingle);
+      result.single.__whenConnectedResolver();
+      await result.single.whenComponentConnected;
+      expect(handlerSingle).toHaveBeenCalledWith(result.single);
+    });
+
     it('functional', () => {
       const $parent = document.createElement('div');
       const render = html($parent);
