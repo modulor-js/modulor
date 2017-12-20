@@ -29,6 +29,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  *  Converts NodeList to array
  *  @param {NodeList} nodes Elements collection
  *  @return {Array} Collection of nodes
+ *
+ *  @example
+ *  toArray(document.querySelectorAll('body')) //=> [document.body]
  * */
 function toArray(nodes) {
   var arr = [];
@@ -206,16 +209,54 @@ function fireEvent(eventName, target) {
   target.dispatchEvent(event);
 };
 
+var patchRefs = function patchRefs(refs) {
+  var promises = Object.keys(refs).reduce(function (acc, key) {
+    return acc.concat(refs[key]);
+  }, []).map(function ($el) {
+    return $el.whenComponentConnected = new Promise(function (resolve, reject) {
+      $el.__whenConnectedResolver = function (arg) {
+        return resolve(arg || $el);
+      };
+    });
+  });
+
+  return refs;
+};
+
 /**
- *  Set the HTML content of element, or generate DocumentFragment
- *  @param {HTMLElement|String} target Element to set content or html string
- *  @param {String|HTMLElement|DocumentFragment} [content] HTML content string
- *  @return {Array|Function} tuple [target || DocumentFragment, refs object] or render function
+ * Set the HTML content of element, or generate DocumentFragment
+ * @param {HTMLElement|String} target Element to set content or html string
+ * @param {String|HTMLElement|DocumentFragment} [content] HTML content string
+ * @return {Array|Function} tuple [target || DocumentFragment, refs object] or render function
+ *
+ * @example
+ * // set content of element
+ * const $el = document.createElement('div');
+ * const result = html($el, `<div></div>`); //=> [$el, {}];
+ *
+ * @example
+ * // create element renderer
+ * const $el = document.createElement('div');
+ * const render = html($el);
+ * const result = render(`<div></div>`); //=> [$el, {}];
+ *
+ * @example
+ * // generate document fragment from string
+ * const result = html(`<div id="some_id"></div>`) //=> [<HTMLElement#some_id>, {}]
+ *
+ * @example
+ * // get refs
+ * const refs = html(`
+ *   <div id="some_id" ref="some_ref">
+ *     <span refs="span_elements" id="span_1"></span>
+ *     <span refs="span_elements" id="span_2"></span>
+ *   </div>
+ * `)[1] //=> { some_ref: <HTMLElement#some_id>, span_elements: [<HTMLElement#span_1>, <HTMLElement#span_2>] }
  * */
 function html(target, content) {
   var fn = function fn(content) {
     var fragment = isNode(content) ? content : toArray(createElement('div', {}, content).childNodes).reduce(append, document.createDocumentFragment());
-    var refs = getRefs(fragment);
+    var refs = patchRefs(getRefs(fragment));
     return [target ? append(empty(target), fragment) : fragment, refs];
   };
   if (typeof content === 'undefined' && !isNode(target)) {

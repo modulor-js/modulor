@@ -63,6 +63,10 @@ Converts NodeList to array
 | --- | --- | --- |
 | nodes | <code>NodeList</code> | Elements collection |
 
+**Example**  
+```js
+toArray(document.querySelectorAll('body')) //=> [document.body]
+```
 <a name="$"></a>
 
 ## $(Element, [selector]) ⇒ <code>function</code> \| <code>Array</code>
@@ -208,6 +212,34 @@ Set the HTML content of element, or generate DocumentFragment
 | target | <code>HTMLElement</code> \| <code>String</code> | Element to set content or html string |
 | [content] | <code>String</code> \| <code>HTMLElement</code> \| <code>DocumentFragment</code> | HTML content string |
 
+**Example**  
+```js
+// set content of element
+const $el = document.createElement('div');
+const result = html($el, `<div></div>`); //=> [$el, {}];
+```
+**Example**  
+```js
+// create element renderer
+const $el = document.createElement('div');
+const render = html($el);
+const result = render(`<div></div>`); //=> [$el, {}];
+```
+**Example**  
+```js
+// generate document fragment from string
+const result = html(`<div id="some_id"></div>`) //=> [<HTMLElement#some_id>, {}]
+```
+**Example**  
+```js
+// get refs
+const refs = html(`
+  <div id="some_id" ref="some_ref">
+    <span refs="span_elements" id="span_1"></span>
+    <span refs="span_elements" id="span_2"></span>
+  </div>
+`)[1] //=> { some_ref: <HTMLElement#some_id>, span_elements: [<HTMLElement#span_1>, <HTMLElement#span_2>] }
+```
 <a name="isNode"></a>
 
 ## isNode(element) ⇒ <code>Boolean</code>

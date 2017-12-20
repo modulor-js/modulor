@@ -245,11 +245,38 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
     }
 
     /**
-     *  Set the HTML content of element
-     *  @category DOM API
-     *  @param {String} htmlString HTML content string
-     *  @param {HTMLElement} [$el] Target element
-     *  @return {Array.<HTMLElement>} refs
+     * Set the HTML content of element
+     * @category DOM API
+     * @param {String} htmlString HTML content string
+     * @param {HTMLElement} [$el] Target element
+     * @return {Object} refs
+     *
+     * @example
+     * // set content
+     * this.html(`<div></div>`);
+     *
+     * @example
+     * // set content of another element
+     * this.html(`<div></div>`, <HTMLElement>);
+     *
+     * @example
+     * // get refs
+     * const refs = this.html(`
+     *   <div id="some_id" ref="some_ref">
+     *     <span refs="span_elements" id="span_1"></span>
+     *     <span refs="span_elements" id="span_2"></span>
+     *   </div>
+     * `) //=> { some_ref: <HTMLElement#some_id>, span_elements: [<HTMLElement#span_1>, <HTMLElement#span_2>] }
+     *
+     * @example
+     * // await child elements (only when instance of modulor component)
+     * const refs = this.html(`
+     *   <child-component ref="$childComponent"></child-component>
+     *   <div ref="$someDiv"></div>
+     * `);
+     * refs['$childComponent'].whenComponentConnected.then(($childComponent) => ...);
+     * refs['$someDiv'].whenComponentConnected.then(...never resolves...);
+     *
      * */
 
   }, {
@@ -325,6 +352,7 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
       this.on('component-attached', function (event) {
         event.stopPropagation();
       });
+      this.__whenConnectedResolver && this.__whenConnectedResolver();
     }
   }, {
     key: 'disconnectedCallback',
