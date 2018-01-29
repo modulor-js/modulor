@@ -33,7 +33,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  *  @example
  *  toArray(document.querySelectorAll('body')) //=> [document.body]
  * */
-function toArray(nodes) {
+function toArray() {
+  var nodes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
   var arr = [];
   for (var i = 0, ref = arr.length = nodes.length; i < ref; i++) {
     arr[i] = nodes[i];

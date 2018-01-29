@@ -6,7 +6,7 @@
  *  @example
  *  toArray(document.querySelectorAll('body')) //=> [document.body]
  * */
-export function toArray(nodes){
+export function toArray(nodes = []){
   let arr = [];
   for (let i = 0, ref = arr.length = nodes.length; i < ref; i++){
    arr[i] = nodes[i];
