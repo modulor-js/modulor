@@ -281,7 +281,7 @@ export function getRefs(element){
  *  @param {String} [content] element content
  *  @return {HTMLElement} created element
  * */
-export function createElement(name, attributes, content){
+export function createElement(name, attributes = {}, content){
   const $el = document.createElement(name);
   Object.keys(attributes).forEach((attr) => {
     if (attr in $el) {

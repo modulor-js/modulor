@@ -240,6 +240,10 @@ describe('Dom utils module', () => {
 
     expect($element.getAttribute('foo')).toBe('bar');
     expect($element.foo).toBeUndefined();
+
+    const $element2 = createElement('div');
+    expect($element2).toBeInstanceOf(HTMLElement);
+    expect($element2.outerHTML).toBe('<div></div>');
   });
 
   it('getRefs()', () => {
