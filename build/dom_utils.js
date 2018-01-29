@@ -25,6 +25,10 @@ exports.createElement = createElement;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function isUndefined(value) {
+  return typeof value === 'undefined';
+}
+
 /**
  *  Converts NodeList to array
  *  @param {NodeList} nodes Elements collection
@@ -261,11 +265,11 @@ function html(target, content) {
     var refs = patchRefs(getRefs(fragment));
     return [target ? append(empty(target), fragment) : fragment, refs];
   };
-  if (typeof content === 'undefined' && !isNode(target)) {
+  if (isUndefined(content) && !isNode(target)) {
     content = target;
     target = undefined;
   }
-  return content ? fn(content) : fn;
+  return !isUndefined(content) ? fn(content) : fn;
 };
 
 /**

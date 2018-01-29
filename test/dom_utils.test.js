@@ -24,6 +24,12 @@ describe('Dom utils module', () => {
     });
 
     it('renders html into node', () => {
+      html(component, 'test');
+      expect(component.innerHTML).toEqual('test');
+
+      html(component, '');
+      expect(component.innerHTML).toEqual('');
+
       html(component, fixture);
       expect(component.innerHTML).toEqual(fixture);
     });

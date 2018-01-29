@@ -1,3 +1,7 @@
+function isUndefined(value){
+  return typeof value === 'undefined';
+}
+
 /**
  *  Converts NodeList to array
  *  @param {NodeList} nodes Elements collection
@@ -218,11 +222,11 @@ export function html(target, content){
       refs
     ];
   }
-  if(typeof content === 'undefined' && !isNode(target)){
+  if(isUndefined(content) && !isNode(target)){
     content = target;
     target = undefined;
   }
-  return content ? fn(content) : fn;
+  return !isUndefined(content) ? fn(content) : fn;
 };
 
 /**
