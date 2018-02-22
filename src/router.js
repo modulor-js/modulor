@@ -324,6 +324,7 @@ Router.prototype.add = function(path, callback){
  *  @property {boolean} [absolute=false] Use absolute path instead of relative by default
  *  @property {boolean} [silent=false] Do not resolve routers after navigation
  *  @property {boolean} [replace=false] Replace history state instead of push
+ *  @property {boolean} [noLeadingSlash=false] Put slash before route to navigate to
  * */
 
 /**
@@ -336,7 +337,8 @@ Router.prototype.navigate = function(path, params = {}){
   if(!this.rootMatches()){
     return false;
   }
-  let newPath = `${params.absolute ? '' : this.getRoot()}/${path}`.replace(/(\/{1,})/ig, '/'); //duplication with line 103. make common function `clean`
+  const pathDelimiter = params.noLeadingSlash ? '' : '/';
+  let newPath = `${params.absolute ? '' : this.getRoot()}${pathDelimiter}${path}`.replace(/(\/{1,})/ig, '/'); //duplication with line 103. make common function `clean`
   if(this.useHash()){
     window.location.hash = newPath;
   } else {
