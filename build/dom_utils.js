@@ -320,7 +320,10 @@ function getRefs(element) {
  *  @param {String} [content] element content
  *  @return {HTMLElement} created element
  * */
-function createElement(name, attributes, content) {
+function createElement(name) {
+  var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var content = arguments[2];
+
   var $el = document.createElement(name);
   Object.keys(attributes).forEach(function (attr) {
     if (attr in $el) {
