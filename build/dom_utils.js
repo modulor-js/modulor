@@ -185,7 +185,9 @@ function walkDOM(node) {
 
   var arr = [];
   var loop = function loop(node) {
-    return toArray(node.children).forEach(function (child) {
+    return toArray(node.childNodes).filter(function (child) {
+      return child.nodeType === 1;
+    }).forEach(function (child) {
       filter(child) && arr.push(child);
       !skipNode(child) && child.hasChildNodes() && loop(child);
     });

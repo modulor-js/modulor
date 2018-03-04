@@ -144,7 +144,7 @@ export function prepend(parent, element){
  * */
 export function walkDOM(node, filter = () => true, skipNode = () => false) {
   let arr = [];
-  let loop = (node) => toArray(node.children).forEach((child) => {
+  let loop = (node) => toArray(node.childNodes).filter(child => child.nodeType === 1).forEach((child) => {
     filter(child) && arr.push(child);
     (!skipNode(child) && child.hasChildNodes()) && loop(child);
   });
