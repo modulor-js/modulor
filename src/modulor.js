@@ -310,15 +310,18 @@ export class BaseComponent extends HTMLElement {
   //lifecycle callbacks
 
   connectedCallback(){
-    this.trigger('component-attached');
-    this.on('component-attached', (event) => {
-      event.stopPropagation();
-    });
+    if(this.__isModulor) {
+      // if __isModulor exist, other lifecycle methods also exist
+      this.trigger && this.trigger('component-attached');
+      this.on('component-attached', (event) => {
+        event.stopPropagation();
+      });
+    }
     this.__whenConnectedResolver && this.__whenConnectedResolver();
   }
 
   disconnectedCallback(){
-    this.off();
+    this.off && this.off();
   }
 
   attributeChangedCallback(name, oldValue, newValue){
