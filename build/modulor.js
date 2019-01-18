@@ -348,16 +348,19 @@ var BaseComponent = exports.BaseComponent = function (_HTMLElement) {
   }, {
     key: 'connectedCallback',
     value: function connectedCallback() {
-      this.trigger('component-attached');
-      this.on('component-attached', function (event) {
-        event.stopPropagation();
-      });
+      if (this.__isModulor) {
+        // if __isModulor exist, other lifecycle methods also exist
+        this.trigger && this.trigger('component-attached');
+        this.on('component-attached', function (event) {
+          event.stopPropagation();
+        });
+      }
       this.__whenConnectedResolver && this.__whenConnectedResolver();
     }
   }, {
     key: 'disconnectedCallback',
     value: function disconnectedCallback() {
-      this.off();
+      this.off && this.off();
     }
   }, {
     key: 'attributeChangedCallback',

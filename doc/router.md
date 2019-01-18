@@ -267,8 +267,8 @@ Destroy router
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| absolute | <code>boolean</code> | <code>false</code> | Use absolute path instead of relative by default |
-| silent | <code>boolean</code> | <code>false</code> | Do not resolve routers after navigation |
-| replace | <code>boolean</code> | <code>false</code> | Replace history state instead of push |
-| noLeadingSlash | <code>boolean</code> | <code>false</code> | Put slash before route to navigate to |
+| [absolute] | <code>boolean</code> | <code>false</code> | Use absolute path instead of relative by default |
+| [silent] | <code>boolean</code> | <code>false</code> | Do not resolve routers after navigation |
+| [replace] | <code>boolean</code> | <code>false</code> | Replace history state instead of push |
+| [noLeadingSlash] | <code>boolean</code> | <code>false</code> | Put slash before route to navigate to |
 
